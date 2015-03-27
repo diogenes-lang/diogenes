@@ -1,0 +1,62 @@
+grammar it.unica.co2.Contracts with org.eclipse.xtext.common.Terminals
+
+generate contracts "http://www.unica.it/co2/Contracts"
+
+ContractGrammar :
+	contracts+=ContractDefinition*
+;
+
+ContractDefinition:
+	{ContractDefinition} "contract" (name=ID)? "{" 
+		contract=(Contract)? 
+	"}" 
+;
+
+Contract:
+	IntSum | 
+	ExtSum | 
+	Recursion |
+	{EmptyContract} value="0" |
+	"(" Contract ")"
+;
+
+IntSum:
+	actions+=IntAction ("(+)" actions+=IntAction)*
+;
+
+ExtSum:
+	actions+=ExtAction ( "+"  actions+=ExtAction)*
+;
+
+Recursion:
+	"rec" name=ID "." body=NextContract
+;
+
+NextContract returns Contract:
+	IntAction |
+	ExtAction |
+	{EmptyContract} value="0" |
+	"(" Contract ")"
+;
+
+IntAction:
+	actionName=ID "!" (type=Type)? next=AbstractNextContract?
+;
+
+ExtAction:
+	actionName=ID "?" (type=Type)? next=AbstractNextContract?
+;
+
+AbstractNextContract:
+	"." (
+		nextContract=NextContract |
+		recursionReference=[Recursion] |
+		"&" contractReference=[ContractDefinition]
+	)
+;
+
+Type: 
+	{Unit} "unit" |
+	{Integer} "int" | 
+	{String} "string"
+;

@@ -1,0 +1,204 @@
+in model-checker .
+
+fmod CONTR-SYNTAX is
+
+	sorts UniContract Participant AdvContract BiContract IGuarded EGuarded IChoice EChoice Var Id RdyContract .
+	sorts BType InAction OutAction IOAction ActName .
+	subsort Id < IGuarded < IChoice < UniContract < RdyContract .
+	subsort Id < EGuarded < EChoice < UniContract < RdyContract .
+    	subsort Var < UniContract .
+	subsort InAction < IOAction .
+	subsort OutAction < IOAction .
+
+	op co : IOAction -> IOAction .
+
+	op _!_ : ActName BType -> OutAction [prec 20] .
+	op _?_ : ActName BType -> InAction [prec 20] .
+
+	vars a b : ActName .
+	vars T T' : BType .
+	vars c d : UniContract .
+
+	eq co(a ! T) = (a ? T) .
+	eq co(a ? T) = (a ! T) .
+
+    	op 0 : -> Id [ctor] .
+	op _._ : InAction UniContract -> EGuarded [frozen prec 25 ctor] .
+	op _._ : OutAction UniContract -> IGuarded [frozen prec 25 ctor] .
+	op _+_ : EChoice EChoice -> EChoice [frozen comm assoc id: 0 prec 30 ctor] .
+	op _(+)_ : IChoice IChoice -> IChoice [frozen comm assoc id: 0 prec 30 ctor] .
+	op ready _._ : InAction UniContract -> RdyContract [frozen prec 25 ctor] .
+    	op rec _._ : Var IChoice -> UniContract [frozen prec 35 ctor] .
+    	op rec _._ : Var EChoice -> UniContract [frozen prec 35 ctor] .    
+
+	op _ says _  : Participant RdyContract -> AdvContract [ctor] .
+
+	op _ | _ : AdvContract AdvContract -> BiContract [comm ctor] .
+endfm
+
+fmod CONTR-UTILS is
+    protecting CONTR-SYNTAX .
+    
+    vars A B : Participant .
+    vars c d : UniContract .
+    vars X Y : Var .
+    var IS : IChoice .
+    var ES : EChoice .
+    var gamma : BiContract .
+    var il : InAction .
+    var ol : OutAction .
+
+    op _ subset _ : IChoice EChoice -> Bool .
+
+    eq 0 subset ES = true .
+    ceq ol . c (+) IS subset il . d + ES = IS subset ES if ol = co(il) .
+    eq IS subset ES = false [owise] .
+
+    op isSafe : BiContract -> Bool .
+
+    eq isSafe(A says 0 | B says 0) = true .
+    ceq isSafe(A says IS | B says ES) = 
+        IS subset ES if IS =/= 0 . 
+    eq isSafe(A says ready il . c | B says d) = true .
+    eq isSafe(C:BiContract) = false [owise] .
+
+    op isSuccess : BiContract -> Bool .
+
+    eq isSuccess(A says 0 | B says 0) = true .
+    eq isSuccess(gamma) = false [owise] .
+
+    op _{_/_} : UniContract UniContract Var -> UniContract [frozen prec 40] .
+
+    eq X {c / X} = c .
+    ceq Y {c / X} = Y if X =/= Y .
+    eq 0 {c / X} = 0 .
+    ceq ol . d (+) d':IChoice {c / X} = ol . (d {c / X}) if d':IChoice == 0 .
+    ceq ol . d (+) d':IChoice {c / X} = ol . (d {c / X}) (+) (d':IChoice {c / X}) if d':IChoice =/= 0 .
+    ceq il . d + d':EChoice {c / X} = il . (d {c / X}) if d':EChoice == 0 .
+    ceq il . d + d':EChoice {c / X} = il . (d {c / X}) + (d':EChoice {c / X}) if d':EChoice =/= 0 .
+    ceq rec Y . d:IChoice {c / X} = rec Y . (d:IChoice {c / X}) if X =/= Y .
+    eq rec X . d:IChoice {c / X} = rec X . d:IChoice .
+    ceq rec Y . d:EChoice {c / X} = rec Y . (d:EChoice {c / X}) if X =/= Y .
+    eq rec X . d:EChoice {c / X} = rec X . d:EChoice .
+
+endfm 
+
+mod CONTR-SEM is
+    protecting CONTR-UTILS .
+    
+    sort LBiContract .
+    subsort BiContract < LBiContract .
+
+    sort Label .
+
+	op _ says _ : Participant IOAction -> Label [ctor] .
+
+	***labelled contract
+	op {_}_ : Label LBiContract -> LBiContract [frozen ctor] .
+
+    vars A B : Participant .
+    vars c d : UniContract .
+    var ci : IChoice .
+    var de : EChoice .
+    var X : Var .
+    vars l l' : Label .
+    vars g g' : BiContract .
+    var il : InAction .
+    var ol : OutAction .
+
+    ***structural congruence
+    eq A says rec X . ci = A says ci {rec X . ci / X} .
+    eq A says rec X . de = A says de {rec X . de / X} .
+
+    ***one step semantics
+    crl [AbsIntExt] : A says ol . c (+) ci | B says il . d + de => {A says ol} A says c | B says ready co(ol) . d if co(il) = ol .
+
+    rl [AbsRdy] : A says ready il . c | B says d => {A says il} A says c | B says d .
+
+    ***semantics
+    sort TBiContract .    
+    op <_> : LBiContract -> TBiContract [frozen] .
+
+    op dummy : -> Label [ctor] .
+    
+    *** crl [Rifl] : [g] => [{l} g'] if g =>  {l} g' .
+    eq < g > = < {dummy} g > .
+
+    crl [Rifl] : < {l'} g > => < {l} g' > if g => {l} g' .
+
+
+endm
+
+mod COMPLIANCE is
+    including MODEL-CHECKER .
+    including LTL-SIMPLIFIER .
+    protecting CONTR-SEM .
+    including SATISFACTION .
+    
+    subsort TBiContract < State .
+
+    *** op success : -> Prop .
+    op safe : -> Prop .
+
+    var g : BiContract .
+    var l : Label . 
+
+    *** eq < {l} g > |= success = isSuccess(g) .
+    eq < {l} g > |= safe = isSafe(g) .
+
+
+    op _|X|_ : UniContract UniContract -> Bool .
+
+    vars c d : UniContract .
+
+    ops Al Bo : -> Participant .
+
+    eq c |X| d = modelCheck(< Al says c | Bo says d >, [] safe) == true .
+endm
+
+mod CULPABILITY is
+    including MODEL-CHECKER .
+    including LTL-SIMPLIFIER .
+    protecting CONTR-SEM .
+    including SATISFACTION .
+
+    var A : Participant .
+    var a : IOAction .
+    var g : BiContract .
+    var lg : LBiContract .
+    var l : Label .
+
+    subsort LBiContract < State .
+
+    op --_->> : Participant -> Prop . 
+
+    eq {A says a} g |= -- A ->> = true .
+    eq {l} g |= -- A ->> = false [owise] . 
+
+    op _ :C _ : Participant BiContract -> Bool .
+
+    eq A :C g = modelCheck(g, O -- A ->>) == true .
+endm
+
+mod ASK is
+    protecting CONTR-SEM .
+    including SATISFACTION .
+    including MODEL-CHECKER .
+    including LTL-SIMPLIFIER .
+
+    subsort TBiContract < State .
+
+    subsort IOAction < Prop .
+
+    var g : BiContract .
+    var a : IOAction .
+    var phi : Formula .
+
+    eq < {A:Participant says a} g > |= a = true .
+    ***eq [g] |= l = false [owise] .
+    
+    op _ |- _ : BiContract Formula -> Bool [frozen] .
+
+    eq g |- phi = modelCheck(< g > , phi) == true .
+endm 
+

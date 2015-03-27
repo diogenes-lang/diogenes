@@ -1,0 +1,102 @@
+grammar it.unica.co2.CO2 with it.unica.co2.Contracts 
+
+generate co2 "http://www.unica.it/co2/CO2"
+
+import "http://www.unica.it/co2/Contracts" as contracts
+
+CO2System:
+	(
+		contracts+=ContractDefinition |
+		processes+=ProcessDefinition |
+		comments+=Comment
+	)*
+;
+
+Comment: ML_COMMENT | SL_COMMENT;
+
+ProcessDefinition:
+	{ProcessDefinition} "process" (name=ID)? ("("freeNames+=ID")")* "{" 
+		process=(ParallelProcesses)?
+	"}"
+;
+
+ParallelProcesses:
+	processes+=DelimitedProcess  ("|" processes+=DelimitedProcess)?
+;
+
+DelimitedProcess:
+	("("freeNames+=ID")")* process=Process
+;
+
+Process:
+	{EmptyProcess} value="0" |
+	Sum |
+	IfThenElse |
+	ProcessReference |
+	"(" Process ")"
+;
+
+Sum:
+	prefixes+=Prefix ("+" prefixes+=Prefix)*
+;
+
+IfThenElse:
+	"if" expression=BooleanExpression
+	then=ThenStatement
+	else=ElseStatement
+;
+
+ThenStatement:
+	"then" (process=NextProcess | processReference=ProcessReference)
+;
+
+ElseStatement:
+	"else" (process=NextProcess | processReference=ProcessReference)
+;
+
+Prefix:
+	{Tau} "t" 	next=AbstractNextProcess? |
+	Tell 		next=AbstractNextProcess? |
+	DoOutput 	next=AbstractNextProcess? |
+	DoInput 	next=AbstractNextProcess?
+;
+
+AbstractNextProcess:
+	"." (
+		nextProcess=NextProcess |
+		processReference=ProcessReference
+	)
+;
+
+ProcessReference:
+	reference=[ProcessDefinition] ("("(variables+=ID) ("," variables+=ID)*")")?
+;
+
+NextProcess returns Process:
+	{EmptyProcess} value="0" |
+	Prefix |
+	"(" ParallelProcesses ")"
+;
+
+Tell:
+	"tell" session=ID  ("{" contract=Contract? "}" | contractReference=[contracts::ContractDefinition]) 
+;
+
+DoOutput:
+	"do" session=ID actionName=ID "!" value=Value
+;
+
+DoInput:
+	"do" session=ID actionName=ID "?" (variable=ID (":" type=Type)?)?
+;
+
+
+BooleanExpression:
+	expression="e"
+;
+
+Value:
+	{UnitValue} |
+	{IntegerValue} value=INT |
+	{StringValue} value=STRING
+;

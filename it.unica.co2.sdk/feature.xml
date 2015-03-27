@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="it.unica.co2.sdk"
+	label="CO2 SDK Feature "
+	version="1.0.0.qualifier">
+	<plugin
+			id="it.unica.co2"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+	<plugin
+			id="it.unica.co2.ui"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+</feature>
