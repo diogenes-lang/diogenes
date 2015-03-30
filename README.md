@@ -1,7 +1,7 @@
 # Instructions #
 * install xtext module (see [https://eclipse.org/Xtext/download.html](https://eclipse.org/Xtext/download.html))
 * import all projects `it.unica.co2*`
-* run as *Eclipse Application*
+* run as *Eclipse Application* (if it fails due to memory problems, as `OutOfMemoryException` or similar, go to `Run -> Run configurations..`, select *Eclipse Application*, *Arguments*, and set `-Xms40m -Xmx512m -XX:MaxPermSize=256m` into *VM arguments*)
 * create a Java project
 * create files with extension `co2` into the `src` folder (see example below)
 * maude files will be generated automatically into `src-gen`
