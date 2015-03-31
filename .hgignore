@@ -1,0 +1,12 @@
+syntax: glob
+
+.classpath # eclipse
+.project   # eclipse
+.settings  # eclipse
+.launch    # eclipse
+
+bin
+xtend-gen
+
+*.xtendbin
+*.class
