@@ -44,7 +44,7 @@ class CO2Validator extends AbstractCO2Validator {
 		
 		for(x : process.freeNames) {
 			if (alreadyDefFreeNames.contains(x)) 
-				error("Name '"+x+"' already defined", Co2Package.Literals.DELIMITED_PROCESS__FREE_NAMES)
+				warning("Name '"+x+"' already defined", Co2Package.Literals.DELIMITED_PROCESS__FREE_NAMES)
 		}
 		
 		for (var i=0; i<process.freeNames.length-1; i++) {

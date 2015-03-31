@@ -102,7 +102,7 @@ class CO2Generator implements IGenerator {
 		    ops exp : -> Expression [ctor] .
 		    
 		    ops «actionNames.join(" ")» : -> ActName [ctor] .
-		   	ops «sessionNames.join(" ")» : -> SessionVariable [ctor] .
+«««		   	ops «sessionNames.join(" ")» : -> SessionVariable [ctor] .
 		    ops «contractNames.join(" ")» : -> UniContract .
 		    ops «processNames.join(" ")» : -> Process .
 		    ops «envProcessNames.join(" ")» : -> ProcIde .
@@ -145,9 +145,6 @@ class CO2Generator implements IGenerator {
 			contractDef.contract = tell.contract
 			tell.contract=null
 			tell.contractReference = contractDef
-		
-			println('''tell «tell.session» «tell.actionName» «tell.contractReference.name»''')
-		
 			return contractDef;
 		}
 		else {
@@ -275,7 +272,7 @@ class CO2Generator implements IGenerator {
 		if (obj.freeNames.length==0)
 			'''eq «obj.name» = «IF obj.process!=null»«obj.process.maudeCode»«ELSE»0«ENDIF» .'''
 		else
-			'''«obj.name»«obj.freeNames.join("("," ; ", ")",[n|n])» =def «obj.process.maudeCode»'''
+			'''«obj.name»«obj.freeNames.join("("," ; ", ")",[n|'''"«n»"'''])» =def «obj.process.maudeCode»'''
 	}
 	
 	def dispatch String maudeCode(ParallelProcesses obj) {
@@ -287,7 +284,7 @@ class CO2Generator implements IGenerator {
 	
 	def dispatch String maudeCode(DelimitedProcess obj) {
 		if (obj.freeNames.length>0)
-			'''«obj.freeNames.join(" ", [x| '''(«x»)'''])» «obj.process.maudeCode»'''
+			'''«obj.freeNames.join(" ", [x| '''("«x»")'''])» «obj.process.maudeCode»'''
 		else
 			obj.process.maudeCode
 	}
@@ -326,15 +323,15 @@ class CO2Generator implements IGenerator {
 	}
 	
 	def dispatch String maudeCode(Tell obj) {
-		'''tell «obj.session» «obj.contractReference.name»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''tell "«obj.session»" «obj.contractReference.name»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(DoInput obj) {
-		'''do «obj.session» «obj.actionName» ? unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''do "«obj.session»" «obj.actionName» ? unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(DoOutput obj) {
-		'''do «obj.session» «obj.actionName» ! unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''do "«obj.session»" «obj.actionName» ! unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(AbstractNextProcess obj) {
@@ -354,7 +351,7 @@ class CO2Generator implements IGenerator {
 		if (obj.variables.length==0)
 			'''«obj.reference.name»'''
 		else {
-			'''«obj.reference.name»«obj.variables.join("("," ; ", ")",[n|n])»'''
+			'''«obj.reference.name»«obj.variables.join("("," ; ", ")",[n|'''("«n»")'''])»'''
 		}
 	}
 }
