@@ -1,5 +1,5 @@
 # Instructions #
-* install xtext module (see [https://eclipse.org/Xtext/download.html](https://eclipse.org/Xtext/download.html))
+* install xtext module, version 2.8.0 or greater (see [https://eclipse.org/Xtext/download.html](https://eclipse.org/Xtext/download.html))
 * import all projects `it.unica.co2*` (1) and go to `Project -> Build All`
 * run as *Eclipse Application* (2)
 * create a Java project
