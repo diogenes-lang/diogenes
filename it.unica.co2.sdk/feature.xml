@@ -2,7 +2,7 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="1.0.0.qualifier">
+      version="0.0.1">
 
    <requires>
       <import plugin="org.eclipse.xtext"/>

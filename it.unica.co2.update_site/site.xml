@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/it.unica.co2.sdk_1.0.0.201503291759.jar" id="it.unica.co2.sdk" version="1.0.0.201503291759">
+   <feature url="features/it.unica.co2.sdk_0.0.1.jar" id="it.unica.co2.sdk" version="0.0.1">
       <category name="CO2"/>
    </feature>
    <category-def name="CO2" label="CO2"/>
