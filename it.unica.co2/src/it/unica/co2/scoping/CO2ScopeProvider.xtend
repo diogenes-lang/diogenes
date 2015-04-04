@@ -3,7 +3,9 @@
  */
 package it.unica.co2.scoping
 
-import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
+import it.unica.co2.co2.Tell
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.xtext.scoping.IScope
 
 /**
  * This class contains custom scoping description.
@@ -12,64 +14,13 @@ import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
  * on how and when to use it.
  *
  */
-class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
+class CO2ScopeProvider extends ContractsScopeProvider {
 
 	/*
-	 * Process reference:
+	 * Contract reference:
 	 * refers to any contract definition except for this
 	 */
-//	def IScope scope_IfThenElse_thenReference(IfThenElse ctx, EReference ref) {
-//		var scope = getIScopeForAllProcessDefinition(ctx);
-//		var processDef = getProcessDefinition(ctx)
-//
-//		if (processDef.name != null)
-//			getFilteredScope(scope, processDef)
-//		else
-//			scope
-//	}
-//
-//	def IScope scope_IfThenElse_elseReference(IfThenElse ctx, EReference ref) {
-//		var scope = getIScopeForAllProcessDefinition(ctx);
-//		var processDef = getProcessDefinition(ctx)
-//
-//		if (processDef.name != null)
-//			getFilteredScope(scope, processDef)
-//		else
-//			scope
-//	}
-//
-//	def IScope scope_AbstractNextProcess_processReference(IfThenElse ctx, EReference ref) {
-//		var scope = getIScopeForAllProcessDefinition(ctx);
-//		var processDef = getProcessDefinition(ctx)
-//
-//		if (processDef.name != null)
-//			getFilteredScope(scope, processDef)
-//		else
-//			scope
-//	}
-//	
-//
-//	def IScope getFilteredScope(IScope scope, ProcessDefinition contractDef) {
-//		new FilteringScope(scope, new Predicate<IEObjectDescription>() {
-//
-//			override apply(IEObjectDescription input) {
-//				return input.getEObjectOrProxy() != contractDef;
-//			}
-//
-//		});
-//	}
-//	
-//	def IScope getIScopeForAllProcessDefinition(EObject ctx){
-//		var root = EcoreUtil2.getRootContainer(ctx);
-//		var candidates = EcoreUtil2.getAllContentsOfType(root, ProcessDefinition);
-//		return Scopes.scopeFor(candidates);
-//	}
-//
-//	def dispatch ProcessDefinition getProcessDefinition(EObject obj) {
-//		return getProcessDefinition(obj.eContainer);
-//	}
-//
-//	def dispatch ProcessDefinition getProcessDefinition(ProcessDefinition obj) {
-//		return obj;
-//	}
+	def IScope scope_Tell_contractReference(Tell ctx, EReference ref) {
+		getIScopeForAllContractDefinition(ctx);
+	}
 }

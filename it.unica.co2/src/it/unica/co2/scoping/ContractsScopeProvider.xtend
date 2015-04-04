@@ -4,9 +4,8 @@
 package it.unica.co2.scoping
 
 import com.google.common.base.Predicate
+import it.unica.co2.contracts.AbstractNextContract
 import it.unica.co2.contracts.ContractDefinition
-import it.unica.co2.contracts.ExtAction
-import it.unica.co2.contracts.IntAction
 import it.unica.co2.contracts.Recursion
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
@@ -30,26 +29,23 @@ class ContractsScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * Recursion reference: 
 	 * refers only to recursions defined before ctx but into the same contract definition
 	 */
-	def IScope scope_IntAction_recursionReference(IntAction ctx, EReference ref) {
-		return symbolsDefinedRecursions(ctx.eContainer);
+	def IScope scope_AbstractNextContract_recursionReference(AbstractNextContract ctx, EReference ref) {
+		return definedRecursions(ctx.eContainer);
 	}
 
-	def IScope scope_ExtAction_recursionReference(ExtAction ctx, EReference ref) {
-		return symbolsDefinedRecursions(ctx.eContainer);
+	def dispatch IScope definedRecursions(EObject cont) {
+		return definedRecursions(cont.eContainer);
 	}
 
-	def dispatch IScope symbolsDefinedRecursions(EObject cont) {
-		return symbolsDefinedRecursions(cont.eContainer);
-	}
-
-	def dispatch IScope symbolsDefinedRecursions(Recursion rec) {
+	def dispatch IScope definedRecursions(Recursion rec) {
 		return Scopes.scopeFor(
-			newArrayList(rec),
-			symbolsDefinedRecursions(rec.eContainer) // outer
+			newArrayList(rec)
+			,
+			definedRecursions(rec.eContainer) // outer
 		);
 	}
 
-	def dispatch IScope symbolsDefinedRecursions(ContractDefinition obj) {
+	def dispatch IScope definedRecursions(ContractDefinition obj) {
 		return IScope.NULLSCOPE; // stop recursion
 	}
 
@@ -59,17 +55,7 @@ class ContractsScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * Contract reference:
 	 * refers to any contract definition except for this
 	 */
-	def IScope scope_IntAction_contractReference(IntAction ctx, EReference ref) {
-		var scope = getIScopeForAllContractDefinition(ctx);
-		var contractDef = getContractDefinition(ctx)
-
-		if (contractDef.name != null)
-			getFilteredScope(scope, contractDef)
-		else
-			scope
-	}
-
-	def IScope scope_ExtAction_contractReference(ExtAction ctx, EReference ref) {
+	def IScope scope_AbstractNextContract_contractReference(AbstractNextContract ctx, EReference ref) {
 		var scope = getIScopeForAllContractDefinition(ctx);
 		var contractDef = getContractDefinition(ctx)
 
@@ -92,7 +78,7 @@ class ContractsScopeProvider extends AbstractDeclarativeScopeProvider {
 	def IScope getIScopeForAllContractDefinition(EObject ctx){
 		var root = EcoreUtil2.getRootContainer(ctx);
 		var candidates = EcoreUtil2.getAllContentsOfType(root, ContractDefinition);
-		return Scopes.scopeFor(candidates);
+		return Scopes.scopeFor(candidates.filter(ContractDefinition).toList);
 	}
 
 	def dispatch ContractDefinition getContractDefinition(EObject obj) {
