@@ -24,4 +24,4 @@ Export-Package: it.unica.co2.ui.quickfix,
  it.unica.co2.ui.contentassist,
  it.unica.co2.ui.internal,
  it.unica.co2.ui.contentassist.antlr
-Bundle-Activator: it.unica.co2.ui.internal.ContractsActivator
+Bundle-Activator: it.unica.co2.ui.internal.Activator
