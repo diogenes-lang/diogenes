@@ -4,17 +4,6 @@
 <plugin>
 
     <extension
-            point="org.eclipse.ui.editors">
-        <editor
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            default="true"
-            extensions="co2"
-            id="it.unica.co2.Contracts"
-            name="Contracts Editor">
-        </editor>
-    </extension>
-    <extension
         point="org.eclipse.ui.handlers">
         <handler
             class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
@@ -76,48 +65,6 @@
                 </with>        
             </and>
         </definition>
-    </extension>
-    <extension
-            point="org.eclipse.ui.preferencePages">
-        <page
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="it.unica.co2.Contracts"
-            name="Contracts">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-        <page
-            category="it.unica.co2.Contracts"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="it.unica.co2.Contracts.coloring"
-            name="Syntax Coloring">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-        <page
-            category="it.unica.co2.Contracts"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="it.unica.co2.Contracts.templates"
-            name="Templates">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-    </extension>
-    <extension
-            point="org.eclipse.ui.propertyPages">
-        <page
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="it.unica.co2.Contracts"
-            name="Contracts">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-            <enabledWhen>
-	            <adapt type="org.eclipse.core.resources.IProject"/>
-			</enabledWhen>
-	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
-        </page>
-    </extension>
-    <extension
-        point="org.eclipse.ui.keywords">
-        <keyword
-            id="it.unica.co2.ui.keyword_Contracts"
-            label="Contracts"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
@@ -255,16 +202,6 @@
             >
       </participant>
    </extension>
-   <extension
-            point="org.eclipse.ui.preferencePages">
-        <page
-            category="it.unica.co2.Contracts"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="it.unica.co2.Contracts.compiler.preferencePage"
-            name="Compiler">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-    </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
@@ -387,27 +324,12 @@
          </command>
       </menuContribution>
    </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="it.unica.co2.Contracts"
-	        class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="it.unica.co2.Contracts.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-	    </page>
-	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="it.unica.co2.Contracts.compare.contentViewers"
             class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="co2">
     </viewer>
-  </extension>
-  <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="it.unica.co2.Contracts.compare.contentMergeViewers"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="co2" label="Contracts Compare">
-     </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
     <provider id="it.unica.co2.Contracts.editors.documentProviders"

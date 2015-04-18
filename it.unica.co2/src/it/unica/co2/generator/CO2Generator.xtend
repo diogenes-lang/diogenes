@@ -16,13 +16,13 @@ import org.eclipse.xtext.generator.IGenerator
 class CO2Generator implements IGenerator {
 	
 	@Inject MaudeGenerator maudeGenerator
-	@Inject XMLContractGenerator xmlContractGenerator
+//	@Inject XMLContractGenerator xmlContractGenerator
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		println("doGenerate() ++ "+resource.URI.lastSegment)
 		
 		maudeGenerator.doGenerate(resource, fsa)
-		xmlContractGenerator.doGenerate(resource, fsa)
+//		xmlContractGenerator.doGenerate(resource, fsa)
 	}
 	
 }
