@@ -1,4 +1,6 @@
 #Version#
+2015-04-18: version **0.0.2** released!
+
 2015-04-03: version **0.0.1** released!
 
 #Installation#
