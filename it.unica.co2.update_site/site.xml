@@ -3,6 +3,9 @@
    <feature url="features/it.unica.co2.sdk_0.0.1.jar" id="it.unica.co2.sdk" version="0.0.1">
       <category name="CO2"/>
    </feature>
+   <feature url="features/it.unica.co2.sdk_0.0.3.jar" id="it.unica.co2.sdk" version="0.0.3">
+      <category name="CO2"/>
+   </feature>
    <feature url="features/it.unica.co2.sdk_0.0.2.jar" id="it.unica.co2.sdk" version="0.0.2">
       <category name="CO2"/>
    </feature>
