@@ -22,15 +22,34 @@ import it.unica.co2.contracts.ExtSum
 import it.unica.co2.contracts.IntAction
 import it.unica.co2.contracts.IntSum
 import it.unica.co2.contracts.Recursion
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 class MaudeGenerator extends AbstractIGenerator{
 	
+	File co2MaudeDirectory
 
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+		
+		//get the IProject from the given Resource
+		val platformString = resource.URI.toPlatformString(true);
+	    val myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+	    val project = myFile.getProject();
+		
+		//get location of workspace (java.io.File)  
+		var workspaceDirectory = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile()
+		
+		//get location of the project
+		var projectDirectory = new File(workspaceDirectory, project.name)
+		
+		//get location of the co2-maude directory
+		co2MaudeDirectory = new File(projectDirectory, "co2-maude")
+		
 		var outputFilename = resource.URI.lastSegment.replace(".co2", ".maude")
 		
 		println('''generating «outputFilename»''')
@@ -47,6 +66,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		var contracts = resource.allContents.filter(ContractDefinition).toSet
 		
 		fixNames(processes)		//fill anonymous processes names
+		fixNames(envProcesses)		//fill anonymous envProcesses names
 		fixNames(contracts)		//fill anonymous contracts names
 		
 		//fix tells
@@ -77,7 +97,8 @@ class MaudeGenerator extends AbstractIGenerator{
 		*** creation date: «new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date())»
 		***
 		
-		in co2-abs .
+		cd «co2MaudeDirectory.absolutePath»
+		load co2-abs .
 		
 		mod «moduleName» is
 		
@@ -115,8 +136,8 @@ class MaudeGenerator extends AbstractIGenerator{
 		red honest(«process.name» , ['«moduleName»] , 50) .
 		«ENDFOR»
 		
-		*** exit the program
-		quit
+«««		*** exit the program
+«««		quit
 		'''
 	}
 	

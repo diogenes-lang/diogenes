@@ -26,11 +26,11 @@ abstract class AbstractIGenerator implements IGenerator {
 	}
 	
 	def dispatch void fixName(ProcessDefinition process) {
-		process.name = process.name ?: "PROC_"+PROCESS_NAME_COUNT++
+		process.name = process.name ?: "PROC#"+PROCESS_NAME_COUNT++
 	}
 	
 	def dispatch void fixName(ContractDefinition contract) {
-		contract.name = contract.name ?: "CONTR_"+CONTRACT_NAME_COUNT++
+		contract.name = contract.name ?: "CONTR#"+CONTRACT_NAME_COUNT++
 	}
 	
 	def dispatch void fixName(EObject process) {}
@@ -41,7 +41,7 @@ abstract class AbstractIGenerator implements IGenerator {
 	def ContractDefinition fixTell(Tell tell) {
 		if (tell.contractReference==null) {
 			var contractDef = ContractsFactoryImpl.init().createContractDefinition
-			contractDef.name = "TELL_CONTR_"+CONTRACT_NAME_COUNT++
+			contractDef.name = "TELL-CONTR#"+CONTRACT_NAME_COUNT++
 			contractDef.contract = tell.contract
 			tell.contract=null
 			tell.contractReference = contractDef
