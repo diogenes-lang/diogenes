@@ -23,6 +23,7 @@ import org.eclipse.xtext.validation.Check
  */
 class CO2Validator extends AbstractCO2Validator {
 
+
 	@Check
 	def void checkUnitType(DoInput doInput) {
 		
