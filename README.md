@@ -10,7 +10,7 @@
 ##Plugin Users##
 * go to `Help -> Install New Software...` from the menu bar and `Add...`
 * add the update site for Xtext 2.8.0 or greater ([http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/)) *(1)*
-* add Co2 update site [http://seclab.unica.it/eclipse-plugin/update_site/](http://seclab.unica.it/eclipse-plugin/update_site/)
+* add Co2 update site [http://co2.unica.it/eclipse-plugin/](http://co2.unica.it/eclipse-plugin/)
 * install CO2 SDK Feature
 
 ##Plugin Developers##
