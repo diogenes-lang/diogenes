@@ -68,6 +68,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoInput/variable"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/type"/>
     </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Ask">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/session"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/formula"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//BooleanExpression">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//BooleanExpression/expression"/>
     </genClasses>

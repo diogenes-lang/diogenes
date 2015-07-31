@@ -29,9 +29,11 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
+import it.unica.co2.co2.Ask
 
 class MaudeGenerator extends AbstractIGenerator{
 	
+	String basepathOfGeneratedFiles = "maude"
 	File co2MaudeDirectory
 
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
@@ -50,7 +52,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		//get location of the co2-maude directory
 		co2MaudeDirectory = new File(projectDirectory, "co2-maude")
 		
-		var outputFilename = resource.URI.lastSegment.replace(".co2", ".maude")
+		var outputFilename = basepathOfGeneratedFiles+"/"+resource.URI.lastSegment.replace(".co2", ".maude")
 		
 		println('''generating «outputFilename»''')
 		fsa.generateFile(outputFilename, resource.maudeCode )
@@ -66,7 +68,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		var contracts = resource.allContents.filter(ContractDefinition).toSet
 		
 		fixNames(processes)		//fill anonymous processes names
-		fixNames(envProcesses)		//fill anonymous envProcesses names
+		fixNames(envProcesses)	//fill anonymous envProcesses names
 		fixNames(contracts)		//fill anonymous contracts names
 		
 		//fix tells
@@ -256,11 +258,15 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(DoInput obj) {
-		'''do "«obj.session»" «obj.actionName» ? unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''do "«obj.session»" "«obj.actionName»" ? unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(DoOutput obj) {
-		'''do "«obj.session»" «obj.actionName» ! unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''do "«obj.session»" "«obj.actionName»" ! unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+	}
+	
+	def dispatch String maudeCode(Ask obj) {
+		'''ask "«obj.session»" True «IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(AbstractNextProcess obj) {

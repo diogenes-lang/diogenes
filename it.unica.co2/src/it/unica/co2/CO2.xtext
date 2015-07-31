@@ -58,7 +58,8 @@ Prefix:
 	{Tau} "t" 	next=AbstractNextProcess? |
 	Tell 		next=AbstractNextProcess? |
 	DoOutput 	next=AbstractNextProcess? |
-	DoInput 	next=AbstractNextProcess?
+	DoInput 	next=AbstractNextProcess? |
+	Ask			next=AbstractNextProcess?
 ;
 
 AbstractNextProcess:
@@ -90,6 +91,13 @@ DoInput:
 	"do" session=ID actionName=ID "?" (variable=ID (":" type=Type)?)?
 ;
 
+Ask:
+	"ask" session=ID ("(" formula=Formula ")" | formula=Formula)?
+;
+
+Formula:
+	"True"
+;
 
 BooleanExpression:
 	expression="e"

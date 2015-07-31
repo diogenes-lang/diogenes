@@ -3,6 +3,7 @@
  */
 package it.unica.co2.validation
 
+import it.unica.co2.co2.Ask
 import it.unica.co2.co2.Co2Package
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
@@ -83,8 +84,16 @@ class CO2Validator extends AbstractCO2Validator {
 		
 		if (!freeNames.contains(input.session))
 			error("Undefined free name '"+input.session+"'", Co2Package.Literals.DO_INPUT__SESSION)
-		
 	}
+	
+	@Check
+	def void checkSessionNames(Ask ask) {
+		var freeNames = getFreeNames(ask.eContainer)
+		
+		if (!freeNames.contains(ask.session))
+			error("Undefined free name '"+ask.session+"'", Co2Package.Literals.ASK__SESSION)
+	}
+	
 	
 	def dispatch Set<String> getFreeNames(EObject obj) {
 		getFreeNames(obj.eContainer)

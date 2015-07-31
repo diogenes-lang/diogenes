@@ -85,6 +85,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass Contracts.ecore#//Type"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Ask" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="session" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="formula" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BooleanExpression">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="expression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
