@@ -19,7 +19,7 @@ Require-Bundle: it.unica.co2;visibility:=reexport,
  org.eclipse.xtext.xbase.ui,
  org.eclipse.jdt.debug.ui
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: it.unica.co2.ui.quickfix,
  it.unica.co2.ui.contentassist,
  it.unica.co2.ui.internal,

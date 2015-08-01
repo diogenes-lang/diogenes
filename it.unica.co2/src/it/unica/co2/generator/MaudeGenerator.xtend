@@ -78,11 +78,11 @@ class MaudeGenerator extends AbstractIGenerator{
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet
 		var contractNames = contracts.map[c | c.name].toSet
-		var actionNames = 
-			resource.allContents
-				.filter[ obj | (obj instanceof IntAction || obj instanceof ExtAction || obj instanceof DoOutput || obj instanceof DoInput)]
-				.map[obj | obj.actionName]
-				.toSet
+//		var actionNames = 
+//			resource.allContents
+//				.filter[ obj | (obj instanceof IntAction || obj instanceof ExtAction || obj instanceof DoOutput || obj instanceof DoInput)]
+//				.map[obj | obj.actionName]
+//				.toSet
 		
 //		var sessionNames = 
 //			resource.allContents
@@ -109,7 +109,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		    ops unit int string : -> BType [ctor] .
 		    ops exp : -> Expression [ctor] .
 		    
-		    ops «actionNames.join(" ")» : -> ActName [ctor] .
+«««		    ops «actionNames.join(" ")» : -> ActName [ctor] .
 «««		   	ops «sessionNames.join(" ")» : -> SessionVariable [ctor] .
 		    ops «contractNames.join(" ")» : -> UniContract .
 		    ops «processNames.join(" ")» : -> Process .
