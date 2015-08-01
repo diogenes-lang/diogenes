@@ -9,17 +9,20 @@
 
 ##Plugin Users##
 * go to `Help -> Install New Software...` from the menu bar and `Add...`
-* add the update site for Xtext 2.8.0 or greater ([http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/)) *(1)*
+* add the update site for Xtext 2.8.\* ([http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releaes/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/)) *(1)*
 * add Co2 update site [http://co2.unica.it/eclipse-plugin/](http://co2.unica.it/eclipse-plugin/)
 * install CO2 SDK Feature
 
 ##Plugin Developers##
-* install Xtext module, version 2.8.0 or greater (see [https://eclipse.org/Xtext/download.html](https://eclipse.org/Xtext/download.html))
+I recommend you to install the last Eclipse IDE (*mars* 4.5.\* at the moment) for Java and DSL Developers (see [http://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/marsr](http://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/marsr)), that embed the Xtext module 2.8.\*, required by the plugin. 
+
+You can install it on older Eclipse versions (see [https://eclipse.org/Xtext/download.html](https://eclipse.org/Xtext/download.html)). This approach is discouraged.
+
 * import all projects `it.unica.co2*` and go to `Project -> Build All` *(2)*
 * run as *Eclipse Application* *(3)*
 
 ###Notes###
-*(1)* you don't need to install the full xtext sdk. The update site is required to solve Co2 plugin dependencies.
+*(1)* Only for Eclipse IDE older than the *mars* version 4.5.\*. Moreover, **you don't need to install it**, the update site is required to solve Co2 plugin dependencies.
 
 *(2)* you might need to create some folders manually due to the *mercurial feature* that not push empty directories. It's currently necessary for the project `it.unica.co2.tests` for `src` and `xtend-gen` folders.
 
