@@ -1,9 +1,18 @@
 #Version#
+2015-08-03: version **0.1.0** released!
+
 2015-05-21: version **0.0.3** released!
 
 2015-04-18: version **0.0.2** released!
 
 2015-04-03: version **0.0.1** released!
+
+#Changelog
+**0.1.0**
+
+* you can check the honesty of co2 maude process (right-click on the maude file)
+* add preferences page for maude model-checking
+
 
 #Installation#
 
