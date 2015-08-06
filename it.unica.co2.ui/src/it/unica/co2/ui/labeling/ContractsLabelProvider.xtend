@@ -4,14 +4,17 @@
 package it.unica.co2.ui.labeling
 
 import com.google.inject.Inject
+import it.unica.co2.co2.StringValue
 import it.unica.co2.contracts.AbstractNextContract
 import it.unica.co2.contracts.ContractDefinition
 import it.unica.co2.contracts.ExtAction
 import it.unica.co2.contracts.ExtSum
 import it.unica.co2.contracts.IntAction
 import it.unica.co2.contracts.IntSum
+import it.unica.co2.contracts.IntegerType
 import it.unica.co2.contracts.Recursion
-import it.unica.co2.contracts.Unit
+import it.unica.co2.contracts.StringType
+import it.unica.co2.contracts.UnitType
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
@@ -67,11 +70,11 @@ class ContractsLabelProvider extends DefaultEObjectLabelProvider {
 	def text(IntAction ele) {
 		if (ele.type != null) {
 			
-			if (ele.type instanceof Unit)
+			if (ele.type instanceof UnitType)
 				ele.actionName + "! " + "unit"
-			else if (ele.type instanceof it.unica.co2.contracts.Integer)
+			else if (ele.type instanceof IntegerType)
 				ele.actionName + "! " + "int"
-			else if (ele.type instanceof it.unica.co2.contracts.String)
+			else if (ele.type instanceof StringValue)
 				ele.actionName + "! " + "string"
 			else
 				"ERROR"
@@ -82,11 +85,11 @@ class ContractsLabelProvider extends DefaultEObjectLabelProvider {
 
 	def text(ExtAction ele) {
 		if (ele.type != null) {
-			if (ele.type instanceof Unit)
+			if (ele.type instanceof UnitType)
 				ele.actionName + "? " + "unit"
-			else if (ele.type instanceof it.unica.co2.contracts.Integer)
+			else if (ele.type instanceof IntegerType)
 				ele.actionName + "? " + "int"
-			else if (ele.type instanceof it.unica.co2.contracts.String)
+			else if (ele.type instanceof StringType)
 				ele.actionName + "? " + "string"
 			else
 				"ERROR"

@@ -56,7 +56,7 @@ AbstractNextContract:
 ;
 
 Type: 
-	{Unit} "unit" |
-	{Integer} "int" | 
-	{String} "string"
+	{UnitType} "unit" |
+	{IntegerType} "int" | 
+	{StringType} "string"
 ;

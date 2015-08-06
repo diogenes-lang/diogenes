@@ -11,7 +11,7 @@ import it.unica.co2.contracts.ExtSum
 import it.unica.co2.contracts.IntAction
 import it.unica.co2.contracts.IntSum
 import it.unica.co2.contracts.Recursion
-import it.unica.co2.contracts.Unit
+import it.unica.co2.contracts.UnitType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
@@ -85,13 +85,13 @@ class ContractsValidator extends AbstractContractsValidator {
 	
 	@Check
 	def void checkExtActionType(ExtAction action) {
-		if (action.type!=null && action.type instanceof Unit)
+		if (action.type!=null && action.type instanceof UnitType)
 			info('Unit type can be omitted', ContractsPackage.Literals.EXT_ACTION__TYPE)
 	}
 	
 	@Check
 	def void checkIntActionType(IntAction action) {
-		if (action.type!=null && action.type instanceof Unit)
+		if (action.type!=null && action.type instanceof UnitType)
 			info('Unit type can be omitted', ContractsPackage.Literals.INT_ACTION__TYPE)
 	}
 	

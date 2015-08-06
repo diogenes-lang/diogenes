@@ -46,7 +46,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="EmptyContract" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Unit" eSuperTypes="#//Type"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Integer" eSuperTypes="#//Type"/>
-  <eClassifiers xsi:type="ecore:EClass" name="String" eSuperTypes="#//Type"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UnitType" eSuperTypes="#//Type"/>
+  <eClassifiers xsi:type="ecore:EClass" name="IntegerType" eSuperTypes="#//Type"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringType" eSuperTypes="#//Type"/>
 </ecore:EPackage>

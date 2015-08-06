@@ -4,7 +4,7 @@
     editorDirectory="/it.unica.co2.editor/src" modelPluginID="it.unica.co2" forceOverwrite="true"
     modelName="Contracts" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" editPluginID="it.unica.co2.edit"
-    editorPluginID="it.unica.co2.editor" runtimeVersion="2.10">
+    editorPluginID="it.unica.co2.editor" runtimeVersion="2.11">
   <genPackages prefix="Contracts" basePackage="it.unica.co2" disposableProviderFactory="true"
       fileExtensions="co2" ecorePackage="Contracts.ecore#/">
     <genClasses ecoreClass="Contracts.ecore#//ContractGrammar">
@@ -44,8 +44,8 @@
     <genClasses ecoreClass="Contracts.ecore#//EmptyContract">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Contracts.ecore#//EmptyContract/value"/>
     </genClasses>
-    <genClasses ecoreClass="Contracts.ecore#//Unit"/>
-    <genClasses ecoreClass="Contracts.ecore#//Integer"/>
-    <genClasses ecoreClass="Contracts.ecore#//String"/>
+    <genClasses ecoreClass="Contracts.ecore#//UnitType"/>
+    <genClasses ecoreClass="Contracts.ecore#//IntegerType"/>
+    <genClasses ecoreClass="Contracts.ecore#//StringType"/>
   </genPackages>
 </genmodel:GenModel>

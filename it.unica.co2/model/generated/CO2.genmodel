@@ -4,7 +4,7 @@
     editorDirectory="/it.unica.co2.editor/src" modelPluginID="it.unica.co2" forceOverwrite="true"
     modelName="CO2" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" editPluginID="it.unica.co2.edit"
-    editorPluginID="it.unica.co2.editor" runtimeVersion="2.10" usedGenPackages="Contracts.genmodel#//contracts">
+    editorPluginID="it.unica.co2.editor" runtimeVersion="2.11" usedGenPackages="Contracts.genmodel#//contracts">
   <genPackages prefix="Co2" basePackage="it.unica.co2" disposableProviderFactory="true"
       fileExtensions="co2" ecorePackage="CO2.ecore#/">
     <genClasses ecoreClass="CO2.ecore#//CO2System">

@@ -12,7 +12,7 @@ import it.unica.co2.co2.EmptyProcess
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.ProcessReference
 import it.unica.co2.co2.Tell
-import it.unica.co2.contracts.Unit
+import it.unica.co2.contracts.UnitType
 import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
@@ -28,7 +28,7 @@ class CO2Validator extends AbstractCO2Validator {
 	@Check
 	def void checkUnitType(DoInput doInput) {
 		
-		if (doInput.type!=null && doInput.type instanceof Unit)
+		if (doInput.type!=null && doInput.type instanceof UnitType)
 			info('Unit type can be omitted', Co2Package.Literals.DO_INPUT__TYPE)
 	}
 	

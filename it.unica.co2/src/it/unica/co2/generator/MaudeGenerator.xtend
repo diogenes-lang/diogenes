@@ -1,6 +1,7 @@
 package it.unica.co2.generator
 
 import it.unica.co2.co2.AbstractNextProcess
+import it.unica.co2.co2.Ask
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
@@ -14,6 +15,7 @@ import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import it.unica.co2.co2.ThenStatement
+import it.unica.co2.co2.Value
 import it.unica.co2.contracts.AbstractNextContract
 import it.unica.co2.contracts.ContractDefinition
 import it.unica.co2.contracts.EmptyContract
@@ -21,7 +23,11 @@ import it.unica.co2.contracts.ExtAction
 import it.unica.co2.contracts.ExtSum
 import it.unica.co2.contracts.IntAction
 import it.unica.co2.contracts.IntSum
+import it.unica.co2.contracts.IntegerType
 import it.unica.co2.contracts.Recursion
+import it.unica.co2.contracts.StringType
+import it.unica.co2.contracts.Type
+import it.unica.co2.contracts.UnitType
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,7 +35,9 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
-import it.unica.co2.co2.Ask
+import it.unica.co2.co2.UnitValue
+import it.unica.co2.co2.StringValue
+import it.unica.co2.co2.IntegerValue
 
 class MaudeGenerator extends AbstractIGenerator{
 	
@@ -111,18 +119,15 @@ class MaudeGenerator extends AbstractIGenerator{
 		    ops unit int string : -> BType [ctor] .
 		    ops exp : -> Expression [ctor] .
 		    
-		    ops «contractNames.join(" ")» : -> UniContract .
-		    ops «processNames.join(" ")» : -> Process .
-		    ops «envProcessNames.join(" ")» : -> ProcIde .
+		«IF contractNames.size>0»    ops «contractNames.join(" ")» : -> UniContract .«ENDIF»
+		«IF processNames.size>0»    ops «processNames.join(" ")» : -> Process .«ENDIF»
+		«IF envProcesses.size>0»    ops «envProcessNames.join(" ")» : -> ProcIde .«ENDIF»
 		
 		    *** list of contracts
-		«FOR contract : contracts»    «maudeCode(contract)»
-		«ENDFOR»
-		    
+		«FOR contract : contracts»    «maudeCode(contract)»«ENDFOR»
 		    
 		    *** list of processes
-		«FOR process : processes»    «maudeCode(process)»
-		«ENDFOR»
+		«FOR process : processes»    «maudeCode(process)»«ENDFOR»
 		    
 		«IF envProcesses.size>0»    *** env
 		    eq env = (
@@ -173,11 +178,11 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(IntAction obj) {
-		'''"«obj.actionName»" ! unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.actionName»" ! «obj.type.typeAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(ExtAction obj) {
-		'''"«obj.actionName»" ? unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.actionName»" ? «obj.type.typeAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(AbstractNextContract obj) {
@@ -257,11 +262,11 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(DoInput obj) {
-		'''do "«obj.session»" "«obj.actionName»" ? unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''do "«obj.session»" "«obj.actionName»" ? «obj.type.typeAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(DoOutput obj) {
-		'''do "«obj.session»" "«obj.actionName»" ! unit«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''do "«obj.session»" "«obj.actionName»" ! «obj.value.valueAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(Ask obj) {
@@ -287,5 +292,17 @@ class MaudeGenerator extends AbstractIGenerator{
 		else {
 			'''«obj.reference.name»«obj.variables.join("("," ; ", ")",[n|'''"«n»"'''])»'''
 		}
+	}
+	
+	def String getTypeAsString(Type type) {
+		if (type instanceof UnitType) return "unit"
+		else if (type instanceof StringType) return "string"
+		else if (type instanceof IntegerType) return "int"
+	}
+	
+	def String getValueAsString(Value value) {
+		if (value instanceof UnitValue) return "unit"
+		else if (value instanceof StringValue) return "string"
+		else if (value instanceof IntegerValue) return "int"
 	}
 }
