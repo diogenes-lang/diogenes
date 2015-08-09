@@ -27,4 +27,4 @@ Export-Package: it.unica.co2.ui.contentassist,
  it.unica.co2.ui.quickfix
 Bundle-Activator: it.unica.co2.ui.internal.ContractsActivator
 Bundle-ClassPath: .,
- lib/co2-java-honesty-1.0.0.jar
+ lib/co2-java-honesty-1.0.1.jar

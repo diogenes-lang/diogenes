@@ -33,6 +33,9 @@ class ContractsScopeProvider extends AbstractDeclarativeScopeProvider {
 		return definedRecursions(ctx.eContainer);
 	}
 
+	/*
+	 * utils: recursively bind all rec definition until ContractDefinition is reached
+	 */
 	def dispatch IScope definedRecursions(EObject cont) {
 		return definedRecursions(cont.eContainer);
 	}
@@ -75,12 +78,18 @@ class ContractsScopeProvider extends AbstractDeclarativeScopeProvider {
 		});
 	}
 	
+	/**
+	 * Get the scope containing all ContractDefinition
+	 */
 	def IScope getIScopeForAllContractDefinition(EObject ctx){
-		var root = EcoreUtil2.getRootContainer(ctx);
-		var candidates = EcoreUtil2.getAllContentsOfType(root, ContractDefinition);
-		return Scopes.scopeFor(candidates.filter(ContractDefinition).toList);
+		var root = EcoreUtil2.getRootContainer(ctx);								// get the root
+		var candidates = EcoreUtil2.getAllContentsOfType(root, ContractDefinition);	// get all the ContractDefinition
+		return Scopes.scopeFor(candidates);											// return the scope
 	}
 
+	/*
+	 * utils: recursively find the first ContractDefinition
+	 */
 	def dispatch ContractDefinition getContractDefinition(EObject obj) {
 		return getContractDefinition(obj.eContainer);
 	}

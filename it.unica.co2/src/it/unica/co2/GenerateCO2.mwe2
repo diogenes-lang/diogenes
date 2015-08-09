@@ -19,6 +19,8 @@ Workflow {
      bean = StandaloneSetup {
     	scanClassPath = true
     	platformUri = "${runtimeProject}/.."
+//		registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
+//		registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
     }
     
     component = DirectoryCleaner {
@@ -119,16 +121,17 @@ Workflow {
     		fragment = types.TypesGeneratorFragment auto-inject {}
     
     		// generates the required bindings only if the grammar inherits from Xbase
-    		fragment = xbase.XbaseGeneratorFragment auto-inject {}
+//    		fragment = xbase.XbaseGeneratorFragment auto-inject {}
     		
     		// generates the required bindings only if the grammar inherits from Xtype
-    		fragment = xbase.XtypeGeneratorFragment auto-inject {}
+//    		fragment = xbase.XtypeGeneratorFragment auto-inject {}
     
     		// provides a preference page for template proposals
     		fragment = templates.CodetemplatesGeneratorFragment auto-inject {}
     
     		// provides a compare view
     		fragment = compare.CompareFragment auto-inject {}
+    		
     	}
     	
     	language = auto-inject {
@@ -215,6 +218,7 @@ Workflow {
     
     		// provides a compare view
     		fragment = compare.CompareFragment auto-inject {}
+    		
     	}
     }
 }

@@ -1,0 +1,337 @@
+import it.unica.co2.co2.AndExpression
+import it.unica.co2.co2.ArithmeticSigned
+import it.unica.co2.co2.Ask
+import it.unica.co2.co2.BooleanLiteral
+import it.unica.co2.co2.BooleanNegation
+import it.unica.co2.co2.BooleanType
+import it.unica.co2.co2.Co2Factory
+import it.unica.co2.co2.Co2Package
+import it.unica.co2.co2.Comparison
+import it.unica.co2.co2.DoInput
+import it.unica.co2.co2.DoOutput
+import it.unica.co2.co2.Equals
+import it.unica.co2.co2.Expression
+import it.unica.co2.co2.FreeName
+import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.IntType
+import it.unica.co2.co2.Minus
+import it.unica.co2.co2.MultiOrDiv
+import it.unica.co2.co2.NumberLiteral
+import it.unica.co2.co2.OrExpression
+import it.unica.co2.co2.Plus
+import it.unica.co2.co2.Prefix
+import it.unica.co2.co2.ProcessCall
+import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.SessionType
+import it.unica.co2.co2.StringLiteral
+import it.unica.co2.co2.StringType
+import it.unica.co2.co2.Tau
+import it.unica.co2.co2.Tell
+import it.unica.co2.co2.Type
+import it.unica.co2.co2.VariableReference
+import it.unica.co2.validation.AbstractCO2Validator
+import org.eclipse.emf.ecore.EObject
+
+system it.unica.co2.xsemantics.CO2TypeSystem
+
+validatorExtends AbstractCO2Validator
+
+judgments {
+
+	type |- Expression expression : output Type
+		error "cannot type " + stringRep(expression)
+		source expression
+		
+	vartype ||- FreeName fn : output Type
+		error "cannot type " + stringRep(fn)
+		source fn
+		
+	validate |= EObject obj
+		error "cannot type " + stringRep(obj)
+		source obj
+		
+//	interpret |- Expression expression ~> output Object
+}
+
+
+/*
+ * expressions
+ */
+axiom NumeralLiteral
+	G |- NumberLiteral num : Co2Factory::eINSTANCE.createIntType
+
+axiom BooleanLiteral
+	G |- BooleanLiteral bool : Co2Factory::eINSTANCE.createBooleanType
+
+axiom StringLiteral
+	G |- StringLiteral str : Co2Factory::eINSTANCE.createStringType
+
+rule MultiOrDiv
+	G |- MultiOrDiv multiOrDiv : IntType intType
+from {
+	G |- multiOrDiv.left : intType
+	G |- multiOrDiv.right : intType
+}
+
+rule Minus
+	G |- Minus minus : Co2Factory::eINSTANCE.createIntType
+from {
+	var IntType intType
+	G |- minus.left : intType
+	G |- minus.right : intType
+}
+
+rule Plus
+	G |- Plus plus : Type type
+from {
+	G |- plus.left : var Type leftType
+	G |- plus.right : var Type rightType
+	
+	{
+		(leftType instanceof StringType && rightType instanceof StringType)
+		type = Co2Factory::eINSTANCE.createStringType
+	}
+	or
+	{
+		(leftType instanceof IntType && rightType instanceof IntType)
+		type = leftType // i.e., IntType
+	}
+}
+
+rule Comparison
+	G |- Comparison comparison : Co2Factory::eINSTANCE.createBooleanType
+from {
+	empty |- comparison.left : var Type leftType
+	empty |- comparison.right : var Type rightType
+	
+	// cannot compare booleans
+	(leftType instanceof IntType && rightType instanceof IntType) ||
+	(leftType instanceof StringType && rightType instanceof StringType)
+}
+
+rule Equals
+	G |- Equals comparison : Co2Factory::eINSTANCE.createBooleanType
+from {
+	G |- comparison.left : var Type leftType
+	G |- comparison.right : var Type rightType
+	
+	// can compare only if they have the same type
+	(leftType.eClass == rightType.eClass)
+}
+
+rule BooleanNegation
+	G |- BooleanNegation negation : BooleanType boolType
+from {
+	G |- negation.expression : boolType
+}
+
+rule Or
+	G |- OrExpression orExp : BooleanType boolType
+from {
+	G |- orExp.left : boolType
+	G |- orExp.right : boolType
+}
+
+rule And
+	G |- AndExpression andExp : BooleanType boolType
+from {
+	G |- andExp.left : boolType
+	G |- andExp.right : boolType
+}
+
+rule ArithmeticSigned
+	G |- ArithmeticSigned signed : Co2Factory::eINSTANCE.createIntType
+from {
+	G |- signed.expression : var IntType intType
+}
+
+rule VariableReference
+	G |- VariableReference varRef : Type type
+from {
+	G ||- varRef.ref : type
+}
+
+
+
+axiom FreeName
+	G ||- FreeName fn : fn.type
+
+
+
+/*
+ * CO2 processes
+ */
+ 
+rule ProcessDefinition
+	G |= ProcessDefinition p 
+from {
+	//check unique name of the parameters
+	for (var i=0; i<p.params.size; i++) {
+		for (var j=0; j<p.params.size; j++) {
+			if (i!=j && p.params.get(i).name == p.params.get(j).name) {
+				fail
+					error "duplicate parameter name '"+p.params.get(i).name+"'" 
+					source p.params.get(j)
+			}
+		}
+	}	
+}
+
+rule IfThenElse
+	G |= IfThenElse ifThenElse
+		error "invalid boolean expression " + stringRep(ifThenElse.^if) 
+			source ifThenElse 
+			feature Co2Package::eINSTANCE.ifThenElse_If
+from {
+	G |- ifThenElse.^if : var Type ifType		// get Expression type
+	ifType instanceof BooleanType				// check the type
+}
+
+rule ProcessCall
+	G |= ProcessCall procCall
+from {
+	var procReferred = procCall.reference
+	
+	if ( procCall.params.size != procReferred.params.size ) {
+		fail
+			error "invalid number of parameters" 
+			source procCall
+	}
+	
+	for (var i=0; i<procCall.params.size; i++) {
+		
+		var actualParam = procCall.params.get(i)
+		var formalParam = procReferred.params.get(i)
+		
+		G |- actualParam : var Type actType	// get the Type of the actual parameter (Expression)
+		G ||- formalParam : var Type formalType	// get the Type of the actual parameter (Expression)
+		
+		if (actType.eClass != formalType.eClass) {
+			fail
+				error "invalid type '"+stringRep(actType)+"', '"+stringRep(formalType)+"' expected"
+				source actualParam 
+		}
+	}
+}
+
+/*
+ * CO2 prefixes
+ */
+axiom Tau
+	G |= Tau tau
+
+rule Tell
+	G |= Tell tell
+from {
+	G ||- tell.session : var Type fnType		// get FreeName type
+	fnType instanceof SessionType				// check the type
+}
+
+rule Ask
+	G |= Ask ask
+from {
+	G ||- ask.session : var Type fnType		// get FreeName type
+	fnType instanceof SessionType				// check the type
+}
+
+rule DoInput
+	G |= DoInput doInput
+from {
+	
+	/*
+	 * check the session
+	 */
+	G ||- doInput.session : var Type sessionType		// get FreeName type
+
+	if (!(sessionType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(sessionType)+"', 'session' expected"			
+			source doInput
+			feature Co2Package::eINSTANCE.doInput_Session
+	}
+	
+	/*
+	 * check the variable
+	 */
+	if (doInput.variable!=null) {
+		G ||- doInput.variable : var Type varType		// get FreeName type
+
+		if ( !(varType instanceof IntType) && !(varType instanceof StringType)){
+			fail
+				error "invalid type '"+stringRep(varType)+"', 'int' or 'string' expected"
+				source doInput
+				feature Co2Package::eINSTANCE.doInput_Variable
+		}
+	}	
+	
+}
+
+rule DoOutput
+	G |= DoOutput doOutput
+from {
+	/*
+	 * check the session
+	 */
+	G ||- doOutput.session : var Type sessionType		// get FreeName type
+	
+	if (!(sessionType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(sessionType)+"', 'session' expected"			
+			source doOutput
+			feature Co2Package::eINSTANCE.doInput_Session
+	}
+	
+	/*
+	 * check the expression
+	 */
+	if (doOutput.value!=null) {
+		G |- doOutput.value : var Type varType		// get Expression type
+
+		if ( !(varType instanceof IntType) && !(varType instanceof StringType)){
+			fail
+				error "invalid type '"+stringRep(varType)+"', 'int' or 'string' expected"
+				source doOutput
+				feature Co2Package::eINSTANCE.doInput_Variable
+		}
+	}
+}
+
+
+/*
+ * rule invocations
+ */
+checkrule CheckExpression for
+    Expression expr
+from {
+    empty |- expr : var Type type
+}
+
+checkrule CheckFreeName for
+    FreeName fn
+from {
+    empty ||- fn : var Type type
+}
+
+checkrule CheckPrefix for		// check all prefixes
+    Prefix prefix
+from {
+    empty |= prefix
+}
+
+checkrule CheckIf for
+    IfThenElse ifProc
+from {
+    empty |= ifProc
+}
+
+checkrule CheckProcessCall for
+    ProcessCall procCall
+from {
+    empty |= procCall
+}
+
+checkrule CheckProcessDefinition for
+    ProcessDefinition proc
+from {
+    empty |= proc
+}

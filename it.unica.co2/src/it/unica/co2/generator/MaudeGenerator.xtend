@@ -1,33 +1,39 @@
 package it.unica.co2.generator
 
-import it.unica.co2.co2.AbstractNextProcess
+import com.google.inject.Inject
 import it.unica.co2.co2.Ask
+import it.unica.co2.co2.Co2Factory
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
-import it.unica.co2.co2.ElseStatement
 import it.unica.co2.co2.EmptyProcess
+import it.unica.co2.co2.Expression
+import it.unica.co2.co2.FreeName
+import it.unica.co2.co2.HonestyDeclaration
 import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.IntType
 import it.unica.co2.co2.ParallelProcesses
+import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.ProcessReference
+import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
-import it.unica.co2.co2.ThenStatement
-import it.unica.co2.co2.Value
+import it.unica.co2.co2.VariableReference
 import it.unica.co2.contracts.AbstractNextContract
+import it.unica.co2.contracts.ActionType
 import it.unica.co2.contracts.ContractDefinition
 import it.unica.co2.contracts.EmptyContract
 import it.unica.co2.contracts.ExtAction
 import it.unica.co2.contracts.ExtSum
 import it.unica.co2.contracts.IntAction
+import it.unica.co2.contracts.IntActionType
 import it.unica.co2.contracts.IntSum
-import it.unica.co2.contracts.IntegerType
 import it.unica.co2.contracts.Recursion
-import it.unica.co2.contracts.StringType
-import it.unica.co2.contracts.Type
-import it.unica.co2.contracts.UnitType
+import it.unica.co2.contracts.StringActionType
+import it.unica.co2.contracts.UnitActionType
+import it.unica.co2.xsemantics.CO2TypeSystem
+import it.xsemantics.runtime.RuleApplicationTrace
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,14 +41,15 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
-import it.unica.co2.co2.UnitValue
-import it.unica.co2.co2.StringValue
-import it.unica.co2.co2.IntegerValue
 
 class MaudeGenerator extends AbstractIGenerator{
 	
+	@Inject CO2TypeSystem co2TypeSystem
+	
 	String basepathOfGeneratedFiles = "maude"
 	File co2MaudeDirectory
+	
+	static final String TAB = "    "
 
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		
@@ -71,8 +78,11 @@ class MaudeGenerator extends AbstractIGenerator{
 	def dispatch String maudeCode(Resource resource){
 		var moduleName = resource.URI.lastSegment.replace(".co2", "").toUpperCase
 		
-		var processes = resource.allContents.filter(ProcessDefinition).filter[p| p.freeNames.length==0].toSet
-		var envProcesses = resource.allContents.filter(ProcessDefinition).filter[p| p.freeNames.length!=0].toSet
+		var honestyDeclaration = resource.allContents.filter(HonestyDeclaration).toSet
+		var processesToCheck = if (honestyDeclaration.size>0) honestyDeclaration.get(0).processes else newArrayList()
+				
+		var processes = resource.allContents.filter(ProcessDefinition).filter[p| p.params.length==0].toSet
+		var envProcesses = resource.allContents.filter(ProcessDefinition).filter[p| p.params.length!=0].toSet
 		var contracts = resource.allContents.filter(ContractDefinition).toSet
 		
 		fixNames(processes)		//fill anonymous processes names
@@ -111,34 +121,45 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		mod «moduleName» is
 		
-		    including CO2-ABS-SEM .
-		    including STRING .
-		    
-		    subsort String < ActName .
-		    
-		    ops unit int string : -> BType [ctor] .
-		    ops exp : -> Expression [ctor] .
-		    
-		«IF contractNames.size>0»    ops «contractNames.join(" ")» : -> UniContract .«ENDIF»
-		«IF processNames.size>0»    ops «processNames.join(" ")» : -> Process .«ENDIF»
-		«IF envProcesses.size>0»    ops «envProcessNames.join(" ")» : -> ProcIde .«ENDIF»
+		«TAB»including CO2-ABS-SEM .
+		«TAB»including STRING .
 		
-		    *** list of contracts
-		«FOR contract : contracts»    «maudeCode(contract)»«ENDFOR»
-		    
-		    *** list of processes
-		«FOR process : processes»    «maudeCode(process)»«ENDFOR»
-		    
-		«IF envProcesses.size>0»    *** env
-		    eq env = (
-		        «envProcesses.join("\n&\n", [p| maudeCode(p)])»
-		    ) .
+		«TAB»subsort String < ActName .
+		
+		«TAB»ops unit int string : -> BType [ctor] .
+		«TAB»ops exp : -> Expression [ctor] .
+		
+		«IF contractNames.size>0»
+		«TAB»ops «contractNames.join(" ")» : -> UniContract .
+		«ENDIF»
+		«IF processNames.size>0»
+		«TAB»ops «processNames.join(" ")» : -> Process .
+		«ENDIF»
+		«IF envProcesses.size>0»
+		«TAB»ops «envProcessNames.join(" ")» : -> ProcIde .
+		«ENDIF»
+		
+		«TAB»*** list of contracts
+		«FOR contract : contracts»
+		«TAB»«contract.maudeCode»
+		«ENDFOR»
+		
+		«TAB»*** list of processes
+		«FOR process : processes»    
+		«TAB»«process.toMaude(TAB)»
+		«ENDFOR»
+		
+		«IF envProcesses.size>0»
+		«TAB»*** env
+		«TAB»eq env = (
+		«TAB»«TAB»«envProcesses.join("\n"+TAB+TAB+"&\n"+TAB+TAB, [p| p.toMaude(TAB+TAB)])»
+		«TAB») .
 		«ENDIF»
 		
 		endm
 		
 		*** honesty
-		«FOR process : processes»
+		«FOR process : processesToCheck»
 		red honest(«process.name» , ['«moduleName»] , 50) .
 		«ENDFOR»
 		
@@ -151,7 +172,6 @@ class MaudeGenerator extends AbstractIGenerator{
 	 * maude code generation
 	 */
 	def dispatch String maudeCode(ContractDefinition contractDef) {
-		
 		'''eq «contractDef.name» = «IF contractDef.contract!=null»«contractDef.contract.maudeCode»«ELSE»0«ENDIF» .'''
 	}
 	
@@ -178,11 +198,11 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(IntAction obj) {
-		'''"«obj.actionName»" ! «obj.type.typeAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.actionName»" ! «getActionType(obj.type)»«IF obj.next!=null»«obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(ExtAction obj) {
-		'''"«obj.actionName»" ? «obj.type.typeAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.actionName»" ? «getActionType(obj.type)»«IF obj.next!=null»«obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(AbstractNextContract obj) {
@@ -202,107 +222,194 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	
-	//processes
-	def dispatch String maudeCode(ProcessDefinition obj) {
-		if (obj.freeNames.length==0)
-			'''eq «obj.name» = «IF obj.process!=null»«obj.process.maudeCode»«ELSE»0«ENDIF» .'''
-		else
-			'''«obj.name»«obj.freeNames.join("("," ; ", ")",[n|'''"«n»"'''])» =def «obj.process.maudeCode»'''
-	}
-	
-	def dispatch String maudeCode(ParallelProcesses obj) {
-		if (obj.processes.length==1)
-			obj.processes.get(0).maudeCode
-		else
-			obj.processes.join(" | ", [a | a.maudeCode])
-	}
-	
-	def dispatch String maudeCode(DelimitedProcess obj) {
-		if (obj.freeNames.length>0)
-			'''«obj.freeNames.join(" ", [x| '''("«x»")'''])» «obj.process.maudeCode»'''
-		else
-			obj.process.maudeCode
-	}
-	
-	def dispatch String maudeCode(Sum obj) {
-		if (obj.prefixes.length==1)
-			obj.prefixes.get(0).maudeCode
-		else
-			obj.prefixes.join(" + ", [a | a.maudeCode])
-	}
-	
-	def dispatch String maudeCode(EmptyProcess obj) {
-		"0 "
-	}
-	
-	def dispatch String maudeCode(IfThenElse obj) {
-		'''if exp then («obj.then.maudeCode») else («obj.^else.maudeCode»)'''
-	}
-	
-	def dispatch String maudeCode(ThenStatement obj) {
-		if (obj.processReference!=null)
-			obj.processReference.maudeCode
-		else
-			obj.process.maudeCode
-	}
-	
-	def dispatch String maudeCode(ElseStatement obj) {
-		if (obj.processReference!=null)
-			obj.processReference.maudeCode
-		else
-			obj.process.maudeCode
-	}
-	
-	def dispatch String maudeCode(Tau obj) {
-		'''t«obj.next.maudeCode»'''
-	}
-	
-	def dispatch String maudeCode(Tell obj) {
-		'''tell "«obj.session»" «obj.contractReference.name»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
-	}
-	
-	def dispatch String maudeCode(DoInput obj) {
-		'''do "«obj.session»" "«obj.actionName»" ? «obj.type.typeAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
-	}
-	
-	def dispatch String maudeCode(DoOutput obj) {
-		'''do "«obj.session»" "«obj.actionName»" ! «obj.value.valueAsString»«IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
-	}
-	
-	def dispatch String maudeCode(Ask obj) {
-		'''ask "«obj.session»" True «IF obj.next!=null» «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
-	}
-	
-	def dispatch String maudeCode(AbstractNextProcess obj) {
+	/*
+	 * 
+	 * processes
+	 * 
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	def dispatch String toMaude(ProcessDefinition obj, String padLeft) {
+		if (obj.process==null) obj.process = Co2Factory.eINSTANCE.createParallelProcesses
 		
-		if (obj.nextProcess!=null) {
-			if (obj.nextProcess instanceof DoInput || obj.nextProcess instanceof DoOutput || obj.nextProcess instanceof Tell || obj.nextProcess instanceof EmptyProcess)
-				''' . «obj.nextProcess.maudeCode»'''
-			else
-				''' . ( «obj.nextProcess.maudeCode» )'''
-		}
-		else if (obj.processReference!=null) {
-			''' . «obj.processReference.maudeCode»'''
-		}
+		if (obj.params.size==0)
+			'''eq «obj.name» = «IF obj.process!=null»«obj.process.toMaude(padLeft)»«ELSE»0«ENDIF» .'''
+		else
+			'''«obj.name»«obj.params.join("("," ; ", ")",[n|'''"«n.name»"'''])» =def «obj.process.toMaude(padLeft)»'''
 	}
 	
-	def dispatch String maudeCode(ProcessReference obj) {
-		if (obj.variables.length==0)
+	def dispatch String toMaude(ParallelProcesses obj, String padLeft) {
+		var pad = padLeft;
+		var sb = new StringBuilder()
+		
+		if (obj.processes.size>1) {
+			sb.append("\n").append(pad).append("(")
+			pad=pad.addPad
+		}
+		
+		var i=0;
+		for (p : obj.processes) {
+			
+			if (i++>0) {
+				sb.append(" | ");
+			}
+			
+			if (obj.processes.size()>1) {
+				sb.append("\n").append(pad)
+			}
+			
+			sb.append(p.toMaude(pad));
+		}
+	
+		if (obj.processes.size>1) {
+			pad=pad.removePad
+			sb.append("\n").append(pad).append(")")
+		}
+		
+		return sb.toString
+	}
+	
+	def dispatch String toMaude(DelimitedProcess obj, String padLeft) {
+		if (obj.freeNames.length>0)
+			'''«obj.freeNames.join(" ", [x| '''("«x.name»")'''])» «obj.process.toMaude(padLeft)»'''
+		else
+			obj.process.toMaude(padLeft)
+	}
+	
+	def dispatch String toMaude(Sum obj, String padLeft) {
+		var pad = padLeft;
+		var sb = new StringBuilder()
+		
+		if (obj.prefixes.size>1) {
+			sb.append("\n").append(pad).append("(")
+			pad=pad.addPad
+		}
+		
+		var i=0;
+		for (p : obj.prefixes) {
+			
+			if (i++>0) {
+				sb.append(" + ");
+			}
+			
+			if (obj.prefixes.size()>1) {
+				sb.append("\n").append(pad)
+			}
+			
+			sb.append(p.toMaude(pad));
+		}
+	
+		if (obj.prefixes.size>1) {
+			pad=pad.removePad
+			sb.append("\n").append(pad).append(")")
+		}
+		
+		return sb.toString
+	}
+	
+	def dispatch String toMaude(EmptyProcess obj, String padLeft) {
+		"0"
+	}
+	
+	def dispatch String toMaude(IfThenElse obj, String padLeft) {
+		if (obj.^else==null) obj.^else = Co2Factory.eINSTANCE.createEmptyProcess
+
+		var pad = padLeft;
+		var sb = new StringBuilder()
+		
+		sb.append("\n").append(pad).append("(")
+		pad=pad.addPad
+			
+		sb.append("\n").append(pad).append('''if «obj.^if.toMaude(pad)» ''')
+		sb.append("\n").append(pad).append('''then «obj.then.toMaude(pad)» ''')
+		sb.append("\n").append(pad).append('''else «obj.^else.toMaude(pad)» ''')
+
+		pad=pad.removePad
+		sb.append("\n").append(padLeft).append(")")	
+		
+		return sb.toString		
+	}
+	
+	/*
+	 * prefixes
+	 */
+	def dispatch String toMaude(Tau obj, String padLeft) {
+		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
+		'''t . «obj.next.toMaude(padLeft)»'''
+	}
+	
+	def dispatch String toMaude(Tell obj, String padLeft) {
+		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
+		'''tell "«obj.session.name»" «obj.contractReference.name» . «obj.next.toMaude(padLeft)»'''
+	}
+	
+	def dispatch String toMaude(DoInput obj, String padLeft) {
+		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
+		'''do "«obj.session.name»" "«obj.actionName»" ? «getFreeNameType(obj.variable)» . «obj.next.toMaude(padLeft)»'''
+	}
+	
+	def dispatch String toMaude(DoOutput obj, String padLeft) {
+		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
+		'''do "«obj.session.name»" "«obj.actionName»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
+	}
+	
+	def dispatch String toMaude(Ask obj, String padLeft) {
+		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
+		'''ask "«obj.session.name»" True . «obj.next.toMaude(padLeft)»'''
+	}
+	
+	def dispatch String toMaude(ProcessCall obj, String padLeft) {
+		if (obj.params.length==0)
 			'''«obj.reference.name»'''
 		else {
-			'''«obj.reference.name»«obj.variables.join("("," ; ", ")",[n|'''"«n»"'''])»'''
+			'''«obj.reference.name»«obj.params.join("("," ; ", ")",[n|'''"«n.toMaude(padLeft)»"'''])»'''
 		}
 	}
 	
-	def String getTypeAsString(Type type) {
-		if (type instanceof UnitType) return "unit"
-		else if (type instanceof StringType) return "string"
-		else if (type instanceof IntegerType) return "int"
+	def dispatch String toMaude(Expression exp, String padLeft) {
+		if (exp instanceof VariableReference)
+			return (exp as VariableReference).ref.name
+		else
+			return "exp"
 	}
 	
-	def String getValueAsString(Value value) {
-		if (value instanceof UnitValue) return "unit"
-		else if (value instanceof StringValue) return "string"
-		else if (value instanceof IntegerValue) return "int"
+	
+	
+	
+	
+	
+	def String getActionType(ActionType type) {
+		if (type==null || type instanceof UnitActionType) return "unit"
+		else if (type instanceof IntActionType) return "int"
+		else if (type instanceof StringActionType) return "string"
 	}
+	
+	def String getExpressionType(Expression exp) {
+		
+		if (exp==null)
+			return "unit"
+		
+		val typeTrace = new RuleApplicationTrace()
+		val result = co2TypeSystem.type(null, typeTrace, exp)
+        
+        val type = result.value
+        
+		if (type instanceof IntType) return "int"
+		else if (type instanceof StringType) return "string"
+		//other types are not permitted by the semantic checker
+	}
+	
+	def String getFreeNameType(FreeName variable) {
+		if (variable==null) return "unit"
+		else if (variable.type instanceof IntType) return "int"
+		else if (variable.type instanceof StringType) return "string"
+	}
+	
+	
+	def String addPad(String pad) {
+		pad+TAB
+	}
+	
+	def String removePad(String pad) {
+		pad.replaceFirst(TAB,"")
+	}
+	
 }

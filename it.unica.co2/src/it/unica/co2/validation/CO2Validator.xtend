@@ -3,134 +3,71 @@
  */
 package it.unica.co2.validation
 
-import it.unica.co2.co2.Ask
 import it.unica.co2.co2.Co2Package
-import it.unica.co2.co2.DelimitedProcess
-import it.unica.co2.co2.DoInput
-import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.EmptyProcess
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.ProcessReference
-import it.unica.co2.co2.Tell
-import it.unica.co2.contracts.UnitType
-import java.util.Set
-import org.eclipse.emf.ecore.EObject
+import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
+import it.unica.co2.co2.HonestyDeclaration
 
 /**
  * This class contains custom validation rules. 
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
-class CO2Validator extends AbstractCO2Validator {
-
+class CO2Validator extends CO2TypeSystemValidator {
 
 	@Check
-	def void checkUnitType(DoInput doInput) {
-		
-		if (doInput.type!=null && doInput.type instanceof UnitType)
-			info('Unit type can be omitted', Co2Package.Literals.DO_INPUT__TYPE)
+	def void checkContractNameIsUnique(ProcessDefinition procDef) {
+		var root = EcoreUtil2.getRootContainer(procDef);
+		for (other: EcoreUtil2.getAllContentsOfType(root, ProcessDefinition)){
+			
+			if (procDef!=other && procDef.getName.equals(other.name)) {
+				error("Process names have to be unique", 
+					Co2Package.Literals.PROCESS_DEFINITION__NAME
+				);
+				return;
+			}
+		}
 	}
-	
+
+	@Check
+	def void checkHonestyDeclaration(HonestyDeclaration honestyDecl) {
+		/*
+		 * each process must appear once and declared without params
+		 */
+		for (var i=0; i<honestyDecl.processes.size; i++) {
+			var p = honestyDecl.processes.get(i)
+			if (p.params.size > 0) {
+				error("You can check only processes without args", 
+					Co2Package.Literals.HONESTY_DECLARATION__PROCESSES,
+					i
+				);
+			}
+		}
+		
+		for (var i=0; i<honestyDecl.processes.size-1; i++) {
+			
+			for (var j=i+1; j<honestyDecl.processes.size; j++) {
+				var p1 = honestyDecl.processes.get(i)
+				var p2 = honestyDecl.processes.get(j)
+				if (p1.name == p2.name) {
+					error("Process already present", 
+						Co2Package.Literals.HONESTY_DECLARATION__PROCESSES,
+						j
+					);
+				}
+			}
+		}
+			
+	}
+
 	@Check
 	def void checkEmptyProcess(EmptyProcess empty) {
-		
-		info("Empty contract can be omitted", 
+		info("Empty process can be omitted", 
 			Co2Package.Literals.EMPTY_PROCESS__VALUE
 		);
 	}
 	
-	@Check
-	def void checkUniqueFreeNames(DelimitedProcess process) {
-		var alreadyDefFreeNames = getFreeNames(process.eContainer);	//already defined
-		
-		for(x : process.freeNames) {
-			if (alreadyDefFreeNames.contains(x)) 
-				warning("Name '"+x+"' already defined", Co2Package.Literals.DELIMITED_PROCESS__FREE_NAMES)
-		}
-		
-		for (var i=0; i<process.freeNames.length-1; i++) {
-			for (var j=i+1; j<process.freeNames.length; j++) {
-			
-				var freeName = process.freeNames.get(i)
-				var other = process.freeNames.get(j)
-				
-				if (other.equals(freeName)) {
-					error("Duplicated name '"+freeName+"'", Co2Package.Literals.DELIMITED_PROCESS__FREE_NAMES)
-				}
-			}
-		}
-	}
-	
-	@Check
-	def void checkSessionNames(Tell tell) {
-		var freeNames = getFreeNames(tell.eContainer)
-		
-		if (!freeNames.contains(tell.session))
-			error('''Undefined free name '«tell.session»' ''', Co2Package.Literals.TELL__SESSION)
-	}
-	
-	@Check
-	def void checkSessionNames(DoOutput output) {
-		var freeNames = getFreeNames(output.eContainer)
-		
-		if (!freeNames.contains(output.session))
-			error("Undefined free name '"+output.session+"'", Co2Package.Literals.DO_OUTPUT__SESSION)
-	}
-	
-	@Check
-	def void checkSessionNames(DoInput input) {
-		var freeNames = getFreeNames(input.eContainer)
-		
-		if (!freeNames.contains(input.session))
-			error("Undefined free name '"+input.session+"'", Co2Package.Literals.DO_INPUT__SESSION)
-	}
-	
-	@Check
-	def void checkSessionNames(Ask ask) {
-		var freeNames = getFreeNames(ask.eContainer)
-		
-		if (!freeNames.contains(ask.session))
-			error("Undefined free name '"+ask.session+"'", Co2Package.Literals.ASK__SESSION)
-	}
-	
-	
-	def dispatch Set<String> getFreeNames(EObject obj) {
-		getFreeNames(obj.eContainer)
-	}
-	
-	def dispatch Set<String> getFreeNames(DelimitedProcess obj) {
-		var freeNames = obj.freeNames.toSet
-		freeNames.addAll(getFreeNames(obj.eContainer));
-		return freeNames
-	}
-	
-	def dispatch Set<String> getFreeNames(ProcessDefinition obj) {
-		obj.freeNames.toSet		//stop recursion
-	}
-	
-	//
-	@Check
-	def void checkProcessReference(ProcessReference processRef) {
-		
-		var freeNames = getFreeNames(processRef.eContainer)
-		
-		for (variable : processRef.variables) {
-			if (!freeNames.contains(variable)) {
-				error("Undefined variable '"+variable+"'", Co2Package.Literals.PROCESS_REFERENCE__VARIABLES)
-				return
-			}
-		}
-		
-		var freenamesToBind = processRef.reference.freeNames;
-		
-		if (processRef.variables.length!=freenamesToBind.length) {
-			error(
-				'''Expected «processRef.reference.freeNames.length» variable(s), not «processRef.variables.length»''', 
-				Co2Package.Literals.PROCESS_REFERENCE__VARIABLES
-			)
-			return
-		}
-		
-	}
 }

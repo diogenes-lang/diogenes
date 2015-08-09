@@ -3,9 +3,14 @@
  */
 package it.unica.co2.scoping
 
+import it.unica.co2.co2.DelimitedProcess
+import it.unica.co2.co2.DoInput
+import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Tell
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.scoping.IScope
+import org.eclipse.xtext.scoping.Scopes
 
 /**
  * This class contains custom scoping description.
@@ -22,5 +27,43 @@ class CO2ScopeProvider extends ContractsScopeProvider {
 	 */
 	def IScope scope_Tell_contractReference(Tell ctx, EReference ref) {
 		getIScopeForAllContractDefinition(ctx);
+	}
+	
+	
+	/*
+	 * FreeName reference
+	 */
+	def IScope scope_FreeName(EObject ctx, EReference ref) {
+		return getDeclaredFreeNames(ctx.eContainer);
+	}
+
+	/*
+	 * utils: recursively get all freename declarations
+	 */
+	def dispatch IScope getDeclaredFreeNames(EObject cont) {
+		return getDeclaredFreeNames(cont.eContainer);
+	}
+	
+	def dispatch IScope getDeclaredFreeNames(DelimitedProcess proc) {
+		return Scopes.scopeFor(
+			proc.freeNames
+			,
+			getDeclaredFreeNames(proc.eContainer) // outer
+		);
+	}
+	
+	def dispatch IScope getDeclaredFreeNames(DoInput proc) {
+		if (proc.variable==null)
+			return getDeclaredFreeNames(proc.eContainer)
+		else
+			return Scopes.scopeFor(
+				newArrayList(proc.variable)
+				,
+				getDeclaredFreeNames(proc.eContainer) // outer
+			);
+	}
+
+	def dispatch IScope getDeclaredFreeNames(ProcessDefinition obj) {
+		return Scopes.scopeFor(obj.params); // stop recursion
 	}
 }

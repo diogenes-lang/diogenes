@@ -26,13 +26,15 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntAction" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//ActionType"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//AbstractNextContract"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExtAction" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//ActionType"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//AbstractNextContract"
         containment="true"/>
   </eClassifiers>
@@ -42,11 +44,11 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="recursionReference" eType="#//Recursion"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Type"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ActionType"/>
   <eClassifiers xsi:type="ecore:EClass" name="EmptyContract" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="UnitType" eSuperTypes="#//Type"/>
-  <eClassifiers xsi:type="ecore:EClass" name="IntegerType" eSuperTypes="#//Type"/>
-  <eClassifiers xsi:type="ecore:EClass" name="StringType" eSuperTypes="#//Type"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UnitActionType" eSuperTypes="#//ActionType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="IntActionType" eSuperTypes="#//ActionType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringActionType" eSuperTypes="#//ActionType"/>
 </ecore:EPackage>

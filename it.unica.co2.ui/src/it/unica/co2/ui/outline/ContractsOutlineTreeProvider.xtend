@@ -8,7 +8,6 @@ import it.unica.co2.contracts.ContractDefinition
 import it.unica.co2.contracts.ContractGrammar
 import it.unica.co2.contracts.ExtSum
 import it.unica.co2.contracts.IntSum
-import it.unica.co2.contracts.Type
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
@@ -35,8 +34,8 @@ class ContractsOutlineTreeProvider extends DefaultOutlineTreeProvider {
     }
     
     //don't create type node
-    def void _createChildren(IOutlineNode parentNode, Type type) {
-    }
+//    def void _createChildren(IOutlineNode parentNode, Type type) {
+//    }
     
     //cut off (+) if the sum is single element
     def void _createNode(IOutlineNode parentNode, IntSum sum) {

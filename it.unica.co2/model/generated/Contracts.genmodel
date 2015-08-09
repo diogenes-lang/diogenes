@@ -40,12 +40,12 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Contracts.ecore#//AbstractNextContract/recursionReference"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Contracts.ecore#//AbstractNextContract/contractReference"/>
     </genClasses>
-    <genClasses ecoreClass="Contracts.ecore#//Type"/>
+    <genClasses ecoreClass="Contracts.ecore#//ActionType"/>
     <genClasses ecoreClass="Contracts.ecore#//EmptyContract">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Contracts.ecore#//EmptyContract/value"/>
     </genClasses>
-    <genClasses ecoreClass="Contracts.ecore#//UnitType"/>
-    <genClasses ecoreClass="Contracts.ecore#//IntegerType"/>
-    <genClasses ecoreClass="Contracts.ecore#//StringType"/>
+    <genClasses ecoreClass="Contracts.ecore#//UnitActionType"/>
+    <genClasses ecoreClass="Contracts.ecore#//IntActionType"/>
+    <genClasses ecoreClass="Contracts.ecore#//StringActionType"/>
   </genPackages>
 </genmodel:GenModel>

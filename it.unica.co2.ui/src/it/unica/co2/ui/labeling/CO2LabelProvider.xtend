@@ -7,15 +7,14 @@ import com.google.inject.Inject
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
-import it.unica.co2.co2.ElseStatement
+import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.ParallelProcesses
+import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.ProcessReference
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
-import it.unica.co2.co2.ThenStatement
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 
 /**
@@ -38,14 +37,14 @@ class CO2LabelProvider extends ContractsLabelProvider {
 	
 	def String text(ProcessDefinition ele) {
 		var name = ele.name?: '<anonymous>'
-		if (ele.freeNames.length!=0)
-			'''«name» «ele.freeNames.join("(", ",", ")", [x|x])»'''
+		if (ele.params.length!=0)
+			'''«name» «ele.params.join("(", ",", ")", [x|x.name])»'''
 		else
 			name
 	}
 	
 	def text(DelimitedProcess ele) {
-		ele.freeNames.join(" ", [ String x | "("+x+")"])
+		ele.freeNames.join(" ", [ FreeName x | "("+x.name+")"])
 	}
 	
 	def text(Sum ele) {
@@ -76,21 +75,13 @@ class CO2LabelProvider extends ContractsLabelProvider {
 	}
 	
 	def text(IfThenElse ele) {
-		"if"
+		"ifThenElse"
 	}
-	
-	def text(ThenStatement ele) {
-		"then"
-	}
-	
-	def text(ElseStatement ele) {
-		"else"
-	}
-	
-	def String text(ProcessReference ele) {
+		
+	def String text(ProcessCall ele) {
 		var name = ele.reference.name?: '<anonymous>'
-		if (ele.variables.length!=0)
-			'''«name» «ele.variables.join("(", ",", ")", [x|x])»'''
+		if (ele.params.length!=0)
+			'''«name» «ele.params.join("(", ",", ")", [x|x.toString])»'''
 		else
 			name
 	}

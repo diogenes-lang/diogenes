@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.8.0";visibility:=reexport,
  org.eclipse.core.runtime;bundle-version="3.10.0",
  com.google.guava,
  org.eclipse.xtend.lib,
- org.eclipse.xtend.lib.macro
+ org.eclipse.xtend.lib.macro,
+ it.xsemantics.runtime;bundle-version="1.8.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: it.unica.co2,
@@ -36,4 +37,5 @@ Export-Package: it.unica.co2,
  it.unica.co2.formatting,
  it.unica.co2.co2,
  it.unica.co2.co2.impl,
- it.unica.co2.co2.util
+ it.unica.co2.co2.util,
+ it.unica.co2.jvmmodel

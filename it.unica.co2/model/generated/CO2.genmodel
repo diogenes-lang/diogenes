@@ -8,84 +8,132 @@
   <genPackages prefix="Co2" basePackage="it.unica.co2" disposableProviderFactory="true"
       fileExtensions="co2" ecorePackage="CO2.ecore#/">
     <genClasses ecoreClass="CO2.ecore#//CO2System">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/systemDeclaration"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/honesty"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/contracts"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/processes"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//CO2System/comments"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ImportDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ImportDeclaration/importedNamespace"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//SystemDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//SystemDeclaration/name"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//HonestyDeclaration">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//HonestyDeclaration/processes"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ProcessDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ProcessDefinition/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ProcessDefinition/freeNames"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessDefinition/params"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessDefinition/process"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ParallelProcesses">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ParallelProcesses/processes"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DelimitedProcess">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DelimitedProcess/freeNames"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DelimitedProcess/freeNames"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DelimitedProcess/process"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//FreeName">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//FreeName/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//FreeName/type"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Process"/>
     <genClasses ecoreClass="CO2.ecore#//Sum">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Sum/prefixes"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//IfThenElse">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/expression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/if"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/then"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/else"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//ThenStatement">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ThenStatement/process"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ThenStatement/processReference"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//ElseStatement">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ElseStatement/process"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ElseStatement/processReference"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Prefix">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Prefix/next"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//AbstractNextProcess">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//AbstractNextProcess/nextProcess"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//AbstractNextProcess/processReference"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//ProcessReference">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessReference/reference"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ProcessReference/variables"/>
+    <genClasses ecoreClass="CO2.ecore#//ProcessCall">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessCall/reference"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessCall/params"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Tell">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Tell/session"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/session"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/contract"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/contractReference"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoOutput">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoOutput/session"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoOutput/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/value"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoInput">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoInput/session"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoInput/actionName"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoInput/variable"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/variable"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Ask">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/session"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Ask/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/formula"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//BooleanExpression">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//BooleanExpression/expression"/>
+    <genClasses ecoreClass="CO2.ecore#//Expression"/>
+    <genClasses ecoreClass="CO2.ecore#//Typable"/>
+    <genClasses ecoreClass="CO2.ecore#//Type">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Type/value"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Value"/>
     <genClasses ecoreClass="CO2.ecore#//EmptyProcess">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//EmptyProcess/value"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Tau"/>
-    <genClasses ecoreClass="CO2.ecore#//UnitValue"/>
-    <genClasses ecoreClass="CO2.ecore#//IntegerValue">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//IntegerValue/value"/>
+    <genClasses ecoreClass="CO2.ecore#//OrExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/right"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//StringValue">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//StringValue/value"/>
+    <genClasses ecoreClass="CO2.ecore#//AndExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//AndExpression/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//AndExpression/right"/>
     </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Comparison">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Comparison/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Comparison/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Comparison/right"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Equals">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Equals/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Equals/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Equals/right"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Plus">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Plus/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Plus/right"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Minus">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Minus/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Minus/right"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//MultiOrDiv">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//MultiOrDiv/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//MultiOrDiv/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//MultiOrDiv/right"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//BooleanNegation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//BooleanNegation/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ArithmeticSigned">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ArithmeticSigned/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//NumberLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//NumberLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//StringLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//StringLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//BooleanLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//BooleanLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//VariableReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//VariableReference/ref"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//IntType"/>
+    <genClasses ecoreClass="CO2.ecore#//StringType"/>
+    <genClasses ecoreClass="CO2.ecore#//BooleanType"/>
+    <genClasses ecoreClass="CO2.ecore#//SessionType"/>
   </genPackages>
 </genmodel:GenModel>

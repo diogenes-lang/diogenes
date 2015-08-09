@@ -3,16 +3,15 @@
  */
 package it.unica.co2.ui.outline
 
-import it.unica.co2.co2.AbstractNextProcess
 import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.ParallelProcesses
+import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Sum
 import it.unica.co2.contracts.ContractDefinition
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
-import it.unica.co2.co2.ProcessReference
 
 /**
  * Customization of the default outline structure.
@@ -33,13 +32,13 @@ class CO2OutlineTreeProvider extends ContractsOutlineTreeProvider {
     }
     
     //cut off <unamed> due to "." token
-    def void _createNode(IOutlineNode parentNode, AbstractNextProcess next) {
-    	if (next.nextProcess!=null)
-			createNode(parentNode, next.nextProcess)		//cut
-		else
-			createNode(parentNode, next.processReference)
-			//createChildren(createEObjectNode(parentNode,next), next)	//normal behavior
-    }
+//    def void _createNode(IOutlineNode parentNode, AbstractNextProcess next) {
+//    	if (next.nextProcess!=null)
+//			createNode(parentNode, next.nextProcess)		//cut
+//		else
+//			createNode(parentNode, next.processReference)
+//			//createChildren(createEObjectNode(parentNode,next), next)	//normal behavior
+//    }
     
 	//cut off + if the sum is single element
     def void _createNode(IOutlineNode parentNode, Sum sum) {
@@ -66,7 +65,7 @@ class CO2OutlineTreeProvider extends ContractsOutlineTreeProvider {
     }
     
     //
-    def void _createNode(IOutlineNode parentNode, ProcessReference process) {
+    def void _createNode(IOutlineNode parentNode, ProcessCall process) {
 		createNode(parentNode, process.reference)		//cut
     }
 //    def void _createNode(IOutlineNode parentNode, ProcessReference process) {

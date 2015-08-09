@@ -1,4 +1,5 @@
 grammar it.unica.co2.Contracts with org.eclipse.xtext.common.Terminals
+//grammar it.unica.co2.Contracts with org.eclipse.xtext.xbase.Xbase
 
 generate contracts "http://www.unica.it/co2/Contracts"
 
@@ -7,7 +8,7 @@ ContractGrammar :
 ;
 
 ContractDefinition:
-	{ContractDefinition} "contract" (name=ID)? "{" 
+	{ContractDefinition} "contract" name=ID "{" 
 		contract=(Contract)? 
 	"}" 
 ;
@@ -40,11 +41,11 @@ NextContract returns Contract:
 ;
 
 IntAction:
-	actionName=ID "!" (type=Type)? next=AbstractNextContract?
+	actionName=ID "!" (type=ActionType)? next=AbstractNextContract?
 ;
 
 ExtAction:
-	actionName=ID "?" (type=Type)? next=AbstractNextContract?
+	actionName=ID "?" (type=ActionType)? next=AbstractNextContract?
 ;
 
 AbstractNextContract:
@@ -55,8 +56,8 @@ AbstractNextContract:
 	)
 ;
 
-Type: 
-	{UnitType} "unit" |
-	{IntegerType} "int" | 
-	{StringType} "string"
+ActionType: 
+	{UnitActionType} "unit" |
+	{IntActionType} "int" |
+	{StringActionType} "string"
 ;

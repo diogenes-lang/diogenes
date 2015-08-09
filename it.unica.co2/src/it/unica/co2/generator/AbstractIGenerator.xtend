@@ -76,17 +76,17 @@ abstract class AbstractIGenerator implements IGenerator {
 	/*
 	 * get sessionNames of the given object
 	 */
-	def dispatch getSessionName(EObject obj){}
-	
-	def dispatch getSessionName(Tell obj){
-		obj.session
-	}
-	
-	def dispatch getSessionName(DoInput obj){
-		obj.session
-	}
-	
-	def dispatch getSessionName(DoOutput obj){
-		obj.session
-	}
+//	def dispatch getSessionName(EObject obj){}
+//	
+//	def dispatch getSessionName(Tell obj){
+//		obj.session
+//	}
+//	
+//	def dispatch getSessionName(DoInput obj){
+//		obj.session
+//	}
+//	
+//	def dispatch getSessionName(DoOutput obj){
+//		obj.session
+//	}
 }

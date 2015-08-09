@@ -3,19 +3,35 @@ grammar it.unica.co2.CO2 with it.unica.co2.Contracts
 generate co2 "http://www.unica.it/co2/CO2"
 
 import "http://www.unica.it/co2/Contracts" as contracts
-
+    
 CO2System:
+//	importDeclarations+=ImportDeclaration*
+	systemDeclaration=SystemDeclaration
+	honesty=HonestyDeclaration?
 	(
 		contracts+=ContractDefinition |
-		processes+=ProcessDefinition |
-		comments+=Comment
+		processes+=ProcessDefinition 
 	)*
 ;
 
-Comment: ML_COMMENT | SL_COMMENT;
+
+
+ImportDeclaration:
+    'import' importedNamespace=QualifiedName ('.*')?;
+
+QualifiedName:
+  ID ('.' ID)*;
+    
+SystemDeclaration:
+	"system" name=QualifiedName
+;
+
+HonestyDeclaration:
+	{HonestyDeclaration} "honesty" processes+=[ProcessDefinition]*
+;
 
 ProcessDefinition:
-	{ProcessDefinition} "process" (name=ID)? ("("freeNames+=ID")")* "{" 
+	{ProcessDefinition} "process" name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
 		process=(ParallelProcesses)?
 	"}"
 ;
@@ -25,14 +41,18 @@ ParallelProcesses:
 ;
 
 DelimitedProcess:
-	("("freeNames+=ID")")* process=Process
+	("("freeNames+=FreeName")")* process=Process
+;
+
+FreeName:
+	name=ID ":" type=Type
 ;
 
 Process:
 	{EmptyProcess} value="0" |
 	Sum |
 	IfThenElse |
-	ProcessReference |
+	ProcessCall |
 	"(" Process ")"
 ;
 
@@ -41,70 +61,113 @@ Sum:
 ;
 
 IfThenElse:
-	"if" expression=BooleanExpression
-	then=ThenStatement
-	else=ElseStatement
-;
-
-ThenStatement:
-	"then" (process=NextProcess | processReference=ProcessReference)
-;
-
-ElseStatement:
-	"else" (process=NextProcess | processReference=ProcessReference)
+	{IfThenElse}
+	'if' if=Expression
+	"then "then=Next
+	(=>'else' else=Next)?
 ;
 
 Prefix:
-	{Tau} "t" 	next=AbstractNextProcess? |
-	Tell 		next=AbstractNextProcess? |
-	DoOutput 	next=AbstractNextProcess? |
-	DoInput 	next=AbstractNextProcess? |
-	Ask			next=AbstractNextProcess?
+	{Tau} "t" 	("." next=Next)? |
+	Tell 		("." next=Next)? |
+	DoOutput 	("." next=Next)? |
+	DoInput 	("." next=Next)? |
+	Ask			("." next=Next)?
 ;
 
-AbstractNextProcess:
-	"." (
-		nextProcess=NextProcess |
-		processReference=ProcessReference
-	)
-;
-
-ProcessReference:
-	reference=[ProcessDefinition] ("("(variables+=ID) ("," variables+=ID)*")")?
-;
-
-NextProcess returns Process:
+Next returns Process:
 	{EmptyProcess} value="0" |
 	Prefix |
-	"(" ParallelProcesses ")"
+	IfThenElse |
+	"(" ParallelProcesses ")"|
+	ProcessCall
+;
+
+ProcessCall:
+	reference=[ProcessDefinition] ("("(params+=Expression ("," params+=Expression)*)?")")?
 ;
 
 Tell:
-	"tell" session=ID  ("{" contract=Contract? "}" | contractReference=[contracts::ContractDefinition]) 
+	"tell" session=[FreeName]  ("{" contract=Contract? "}" | contractReference=[contracts::ContractDefinition]) 
 ;
 
 DoOutput:
-	"do" session=ID actionName=ID "!" value=Value
+	"do" session=[FreeName] actionName=ID "!" (value=Expression)?
 ;
 
 DoInput:
-	"do" session=ID actionName=ID "?" (variable=ID (":" type=Type)?)?
+	"do" session=[FreeName] actionName=ID "?" (variable=FreeName)?
 ;
 
+
+
 Ask:
-	"ask" session=ID ("(" formula=Formula ")" | formula=Formula)?
+	"ask" session=[FreeName] ("(" formula=Formula ")" | formula=Formula)?
 ;
 
 Formula:
 	"True"
 ;
 
-BooleanExpression:
-	expression="e"
+
+
+
+
+/*
+ * the following part is extracted (and partially modified) from 
+ * 		http://xsemantics.sourceforge.net/xsemantics-documentation/Expressions-example.html#Expressions
+ * a type-system is also provided
+ */
+Expression:
+    OrExpression;
+
+OrExpression returns Expression:
+	AndExpression (({OrExpression.left=current} '||' ) right=AndExpression)*
 ;
 
-Value:
-	{UnitValue} |
-	{IntegerValue} value=INT |
-	{StringValue} value=STRING
+AndExpression returns Expression:
+	Comparison (({AndExpression.left=current} '&&') right=Comparison)*
 ;
+
+Comparison returns Expression:
+       Equals
+       (({Comparison.left=current} op=('>=' | '<=' | '>' | '<') ) right=Equals)*;
+
+Equals returns Expression:
+       Addition 
+       (({Equals.left=current} op=("==") ) right=Addition)*;
+ 
+Addition returns Expression:
+    Multiplication
+    (({Plus.left=current} '+' | {Minus.left=current} '-')
+        right=Multiplication)*; 
+
+Multiplication returns Expression:
+    Prefixed (({MultiOrDiv.left=current} op=("*"|"/")) right=Prefixed)*;
+
+Prefixed returns Expression:
+    {BooleanNegation} =>"!" expression=Atomic | /* right associativity */
+    {ArithmeticSigned} =>"-" expression=Atomic | /* right associativity */
+    Atomic;
+
+Atomic returns Expression:
+    '(' Expression ')' |
+    {NumberLiteral} value=INT |
+    {StringLiteral} value=STRING |
+    {BooleanLiteral} value=('true'|'false') |
+    {VariableReference} ref=[FreeName]
+;
+
+
+Typable:
+	FreeName | Expression
+;
+
+// the types will be used only internally by the type system
+Type:
+    {IntType} value='int' |
+    {StringType} value='string' |
+    {BooleanType} value='boolean' |
+    {SessionType} value='session'
+;
+
