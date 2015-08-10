@@ -8,6 +8,12 @@
 2015-04-03: version **0.0.1** released!
 
 #Changelog
+**1.0.0** (will published soon)
+
+* **syntax is changed** (see example below)
+* added expressions
+* added static type-check for expressions and freenames
+
 **0.1.0**
 
 * you can check the honesty of co2 maude process (right-click on the maude file)
@@ -48,10 +54,15 @@ The syntax is defined into `it.unica.co2.CO2.xtext` and `it.unica.co2.Contracts.
 # Example #
 ```
 /*
- *  Insured-sale.co2
+ *  Insured-sale
  */
-contract CA {
-	order ? int . (amount! . pay ? (+) abort!)
+system insuredSale
+
+// list of processes will be checked for honesty
+honesty PA
+
+contract CA  {
+	order ? int . (amount! int . pay ? (+) abort!)
 }
 
 contract CI {
@@ -60,19 +71,19 @@ contract CI {
 
 
 process PA {
-	(x) (
+	(x:session) (
 		tell x CA . (
-			do x order ? n:int . (if e then PAY(x) else INS(x))
+			do x order ? n:int . (if n>50 then PAY(x) else INS(x))
 		) 
 	)
 }
 
-process PAY (x) {
+process PAY (x:session) {
     do x amount ! . do x pay ? + do x abort !
 }
    
-process INS (x) {
-	(y) tell y CI . (
+process INS (x:session) {
+	(y:session) tell y CI . (
         do y reqI ! . ( 
               do y okI ? . PAY(x)
             + do y abortI ? . do x abort !
