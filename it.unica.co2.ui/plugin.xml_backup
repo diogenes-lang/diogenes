@@ -4,17 +4,6 @@
 <plugin>
 
     <extension
-            point="org.eclipse.ui.editors">
-        <editor
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            default="true"
-            extensions="co2"
-            id="it.unica.co2.Contracts"
-            name="Contracts Editor">
-        </editor>
-    </extension>
-    <extension
         point="org.eclipse.ui.handlers">
         <handler
             class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
@@ -76,48 +65,6 @@
                 </with>        
             </and>
         </definition>
-    </extension>
-    <extension
-            point="org.eclipse.ui.preferencePages">
-        <page
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="it.unica.co2.Contracts"
-            name="Contracts">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-        <page
-            category="it.unica.co2.Contracts"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="it.unica.co2.Contracts.coloring"
-            name="Syntax Coloring">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-        <page
-            category="it.unica.co2.Contracts"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="it.unica.co2.Contracts.templates"
-            name="Templates">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-    </extension>
-    <extension
-            point="org.eclipse.ui.propertyPages">
-        <page
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="it.unica.co2.Contracts"
-            name="Contracts">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-            <enabledWhen>
-	            <adapt type="org.eclipse.core.resources.IProject"/>
-			</enabledWhen>
-	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
-        </page>
-    </extension>
-    <extension
-        point="org.eclipse.ui.keywords">
-        <keyword
-            id="it.unica.co2.ui.keyword_Contracts"
-            label="Contracts"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
@@ -255,30 +202,6 @@
             >
       </participant>
    </extension>
-   <extension
-            point="org.eclipse.ui.preferencePages">
-        <page
-            category="it.unica.co2.Contracts"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="it.unica.co2.Contracts.compiler.preferencePage"
-            name="Compiler">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-        </page>
-    </extension>
-    <extension
-            point="org.eclipse.ui.propertyPages">
-        <page
-            category="it.unica.co2.Contracts"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="it.unica.co2.Contracts.compiler.propertyPage"
-            name="Compiler">
-            <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-            <enabledWhen>
-	            <adapt type="org.eclipse.core.resources.IProject"/>
-			</enabledWhen>
-	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
-        </page>
-    </extension>
     <extension point="org.eclipse.ui.menus">
 		<menuContribution locationURI="popup:#TextEditorContext?after=xtext.ui.openDeclaration">
 			<command
@@ -300,8 +223,6 @@
 				</activeWhen>
 		</handler>
 	</extension>
-
-	<!-- Quick Outline -->
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
@@ -334,7 +255,6 @@
 			</command>
 		</menuContribution>
 	</extension>
-    <!-- quickfix marker resolution generator for it.unica.co2.Contracts -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
@@ -362,7 +282,6 @@
             </attribute>
         </markerResolutionGenerator>
     </extension>
-   	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
 			class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
@@ -387,27 +306,12 @@
          </command>
       </menuContribution>
    </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="it.unica.co2.Contracts"
-	        class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="it.unica.co2.Contracts.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="it.unica.co2.ui.keyword_Contracts"/>
-	    </page>
-	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="it.unica.co2.Contracts.compare.contentViewers"
             class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="co2">
     </viewer>
-  </extension>
-  <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="it.unica.co2.Contracts.compare.contentMergeViewers"
-            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="co2" label="Contracts Compare">
-     </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
     <provider id="it.unica.co2.Contracts.editors.documentProviders"
@@ -497,28 +401,21 @@
         </definition>
     </extension>
     <extension
-            point="org.eclipse.ui.preferencePages">
+            point="org.eclipse.ui.propertyPages">
         <page
-            class="it.unica.co2.ui.CO2ExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="it.unica.co2.CO2"
-            name="CO2">
-            <keywordReference id="it.unica.co2.ui.keyword_CO2"/>
-        </page>
-        <page
-            category="it.unica.co2.CO2"
-            class="it.unica.co2.ui.CO2ExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="it.unica.co2.CO2.coloring"
-            name="Syntax Coloring">
-            <keywordReference id="it.unica.co2.ui.keyword_CO2"/>
-        </page>
-        <page
-            category="it.unica.co2.CO2"
-            class="it.unica.co2.ui.CO2ExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="it.unica.co2.CO2.templates"
-            name="Templates">
-            <keywordReference id="it.unica.co2.ui.keyword_CO2"/>
+            class="it.unica.co2.ui.ContractsExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="it.unica.co2.Contracts.compiler.propertyPage"
+            name="Compiler">
+            <enabledWhen>
+	            <adapt type="org.eclipse.core.resources.IProject"/>
+			</enabledWhen>
+	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
         </page>
     </extension>
+
+	<!-- Quick Outline -->
+    <!-- quickfix marker resolution generator for it.unica.co2.Contracts -->
+   	<!-- Rename Refactoring -->
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
@@ -624,9 +521,7 @@
                 </reference>
             </activeWhen>
         </handler>
-    </extension>   
-
-<!-- adding resource factories -->
+    </extension>
 
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
@@ -641,9 +536,6 @@
             uriExtension="co2">
         </resourceServiceProvider>
     </extension>
-
-
-	<!-- marker definitions for it.unica.co2.CO2 -->
 	<extension
 	        id="co2.check.fast"
 	        name="CO2 Problem"
@@ -719,8 +611,6 @@
 				</activeWhen>
 		</handler>
 	</extension>
-
-	<!-- Quick Outline -->
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
@@ -753,7 +643,6 @@
 			</command>
 		</menuContribution>
 	</extension>
-    <!-- quickfix marker resolution generator for it.unica.co2.CO2 -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
@@ -781,7 +670,6 @@
             </attribute>
         </markerResolutionGenerator>
     </extension>
-   	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
 			class="it.unica.co2.ui.CO2ExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
@@ -840,5 +728,99 @@
             type="text">
     </fileTypes>
   </extension>
+  <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           allPopups="false"
+           locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+        <command
+              commandId="it.unica.co2.ui.honesty-maude"
+              label="Honesty (maude)"
+              style="push">
+           <visibleWhen
+                 checkEnabled="false">
+              <with
+                    variable="activeMenuSelection">
+                 <iterate
+                       ifEmpty="false"
+                       operator="and">
+                    <instanceof
+                          value="org.eclipse.core.resources.IResource">
+                    </instanceof>
+                    <test
+                          property="org.eclipse.core.resources.name"
+                          value="*.maude">
+                    </test>
+                 </iterate>
+                 <count
+                       value="1">
+                 </count>
+              </with>
+           </visibleWhen>
+        </command>
+     </menuContribution>
+  </extension>
+  <extension
+        point="org.eclipse.ui.handlers">
+     <handler
+           class="it.unica.co2.ui.handlers.HonestyMaudeHandler"
+           commandId="it.unica.co2.ui.honesty-maude">
+     </handler>
+  </extension>
+  <extension
+        name="Validate maude code"
+        point="org.eclipse.ui.commands">
+     <command
+           id="it.unica.co2.ui.honesty-maude"
+           name="honesty-maude">
+     </command>
+  </extension>
+    <extension
+            point="org.eclipse.ui.preferencePages">
+        <page
+            class="it.unica.co2.ui.CO2ExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="it.unica.co2.CO2"
+            name="CO2">
+            <keywordReference id="it.unica.co2.ui.keyword_CO2"/>
+        </page>
+        <page
+            category="it.unica.co2.CO2"
+            class="it.unica.co2.ui.CO2ExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+            id="it.unica.co2.CO2.coloring"
+            name="Syntax Coloring">
+            <keywordReference id="it.unica.co2.ui.keyword_CO2"/>
+        </page>
+        <page
+            category="it.unica.co2.CO2"
+            class="it.unica.co2.ui.CO2ExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+            id="it.unica.co2.CO2.templates"
+            name="Templates">
+            <keywordReference id="it.unica.co2.ui.keyword_CO2"/>
+        </page>
+    </extension>
+    <extension
+          point="org.eclipse.ui.preferencePages">
+       <page
+             category="it.unica.co2.CO2"
+             class="it.unica.co2.ui.preferences.MaudeHonestyPreferences"
+             id="it.unica.co2.ui.Maude_checker"
+             name="Maude honesty">
+       </page>
+    </extension>
+    <extension
+          point="org.eclipse.core.runtime.preferences">
+       <initializer
+             class="it.unica.co2.ui.preferences.MaudeDefaultInitializer">
+       </initializer>
+    </extension>   
+
+<!-- adding resource factories -->
+
+
+	<!-- marker definitions for it.unica.co2.CO2 -->
+
+	<!-- Quick Outline -->
+    <!-- quickfix marker resolution generator for it.unica.co2.CO2 -->
+   	<!-- Rename Refactoring -->
 
 </plugin>

@@ -12,7 +12,6 @@
   </extension>
 
 
-
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://www.unica.it/co2/CO2" 
