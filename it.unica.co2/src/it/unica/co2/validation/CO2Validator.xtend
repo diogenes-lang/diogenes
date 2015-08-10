@@ -4,12 +4,16 @@
 package it.unica.co2.validation
 
 import it.unica.co2.co2.Co2Package
+import it.unica.co2.co2.DelimitedProcess
+import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.EmptyProcess
+import it.unica.co2.co2.FreeName
+import it.unica.co2.co2.HonestyDeclaration
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
-import it.unica.co2.co2.HonestyDeclaration
 
 /**
  * This class contains custom validation rules. 
@@ -69,5 +73,65 @@ class CO2Validator extends CO2TypeSystemValidator {
 			Co2Package.Literals.EMPTY_PROCESS__VALUE
 		);
 	}
+	
+	
+	
+	
+	
+	/*
+	 * check shadowed variables
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	@Check
+	def void checkShadowDelimitedProcess(DelimitedProcess proc) {
+		
+		// we already check that fn into DelimitedProcess are unique
+		var i=0
+		for (fn : proc.freeNames) {
+			this.checkFreeName(proc.eContainer, fn, i)
+			i++
+		}
+	}
+	
+	@Check
+	def void checkShadowDoInput(DoInput proc) {
+		this.checkFreeName(proc.eContainer, proc.variable, 0)
+	}
+	
+	def dispatch void checkFreeName(EObject obj, FreeName fn, int i) {
+    	checkFreeName(obj.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(DoInput obj, FreeName fn, int i) {
+    	if (obj.variable.name == fn.name) {
+    		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
+	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
+    	}
+    	checkFreeName(obj.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(DelimitedProcess proc, FreeName fn, int i) {
+    	var j=0
+    	for (fn1 : proc.freeNames) {
+			if (fn1.name == fn.name) {
+	    		warning("Shadowed free-name", fn1.eContainer, fn1.eContainingFeature, j)
+	    		warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature, i)
+    		}
+    		j++
+		}
+    	checkFreeName(proc.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(ProcessDefinition proc, FreeName fn, int i) {
+    	var j=0
+    	for (fn1 : proc.params) {
+			if (fn1.name == fn.name) {
+				warning("Shadowed free-name", fn1.eContainer, fn1.eContainingFeature, j)
+	    		warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature, i)
+    		}
+    		j++
+		}
+    	// stop recursion
+    }
 	
 }

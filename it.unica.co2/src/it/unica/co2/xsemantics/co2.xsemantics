@@ -7,6 +7,7 @@ import it.unica.co2.co2.BooleanType
 import it.unica.co2.co2.Co2Factory
 import it.unica.co2.co2.Co2Package
 import it.unica.co2.co2.Comparison
+import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.Equals
@@ -177,6 +178,21 @@ from {
 	}	
 }
 
+rule DelimitedProcess
+	G |= DelimitedProcess p 
+from {
+	//check unique name of the parameters
+	for (var i=0; i<p.freeNames.size; i++) {
+		for (var j=0; j<p.freeNames.size; j++) {
+			if (i!=j && p.freeNames.get(i).name == p.freeNames.get(j).name) {
+				fail
+					error "duplicate free-name '"+p.freeNames.get(i).name+"'" 
+					source p.freeNames.get(j)
+			}
+		}
+	}	
+}
+
 rule IfThenElse
 	G |= IfThenElse ifThenElse
 		error "invalid boolean expression " + stringRep(ifThenElse.^if) 
@@ -332,6 +348,12 @@ from {
 
 checkrule CheckProcessDefinition for
     ProcessDefinition proc
+from {
+    empty |= proc
+}
+
+checkrule CheckDelimitedProcess for
+    DelimitedProcess proc
 from {
     empty |= proc
 }
