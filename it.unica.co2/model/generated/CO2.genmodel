@@ -4,14 +4,13 @@
     editorDirectory="/it.unica.co2.editor/src" modelPluginID="it.unica.co2" forceOverwrite="true"
     modelName="CO2" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" editPluginID="it.unica.co2.edit"
-    editorPluginID="it.unica.co2.editor" runtimeVersion="2.11" usedGenPackages="Contracts.genmodel#//contracts">
+    editorPluginID="it.unica.co2.editor" runtimeVersion="2.11">
   <genPackages prefix="Co2" basePackage="it.unica.co2" disposableProviderFactory="true"
       fileExtensions="co2" ecorePackage="CO2.ecore#/">
     <genClasses ecoreClass="CO2.ecore#//CO2System">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/systemDeclaration"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/honesty"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/contracts"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/processes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/contractsAndProcessesDeclaration"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ImportDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ImportDeclaration/importedNamespace"/>
@@ -21,6 +20,10 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//HonestyDeclaration">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//HonestyDeclaration/processes"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ContractsAndProcessesDeclaration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractsAndProcessesDeclaration/contracts"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractsAndProcessesDeclaration/processes"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ProcessDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ProcessDefinition/name"/>
@@ -78,6 +81,36 @@
     <genClasses ecoreClass="CO2.ecore#//Type">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Type/value"/>
     </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ContractDefinition">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractDefinition/contract"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Contract">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Contract/next"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//IntSum">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntSum/actions"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ExtSum">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtSum/actions"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Recursion">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Recursion/body"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//IntAction">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//IntAction/actionName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntAction/type"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ExtAction">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ExtAction/actionName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtAction/type"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ContractReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractReference/ref"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Referrable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Referrable/name"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//ActionType"/>
     <genClasses ecoreClass="CO2.ecore#//EmptyProcess">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//EmptyProcess/value"/>
     </genClasses>
@@ -135,5 +168,11 @@
     <genClasses ecoreClass="CO2.ecore#//StringType"/>
     <genClasses ecoreClass="CO2.ecore#//BooleanType"/>
     <genClasses ecoreClass="CO2.ecore#//SessionType"/>
+    <genClasses ecoreClass="CO2.ecore#//EmptyContract">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//EmptyContract/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//UnitActionType"/>
+    <genClasses ecoreClass="CO2.ecore#//IntActionType"/>
+    <genClasses ecoreClass="CO2.ecore#//StringActionType"/>
   </genPackages>
 </genmodel:GenModel>

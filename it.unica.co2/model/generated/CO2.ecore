@@ -6,10 +6,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="honesty" eType="#//HonestyDeclaration"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contracts" upperBound="-1"
-        eType="ecore:EClass Contracts.ecore#//ContractDefinition" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
-        eType="#//ProcessDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contractsAndProcessesDeclaration"
+        eType="#//ContractsAndProcessesDeclaration" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ImportDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="importedNamespace" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -20,6 +18,12 @@
   <eClassifiers xsi:type="ecore:EClass" name="HonestyDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="processes" unique="false"
         upperBound="-1" eType="#//ProcessDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContractsAndProcessesDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contracts" upperBound="-1"
+        eType="#//ContractDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" upperBound="-1"
+        eType="#//ProcessDefinition" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ProcessDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -66,9 +70,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Tell" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="ecore:EClass Contracts.ecore#//Contract"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="ecore:EClass Contracts.ecore#//ContractDefinition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DoOutput" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
@@ -91,6 +95,43 @@
   <eClassifiers xsi:type="ecore:EClass" name="Type">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContractDefinition" eSuperTypes="#//Referrable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Contract">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Contract"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntSum" eSuperTypes="#//Contract">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
+        eType="#//IntAction" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExtSum" eSuperTypes="#//Contract">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
+        eType="#//ExtAction" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Recursion" eSuperTypes="#//Contract #//Referrable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//Contract"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntAction" eSuperTypes="#//Contract">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//ActionType"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExtAction" eSuperTypes="#//Contract">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//ActionType"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContractReference" eSuperTypes="#//Contract">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//Referrable"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Referrable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ActionType"/>
   <eClassifiers xsi:type="ecore:EClass" name="EmptyProcess" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -164,4 +205,10 @@
   <eClassifiers xsi:type="ecore:EClass" name="StringType" eSuperTypes="#//Type"/>
   <eClassifiers xsi:type="ecore:EClass" name="BooleanType" eSuperTypes="#//Type"/>
   <eClassifiers xsi:type="ecore:EClass" name="SessionType" eSuperTypes="#//Type"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EmptyContract" eSuperTypes="#//Contract">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UnitActionType" eSuperTypes="#//ActionType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="IntActionType" eSuperTypes="#//ActionType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringActionType" eSuperTypes="#//ActionType"/>
 </ecore:EPackage>

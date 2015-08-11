@@ -4,25 +4,32 @@
 package it.unica.co2.ui.labeling
 
 import com.google.inject.Inject
+import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
+import it.unica.co2.co2.ExtAction
+import it.unica.co2.co2.ExtSum
 import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.IntAction
+import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Recursion
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
+import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
 /**
  * Provides labels for EObjects.
  * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
  */
-class CO2LabelProvider extends ContractsLabelProvider {
+class CO2LabelProvider extends DefaultEObjectLabelProvider {
 
 	@Inject
 	new(AdapterFactoryLabelProvider delegate) {
@@ -85,4 +92,79 @@ class CO2LabelProvider extends ContractsLabelProvider {
 		else
 			name
 	}
+	
+
+	// Labels and icons can be computed like this:
+	def image(ContractDefinition ele) {
+		'contract.png'
+	}
+
+//	def image(AbstractNextContract ele) {
+//		if (ele.contractReference != null)
+//			'contract.png'
+//	}
+
+	def image(IntAction ele) {
+		'output.png'
+	}
+
+	def image(ExtAction ele) {
+		'input.png'
+	}
+
+	def text(ContractDefinition ele) {
+		if (ele.name != null)
+			ele.name
+		else
+			'<anonymous>'
+	}
+
+	def text(IntSum ele) {
+		"(+)"
+	}
+
+	def text(ExtSum ele) {
+		"+"
+	}
+
+	def text(Recursion ele) {
+		"rec " + ele.name
+	}
+
+//	def text(IntAction ele) {
+//		if (ele.type != null) {
+//			
+//			if (ele.type instanceof UnitType)
+//				ele.actionName + "! " + "unit"
+//			else if (ele.type instanceof IntegerType)
+//				ele.actionName + "! " + "int"
+//			else if (ele.type instanceof StringValue)
+//				ele.actionName + "! " + "string"
+//			else
+//				"ERROR"
+//			
+//		} else
+//			ele.actionName + "! unit"
+//	}
+//
+//	def text(ExtAction ele) {
+//		if (ele.type != null) {
+//			if (ele.type instanceof UnitType)
+//				ele.actionName + "? " + "unit"
+//			else if (ele.type instanceof IntegerType)
+//				ele.actionName + "? " + "int"
+//			else if (ele.type instanceof StringType)
+//				ele.actionName + "? " + "string"
+//			else
+//				"ERROR"
+//		} else
+//			ele.actionName + "? unit"
+//	}
+
+//	def text(AbstractNextContract ele) {
+//		if (ele.recursionReference != null)
+//			"[" + ele.recursionReference.name + "]"
+//		else if (ele.contractReference != null)
+//			"[" + ele.contractReference.name + "]"
+//	}
 }

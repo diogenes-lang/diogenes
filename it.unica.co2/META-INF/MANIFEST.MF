@@ -25,9 +25,6 @@ Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: it.unica.co2,
  it.unica.co2.services,
- it.unica.co2.contracts,
- it.unica.co2.contracts.impl,
- it.unica.co2.contracts.util,
  it.unica.co2.serializer,
  it.unica.co2.parser.antlr,
  it.unica.co2.parser.antlr.internal,

@@ -29,7 +29,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import it.unica.co2.honesty.HonestyResult;
 import it.unica.co2.honesty.MaudeConfiguration;
 import it.unica.co2.honesty.MaudeExecutor;
-import it.unica.co2.ui.internal.ContractsActivator;
+import it.unica.co2.ui.internal.CO2Activator;
 import it.unica.co2.ui.preferences.MaudeHonestyPreferences;
 
 
@@ -188,7 +188,7 @@ public class HonestyMaudeHandler extends AbstractHandler {
 	private MaudeConfiguration getMaudeConfiguration() {
 		
 		// get the properties
-		final IPreferenceStore preferences = ContractsActivator.getInstance().getPreferenceStore();
+		final IPreferenceStore preferences = CO2Activator.getInstance().getPreferenceStore();
 
 		System.out.println("----------------- MaudeConfiguration ------------------");
 		System.out.println("in: "+preferences.getString(MaudeHonestyPreferences.HONESTY_MAUDE_PRINT_IN));

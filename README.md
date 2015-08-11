@@ -53,6 +53,7 @@ The syntax is defined into `it.unica.co2.CO2.xtext` and `it.unica.co2.Contracts.
 
 # Example #
 ```
+
 /*
  *  Insured-sale
  */

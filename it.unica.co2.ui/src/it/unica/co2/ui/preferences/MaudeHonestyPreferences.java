@@ -9,7 +9,7 @@ import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import it.unica.co2.ui.internal.ContractsActivator;
+import it.unica.co2.ui.internal.CO2Activator;
 
 /**
  * Define the properties' page related to maude honesty checking
@@ -46,7 +46,7 @@ public class MaudeHonestyPreferences extends FieldEditorPreferencePage implement
 
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(ContractsActivator.getInstance().getPreferenceStore());
+		setPreferenceStore(CO2Activator.getInstance().getPreferenceStore());
 	}
 
 }

@@ -1,37 +1,38 @@
 package it.unica.co2.generator
 
 import com.google.inject.Inject
+import it.unica.co2.co2.ActionType
 import it.unica.co2.co2.Ask
 import it.unica.co2.co2.Co2Factory
+import it.unica.co2.co2.Contract
+import it.unica.co2.co2.ContractDefinition
+import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
+import it.unica.co2.co2.EmptyContract
 import it.unica.co2.co2.EmptyProcess
 import it.unica.co2.co2.Expression
+import it.unica.co2.co2.ExtAction
+import it.unica.co2.co2.ExtSum
 import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.HonestyDeclaration
 import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.IntAction
+import it.unica.co2.co2.IntActionType
+import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.IntType
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Recursion
+import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.VariableReference
-import it.unica.co2.contracts.AbstractNextContract
-import it.unica.co2.contracts.ActionType
-import it.unica.co2.contracts.ContractDefinition
-import it.unica.co2.contracts.EmptyContract
-import it.unica.co2.contracts.ExtAction
-import it.unica.co2.contracts.ExtSum
-import it.unica.co2.contracts.IntAction
-import it.unica.co2.contracts.IntActionType
-import it.unica.co2.contracts.IntSum
-import it.unica.co2.contracts.Recursion
-import it.unica.co2.contracts.StringActionType
-import it.unica.co2.contracts.UnitActionType
 import it.unica.co2.xsemantics.CO2TypeSystem
 import it.xsemantics.runtime.RuleApplicationTrace
 import java.io.File
@@ -47,7 +48,6 @@ class MaudeGenerator extends AbstractIGenerator{
 	@Inject CO2TypeSystem co2TypeSystem
 	
 	String basepathOfGeneratedFiles = "maude"
-	File co2MaudeDirectory
 	
 	static final String TAB = "    "
 
@@ -63,9 +63,6 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		//get location of the project
 		var projectDirectory = new File(workspaceDirectory, project.name)
-		
-		//get location of the co2-maude directory
-		co2MaudeDirectory = new File(projectDirectory, "co2-maude")
 		
 		var outputFilename = basepathOfGeneratedFiles+"/"+resource.URI.lastSegment.replace(".co2", ".maude")
 		
@@ -85,31 +82,13 @@ class MaudeGenerator extends AbstractIGenerator{
 		var envProcesses = resource.allContents.filter(ProcessDefinition).filter[p| p.params.length!=0].toSet
 		var contracts = resource.allContents.filter(ContractDefinition).toSet
 		
-		fixNames(processes)		//fill anonymous processes names
-		fixNames(envProcesses)	//fill anonymous envProcesses names
-		fixNames(contracts)		//fill anonymous contracts names
-		
-		//fix tells
+		//fix anonymous tells
 		contracts.addAll( resource.allContents.filter(Tell).map[t| t.fixTell].toSet )
 		
 		
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet
 		var contractNames = contracts.map[c | c.name].toSet
-//		var actionNames = 
-//			resource.allContents
-//				.filter[ obj | (obj instanceof IntAction || obj instanceof ExtAction || obj instanceof DoOutput || obj instanceof DoInput)]
-//				.map[obj | obj.actionName]
-//				.toSet
-		
-//		var sessionNames = 
-//			resource.allContents
-//				.filter[ obj | (obj instanceof Tell || obj instanceof DoOutput || obj instanceof DoInput)]
-//				.map[obj | obj.sessionName]
-//				.toSet
-		
-		println('''processes: «processNames»''')
-		println('''contracts: «contractNames»''')
 		
 		return '''
 		***
@@ -183,14 +162,14 @@ class MaudeGenerator extends AbstractIGenerator{
 		if (obj.actions.length==1)
 			obj.actions.get(0).maudeCode
 		else
-			obj.actions.join(" (+) ", [a | a.maudeCode])
+			obj.actions.join("(", " (+) ", ")", [a | a.maudeCode])
 	}
 	
 	def dispatch String maudeCode(ExtSum obj) {
 		if (obj.actions.length==1)
 			obj.actions.get(0).maudeCode
 		else
-			obj.actions.join(" + ", [a | a.maudeCode])
+			obj.actions.join("(", " + ", ")", [a | a.maudeCode])
 	}
 	
 	def dispatch String maudeCode(EmptyContract obj) {
@@ -198,27 +177,19 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(IntAction obj) {
-		'''"«obj.actionName»" ! «getActionType(obj.type)»«IF obj.next!=null»«obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.actionName»" ! «getActionType(obj.type)»«IF obj.next!=null» . «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(ExtAction obj) {
-		'''"«obj.actionName»" ? «getActionType(obj.type)»«IF obj.next!=null»«obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.actionName»" ? «getActionType(obj.type)»«IF obj.next!=null» . «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
-	def dispatch String maudeCode(AbstractNextContract obj) {
-		
-		if (obj.nextContract!=null) {
-			if (obj.nextContract instanceof IntAction || obj.nextContract instanceof ExtAction || obj.nextContract instanceof EmptyContract)
-				''' . «obj.nextContract.maudeCode»'''
-			else
-				''' . ( «obj.nextContract.maudeCode» )'''
-		}
-		else if (obj.recursionReference!=null) {
-			''' . «obj.recursionReference.name»'''
-		}
-		else if (obj.contractReference!=null) {
-			''' . «obj.contractReference.name»'''
-		}
+	def dispatch String maudeCode(ContractReference obj) {
+		obj.ref.name
+	}
+	
+	def dispatch String maudeCode(Contract obj) {
+		obj.next.maudeCode
 	}
 	
 	

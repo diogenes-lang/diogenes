@@ -4,12 +4,20 @@
 package it.unica.co2.validation
 
 import it.unica.co2.co2.Co2Package
+import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
+import it.unica.co2.co2.EmptyContract
 import it.unica.co2.co2.EmptyProcess
+import it.unica.co2.co2.ExtAction
+import it.unica.co2.co2.ExtSum
 import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.HonestyDeclaration
+import it.unica.co2.co2.IntAction
+import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Recursion
+import it.unica.co2.co2.UnitActionType
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
@@ -134,4 +142,112 @@ class CO2Validator extends CO2TypeSystemValidator {
     	// stop recursion
     }
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Check
+	def void checkContractNameIsUnique(ContractDefinition contractDef) {
+		var root = EcoreUtil2.getRootContainer(contractDef);
+		for (other: EcoreUtil2.getAllContentsOfType(root, ContractDefinition)){
+			
+			if (contractDef!=other && contractDef.getName.equals(other.name)) {
+				error("Contract names have to be unique",
+					contractDef,
+					Co2Package.Literals.REFERRABLE__NAME
+				);
+				return;
+			}
+		}
+	}
+	
+	@Check
+	def void checkInternalActionsName(IntAction internalAction) {
+		
+		if (internalAction.eContainer instanceof IntSum)
+			for (other: (internalAction.eContainer() as IntSum).actions){
+				
+				if (internalAction!=other && internalAction.actionName.equals(other.actionName)) {
+					error("Action names have to be unique", 
+						Co2Package.Literals.INT_ACTION__ACTION_NAME
+					);
+					return;
+				}
+			}
+	}
+	
+	@Check
+	def void checkExternalActionsName(ExtAction externalAction) {
+		
+		if (externalAction.eContainer instanceof ExtSum)
+			for (other: (externalAction.eContainer() as ExtSum).actions){
+				
+				if (externalAction!=other && externalAction.actionName.equals(other.actionName)) {
+					error("Action names have to be unique", 
+						Co2Package.Literals.EXT_ACTION__ACTION_NAME
+					);
+					return;
+				}
+			}
+	}
+	
+	@Check
+	def void checkExtActionType(ExtAction action) {
+		if (action.type!=null && action.type instanceof UnitActionType)
+			info('Unit type can be omitted', Co2Package.Literals.EXT_ACTION__TYPE)
+	}
+	
+	@Check
+	def void checkIntActionType(IntAction action) {
+		if (action.type!=null && action.type instanceof UnitActionType)
+			info('Unit type can be omitted', Co2Package.Literals.INT_ACTION__TYPE)
+	}
+	
+	@Check
+	def void checkEmptyContract(EmptyContract empty) {
+		
+		info("Empty contract can be omitted", 
+			Co2Package.Literals.EMPTY_CONTRACT__VALUE
+		);
+	}
+	
+	@Check
+	def void checkRecursionDefinition(Recursion recursion) {
+		this.checkRecursionID(recursion.eContainer, recursion.name)
+	}
+	
+	def dispatch void checkRecursionID(EObject obj, String name) {
+    	checkRecursionID(obj.eContainer, name)
+    }
+    
+    def dispatch void checkRecursionID(Recursion obj, String name) {
+    	if (obj.name.equals(name)) {
+    		warning("You are hiding an existing name",
+    			Co2Package.Literals.REFERRABLE__NAME
+    		)
+    	}
+    	checkRecursionID(obj.eContainer, name)
+    }
+    
+    def dispatch void checkRecursionID(ContractDefinition obj, String name) {
+    	// stop recursion
+    }
 }

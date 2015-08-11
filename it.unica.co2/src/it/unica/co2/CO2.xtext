@@ -1,17 +1,13 @@
-grammar it.unica.co2.CO2 with it.unica.co2.Contracts 
+grammar it.unica.co2.CO2 with org.eclipse.xtext.common.Terminals
 
 generate co2 "http://www.unica.it/co2/CO2"
 
-import "http://www.unica.it/co2/Contracts" as contracts
     
 CO2System:
 //	importDeclarations+=ImportDeclaration*
 	systemDeclaration=SystemDeclaration
 	honesty=HonestyDeclaration?
-	(
-		contracts+=ContractDefinition |
-		processes+=ProcessDefinition 
-	)*
+	contractsAndProcessesDeclaration=ContractsAndProcessesDeclaration
 ;
 
 
@@ -28,6 +24,10 @@ SystemDeclaration:
 
 HonestyDeclaration:
 	{HonestyDeclaration} "honesty" processes+=[ProcessDefinition]*
+;
+
+ContractsAndProcessesDeclaration:
+	{ContractsAndProcessesDeclaration} (contracts+=ContractDefinition | processes+=ProcessDefinition)*
 ;
 
 ProcessDefinition:
@@ -88,7 +88,7 @@ ProcessCall:
 ;
 
 Tell:
-	"tell" session=[FreeName]  ("{" contract=Contract? "}" | contractReference=[contracts::ContractDefinition]) 
+	"tell" session=[FreeName]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
 ;
 
 DoOutput:
@@ -171,3 +171,70 @@ Type:
     {SessionType} value='session'
 ;
 
+
+
+
+
+// ======================================================================================
+// contract grammar
+// ======================================================================================
+
+ContractDefinition:
+	{ContractDefinition} "contract" name=ID "{" 
+		contract=(Contract)? 
+	"}" 
+;
+
+Contract:
+	IntSum | 
+	ExtSum | 
+	Recursion |
+	{EmptyContract} value="0" |
+	"(" Contract ")"
+;
+
+IntSum:
+	actions+=IntAction ("(+)" actions+=IntAction)*
+;
+
+ExtSum:
+	actions+=ExtAction ( "+"  actions+=ExtAction)*
+;
+
+Recursion:
+	"rec" name=ID "." body=NextContract
+;
+
+NextContract returns Contract:
+	IntAction |
+	ExtAction |
+	{EmptyContract} value="0" |
+	"(" Contract ")"
+;
+
+IntAction:
+	actionName=ID "!" (type=ActionType)? ("." next=AbstractNextContract)?
+;
+
+ExtAction:
+	actionName=ID "?" (type=ActionType)? ("." next=AbstractNextContract)?
+;
+
+AbstractNextContract returns Contract:
+	next=NextContract |
+	ContractReference
+;
+
+ContractReference:
+	ref=[Referrable]
+;
+
+Referrable:
+	ContractDefinition | Recursion
+;
+
+ActionType: 
+	{UnitActionType} "unit" |
+	{IntActionType} "int" |
+	{StringActionType} "string"
+;
