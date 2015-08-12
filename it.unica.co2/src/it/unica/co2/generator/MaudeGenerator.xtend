@@ -3,6 +3,7 @@ package it.unica.co2.generator
 import com.google.inject.Inject
 import it.unica.co2.co2.ActionType
 import it.unica.co2.co2.Ask
+import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.Co2Factory
 import it.unica.co2.co2.Contract
 import it.unica.co2.co2.ContractDefinition
@@ -16,7 +17,6 @@ import it.unica.co2.co2.Expression
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
 import it.unica.co2.co2.FreeName
-import it.unica.co2.co2.HonestyDeclaration
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
@@ -26,6 +26,7 @@ import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Recursion
+import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Sum
@@ -35,60 +36,51 @@ import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.xsemantics.CO2TypeSystem
 import it.xsemantics.runtime.RuleApplicationTrace
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 class MaudeGenerator extends AbstractIGenerator{
 	
 	@Inject CO2TypeSystem co2TypeSystem
-	
-	String basepathOfGeneratedFiles = "maude"
+	@Inject extension IQualifiedNameProvider qNameProvider
 	
 	static final String TAB = "    "
 
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		
-		//get the IProject from the given Resource
-		val platformString = resource.URI.toPlatformString(true);
-	    val myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-	    val project = myFile.getProject();
-		
-		//get location of workspace (java.io.File)  
-		var workspaceDirectory = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile()
-		
-		//get location of the project
-		var projectDirectory = new File(workspaceDirectory, project.name)
-		
-		var outputFilename = basepathOfGeneratedFiles+"/"+resource.URI.lastSegment.replace(".co2", ".maude")
-		
-		println('''generating «outputFilename»''')
-		fsa.generateFile(outputFilename, resource.maudeCode )
+		for (e : resource.allContents.toIterable.filter(CO2System)) {
+			var outputFilename = e.systemDeclaration.fullyQualifiedName.toString("/") + ".maude"
+			println('''generating «outputFilename»''')
+			fsa.generateFile(outputFilename, e.maudeCode)
+		}
 	}
 	
 
 
-	def dispatch String maudeCode(Resource resource){
-		var moduleName = resource.URI.lastSegment.replace(".co2", "").toUpperCase
+	def dispatch String maudeCode(CO2System _co2System){
 		
-		var honestyDeclaration = resource.allContents.filter(HonestyDeclaration).toSet
-		var processesToCheck = if (honestyDeclaration.size>0) honestyDeclaration.get(0).processes else newArrayList()
+		var co2System = EcoreUtil.copy(_co2System)	//clone the AST (multiple generators use this)
+		
+		var moduleName = co2System.systemDeclaration.fullyQualifiedName.lastSegment.toUpperCase
+		
+		var processToCheck = if (co2System.honesty!=null) co2System.honesty.process else null
 				
-		var processes = resource.allContents.filter(ProcessDefinition).filter[p| p.params.length==0].toSet
-		var envProcesses = resource.allContents.filter(ProcessDefinition).filter[p| p.params.length!=0].toSet
-		var contracts = resource.allContents.filter(ContractDefinition).toSet
+		var processes = co2System.contractsAndProcessesDeclaration.processes.filter[p| p.params.length==0].toSet
+		var envProcesses = co2System.contractsAndProcessesDeclaration.processes.filter[p| p.params.length!=0].toSet
+		var contracts = co2System.contractsAndProcessesDeclaration.contracts.toSet
 		
 		//fix anonymous tells
-		contracts.addAll( resource.allContents.filter(Tell).map[t| t.fixTell].toSet )
+		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("TELL-CONTR#")].toSet )
 		
 		
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet
 		var contractNames = contracts.map[c | c.name].toSet
+		var recContractNames = co2System.eAllContents.filter(Recursion).map[c | c.name].toSet
 		
 		return '''
 		***
@@ -100,7 +92,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		mod «moduleName» is
 		
-		«TAB»including CO2-ABS-SEM .
+		    including CO2-ABS-SEM .
 		«TAB»including STRING .
 		
 		«TAB»subsort String < ActName .
@@ -108,6 +100,9 @@ class MaudeGenerator extends AbstractIGenerator{
 		«TAB»ops unit int string : -> BType [ctor] .
 		«TAB»ops exp : -> Expression [ctor] .
 		
+		«IF recContractNames.size>0»
+		«TAB»ops «recContractNames.join(" ")» : -> Var [ctor] .
+		«ENDIF»
 		«IF contractNames.size>0»
 		«TAB»ops «contractNames.join(" ")» : -> UniContract .
 		«ENDIF»
@@ -138,9 +133,9 @@ class MaudeGenerator extends AbstractIGenerator{
 		endm
 		
 		*** honesty
-		«FOR process : processesToCheck»
-		red honest(«process.name» , ['«moduleName»] , 50) .
-		«ENDFOR»
+		«IF processToCheck!=null»
+		red honest(«processToCheck.name» , ['«moduleName»] , 50) .
+		«ENDIF»
 		
 		*** exit the program
 		quit
@@ -155,21 +150,21 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(Recursion obj) {
-		'''rec «obj.name» . ( «obj.body.maudeCode» )'''
+		'''( rec «obj.name» . ( «obj.body.maudeCode» ) )'''
 	}
 	
 	def dispatch String maudeCode(IntSum obj) {
 		if (obj.actions.length==1)
 			obj.actions.get(0).maudeCode
 		else
-			obj.actions.join("(", " (+) ", ")", [a | a.maudeCode])
+			obj.actions.join("( ", " (+) ", " )", [a | a.maudeCode])
 	}
 	
 	def dispatch String maudeCode(ExtSum obj) {
 		if (obj.actions.length==1)
 			obj.actions.get(0).maudeCode
 		else
-			obj.actions.join("(", " + ", ")", [a | a.maudeCode])
+			obj.actions.join("( ", " + ", " )", [a | a.maudeCode])
 	}
 	
 	def dispatch String maudeCode(EmptyContract obj) {
@@ -204,10 +199,15 @@ class MaudeGenerator extends AbstractIGenerator{
 		if (obj.params.size==0)
 			'''eq «obj.name» = «IF obj.process!=null»«obj.process.toMaude(padLeft)»«ELSE»0«ENDIF» .'''
 		else
-			'''«obj.name»«obj.params.join("("," ; ", ")",[n|'''"«n.name»"'''])» =def «obj.process.toMaude(padLeft)»'''
+			'''«obj.name»«obj.params.join("("," ; ", ")",[
+				n | '''«IF n.type instanceof SessionType»"«n.name»"«ELSE»exp«ENDIF»'''
+			])» =def «obj.process.toMaude(padLeft)»'''
 	}
 	
 	def dispatch String toMaude(ParallelProcesses obj, String padLeft) {
+		if (obj.processes.size==0)
+			return "0"
+		
 		var pad = padLeft;
 		var sb = new StringBuilder()
 		
@@ -331,13 +331,18 @@ class MaudeGenerator extends AbstractIGenerator{
 		if (obj.params.length==0)
 			'''«obj.reference.name»'''
 		else {
-			'''«obj.reference.name»«obj.params.join("("," ; ", ")",[n|'''"«n.toMaude(padLeft)»"'''])»'''
+			'''«obj.reference.name»«obj.params.join("("," ; ", ")",[
+				n|'''«n.toMaude(padLeft)»'''
+			])»'''
 		}
 	}
 	
 	def dispatch String toMaude(Expression exp, String padLeft) {
-		if (exp instanceof VariableReference)
-			return (exp as VariableReference).ref.name
+		if (
+			exp instanceof VariableReference 
+			&& (exp as VariableReference).ref.type instanceof SessionType
+		)
+			return '''"«(exp as VariableReference).ref.name»"'''
 		else
 			return "exp"
 	}

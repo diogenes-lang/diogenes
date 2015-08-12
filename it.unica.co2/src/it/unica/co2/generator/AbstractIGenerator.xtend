@@ -12,10 +12,10 @@ abstract class AbstractIGenerator implements IGenerator {
 	/*
 	 * fix tell with anonymous contract
 	 */
-	def ContractDefinition fixTell(Tell tell) {
+	def ContractDefinition fixTell(Tell tell, String prefix) {
 		if (tell.contractReference==null) {
 			var contractDef = Co2Factory.eINSTANCE.createContractDefinition
-			contractDef.name = "TELL-CONTR#"+CONTRACT_NAME_COUNT++
+			contractDef.name = prefix+CONTRACT_NAME_COUNT++
 			contractDef.contract = tell.contract
 			tell.contract=null
 			tell.contractReference = contractDef

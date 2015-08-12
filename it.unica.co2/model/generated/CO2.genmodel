@@ -19,7 +19,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//SystemDeclaration/name"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//HonestyDeclaration">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//HonestyDeclaration/processes"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//HonestyDeclaration/process"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ContractsAndProcessesDeclaration">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractsAndProcessesDeclaration/contracts"/>
@@ -42,6 +42,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//FreeName/type"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Process"/>
+    <genClasses ecoreClass="CO2.ecore#//EmptyProcess">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//EmptyProcess/value"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Sum">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Sum/prefixes"/>
     </genClasses>
@@ -99,10 +102,12 @@
     <genClasses ecoreClass="CO2.ecore#//IntAction">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//IntAction/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntAction/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntAction/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ExtAction">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ExtAction/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtAction/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtAction/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ContractReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractReference/ref"/>
@@ -111,9 +116,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Referrable/name"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ActionType"/>
-    <genClasses ecoreClass="CO2.ecore#//EmptyProcess">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//EmptyProcess/value"/>
-    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Tau"/>
     <genClasses ecoreClass="CO2.ecore#//OrExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/left"/>

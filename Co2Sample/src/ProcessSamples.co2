@@ -1,0 +1,45 @@
+/*
+ * empty process
+ */
+
+system processSamples 
+
+process p1{ }
+process p2{nil}
+
+/*
+ * simple tau prefix
+ */
+process p3{
+	t. nil
+}
+
+/*
+ * delimited process
+ */
+process p4{
+	(x:session) tell x {} . do x a!
+}
+
+contract C { 
+	a!
+}
+
+process p5(x:session) {
+	tell x C . do x a!
+}
+
+/*
+ * with name
+ */
+process PROCESS (x:session) {
+	tell x C . do x a!. PROCESS(x)
+}
+
+/*
+ * ask sample
+ */
+process p6(x:session) {
+	ask x ( True )
+}
+

@@ -196,6 +196,7 @@ public class HonestyMaudeHandler extends AbstractHandler {
 		System.out.println("delete: "+preferences.getString(MaudeHonestyPreferences.HONESTY_MAUDE_DELETE_TEMP_FILE));
 		System.out.println("exec: "+preferences.getString(MaudeHonestyPreferences.HONESTY_MAUDE_EXEC));
 		System.out.println("co2-dir: "+preferences.getString(MaudeHonestyPreferences.HONESTY_MAUDE_CO2_DIR));
+		System.out.println("timeout: "+preferences.getString(MaudeHonestyPreferences.HONESTY_MAUDE_TIMEOUT));
 		
 		return  new MaudeConfiguration() {
 			
@@ -222,6 +223,11 @@ public class HonestyMaudeHandler extends AbstractHandler {
 			@Override
 			public File getCo2MaudeDir() {
 				return new File(preferences.getString(MaudeHonestyPreferences.HONESTY_MAUDE_CO2_DIR));
+			}
+
+			@Override
+			public int timeout() {
+				return preferences.getInt(MaudeHonestyPreferences.HONESTY_MAUDE_TIMEOUT);
 			}
 
 		};

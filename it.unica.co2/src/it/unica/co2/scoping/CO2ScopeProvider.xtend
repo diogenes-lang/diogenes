@@ -13,12 +13,13 @@ import it.unica.co2.co2.Recursion
 import it.unica.co2.co2.Tell
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
 import org.eclipse.xtext.scoping.impl.FilteringScope
+
+import static extension it.unica.co2.utils.CustomExtensions.*
 
 /**
  * This class contains custom scoping description.
@@ -34,7 +35,7 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * refers to any contract definition except for this
 	 */
 	def IScope scope_Tell_contractReference(Tell ctx, EReference ref) {
-		getIScopeForAllContractDefinition(ctx);
+		ctx.getIScopeForAllContentsOfClass(ContractDefinition);
 	}
 	
 	
@@ -46,7 +47,7 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	}
 
 	/*
-	 * utils: recursively get all freename declarations
+	 * utils: recursively get all free-names declarations until ProcessDefinition
 	 */
 	def dispatch IScope getDeclaredFreeNames(EObject cont) {
 		return getDeclaredFreeNames(cont.eContainer);
@@ -78,17 +79,14 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	
 	
 	
-	
+	/*
+	 * Scope for Referrable, alias [Recursion] or [ContractDefinition]
+	 */
 	def IScope scope_Referrable(ContractReference ctx, EReference ref) {
-		
 		Scopes.scopeFor(
 			scope_ContractDefinition(ctx, ref).allElements.map[x|x.EObjectOrProxy],
 			scope_Recursion(ctx, ref)
 		)
-//		if (ref instanceof Recursion)
-//			return scope_Recursion(ctx, ref)
-//		else if (ref instanceof ContractDefinition)
-//			return scope_ContractDefinition(ctx, ref)
 	}
 
 	/*
@@ -125,13 +123,9 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * refers to any contract definition except for this
 	 */
 	def IScope scope_ContractDefinition(ContractReference ctx, EReference ref) {
-		var scope = getIScopeForAllContractDefinition(ctx);
-		var contractDef = getContractDefinition(ctx)
+		var scope = ctx.getIScopeForAllContentsOfClass(ContractDefinition);
+		val contractDef = ctx.getFirstUpOccurrenceOf(ContractDefinition)
 
-		getFilteredScope(scope, contractDef)
-	}
-
-	def IScope getFilteredScope(IScope scope, ContractDefinition contractDef) {
 		new FilteringScope(scope, new Predicate<IEObjectDescription>() {
 
 			override apply(IEObjectDescription input) {
@@ -141,23 +135,11 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 		});
 	}
 	
-	/**
-	 * Get the scope containing all ContractDefinition
-	 */
-	def IScope getIScopeForAllContractDefinition(EObject ctx){
-		var root = EcoreUtil2.getRootContainer(ctx);								// get the root
-		var candidates = EcoreUtil2.getAllContentsOfType(root, ContractDefinition);	// get all the ContractDefinition
-		return Scopes.scopeFor(candidates);											// return the scope
-	}
-
 	/*
-	 * utils: recursively find the first ContractDefinition
+	 * Process reference: refers to any process
 	 */
-	def dispatch ContractDefinition getContractDefinition(EObject obj) {
-		return getContractDefinition(obj.eContainer);
+	def IScope scope_ProcessDefinition(EObject ctx, EReference ref) {
+		return ctx.getIScopeForAllContentsOfClass(ProcessDefinition);
 	}
 
-	def dispatch ContractDefinition getContractDefinition(ContractDefinition obj) {
-		return obj;
-	}
 }

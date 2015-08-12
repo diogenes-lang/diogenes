@@ -1,0 +1,83 @@
+
+system it.unica.co2.travelagency.TravelAgency
+
+honesty P
+
+contract Cu {
+	tripDets? string. budget? int . (quote! int. pay? . (commit! (+) abort!) (+) abort!)
+}
+
+contract Cf {
+	flightDets! string . d
+}
+
+contract d {
+	quote? int . (
+		pay! . (confirm? . ( commit! (+) abort! ) ) 
+		(+) abort!
+	)
+}
+
+contract Ch {
+	hotelDets! string . d
+}
+
+process P {
+	(xu:session) tell xu Cu . do xu tripDets? yt:string . do xu budget? bud:int . P1(xu,yt,bud)
+}
+
+process P1 (xu: session, yt:string, bud:int) {
+	(xf:session) (xh:session) (
+		(tell xf Cf. do xf flightDets! yt)
+		| (tell xh Ch . do xh hotelDets! yt)
+		| Pquote(xu,xf,xh,bud)
+	)
+}
+
+process Pquote (xu:session, xf:session, xh:session, bud:int) {
+	do xf quote ? n:int . Pquote1(xu,xf,xh,n,bud)
+	+ do xh quote ? n:int . Pquote1(xu,xh,xf,n,bud) 
+	+ t . Pabort(xu,xh,xf)
+}
+
+process Pquote1 (x:session, x1:session, x2:session, quote:int, budget:int) {
+	if quote<budget
+	then Pquote2(x,x1,x2,quote,budget)
+	else Pabort(x,x1,x2)
+}
+
+process Pquote2 (x:session, x1:session, x2:session, quote:int, budget:int) {
+	do x2 quote? quote2:int . 
+		if quote+quote2<budget
+		then Ppay(x,x1,x2,quote+quote2)
+		else Pabort(x,x1,x2)
+	+ t . Pabort(x,x1,x2)
+}
+
+process Pabort (x:session, x1:session, x2:session) {
+	do x abort! | do x1 abort! | do x2 abort! |
+	do x pay? | do x1 quote?n:int | do x2 quote?n:int | do x1 confirm? | do x2 confirm?
+}
+
+process Ppay (x:session, x1:session, x2:session, amount:int) {
+	do x quote! amount . (
+		do x pay?. Pconfirm1(x,x1,x2)
+		+ t . Pabort(x,x1,x2)
+	)
+}
+
+process Pconfirm1 (x:session, x1:session, x2:session) {
+	do x1 pay!. do x2 pay! . (
+		do x1 confirm?. Pconfirm2(x,x1,x2)
+		+ t . Pabort(x,x1,x2)
+	)
+}
+
+process Pconfirm2 (x:session, x1:session, x2:session) {
+	do x confirm?. Pcommit(x,x1,x2)
+	+ t . Pabort(x,x1,x2)
+}
+
+process Pcommit (x:session, x1:session, x2:session) {
+	do x commit! | do x1 commit! | do x2 commit!
+}

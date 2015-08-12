@@ -6,6 +6,7 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -23,6 +24,7 @@ public class MaudeHonestyPreferences extends FieldEditorPreferencePage implement
 	public static final String HONESTY_MAUDE_EXEC = "honesty.maude.exec";
 	public static final String HONESTY_MAUDE_PRINT_IN = "honesty.maude.print-in";
 	public static final String HONESTY_MAUDE_PRINT_OUT = "honesty.maude.print-out";
+	public static final String HONESTY_MAUDE_TIMEOUT = "honesty.maude.timeout";
 
 	public MaudeHonestyPreferences() {
 		super(GRID);
@@ -42,6 +44,8 @@ public class MaudeHonestyPreferences extends FieldEditorPreferencePage implement
 		addField(new BooleanFieldEditor(HONESTY_MAUDE_DELETE_TEMP_FILE, "&Delete temporary file", getFieldEditorParent()));
 		addField(new BooleanFieldEditor(HONESTY_MAUDE_PRINT_IN, "&Print input maude process", getFieldEditorParent()));
 		addField(new BooleanFieldEditor(HONESTY_MAUDE_PRINT_OUT, "&Print output stream", getFieldEditorParent()));
+		addField(new IntegerFieldEditor(HONESTY_MAUDE_TIMEOUT, "&Model-cheker timeout", getFieldEditorParent()));
+		
 	}
 
 	@Override

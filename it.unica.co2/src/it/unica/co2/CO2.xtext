@@ -23,7 +23,7 @@ SystemDeclaration:
 ;
 
 HonestyDeclaration:
-	{HonestyDeclaration} "honesty" processes+=[ProcessDefinition]*
+	{HonestyDeclaration} "honesty" process=[ProcessDefinition]
 ;
 
 ContractsAndProcessesDeclaration:
@@ -37,7 +37,7 @@ ProcessDefinition:
 ;
 
 ParallelProcesses:
-	processes+=DelimitedProcess  ("|" processes+=DelimitedProcess)?
+	processes+=DelimitedProcess  ("|" processes+=DelimitedProcess)*
 ;
 
 DelimitedProcess:
@@ -49,11 +49,15 @@ FreeName:
 ;
 
 Process:
-	{EmptyProcess} value="0" |
+	EmptyProcess |
 	Sum |
 	IfThenElse |
 	ProcessCall |
-	"(" Process ")"
+	"(" ParallelProcesses ")"
+;
+
+EmptyProcess:
+	{EmptyProcess} value="nil"
 ;
 
 Sum:
@@ -76,7 +80,7 @@ Prefix:
 ;
 
 Next returns Process:
-	{EmptyProcess} value="0" |
+	EmptyProcess |
 	Prefix |
 	IfThenElse |
 	"(" ParallelProcesses ")"|
@@ -112,7 +116,9 @@ Formula:
 
 
 
-
+// ======================================================================================
+// expression grammar
+// ======================================================================================
 /*
  * the following part is extracted (and partially modified) from 
  * 		http://xsemantics.sourceforge.net/xsemantics-documentation/Expressions-example.html#Expressions
@@ -189,7 +195,7 @@ Contract:
 	IntSum | 
 	ExtSum | 
 	Recursion |
-	{EmptyContract} value="0" |
+	{EmptyContract} value="nil" |
 	"(" Contract ")"
 ;
 
@@ -206,10 +212,18 @@ Recursion:
 ;
 
 NextContract returns Contract:
-	IntAction |
-	ExtAction |
-	{EmptyContract} value="0" |
+	SingleIntSum |
+	SingleExtSum |
+	{EmptyContract} value="nil" |
 	"(" Contract ")"
+;
+
+SingleIntSum returns IntSum:
+	actions+=IntAction
+;
+
+SingleExtSum returns ExtSum:
+	actions+=ExtAction
 ;
 
 IntAction:

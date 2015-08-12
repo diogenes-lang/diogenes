@@ -1,0 +1,20 @@
+
+system test
+
+contract C {
+	a? int + b? int
+}
+
+contract C1 {
+	a! int (+) b! int
+}
+
+
+
+process P (n:int) {
+	(y:session) tell y C . ( do y a? n :int + do y b? n:int . P1(n,8))
+}
+
+process P1 (a:int, x:int) {
+	 (n:boolean) (x:session) tell x C . ( if ""+"ads"=="" then do x a? n1 :int else nil)
+}

@@ -24,6 +24,7 @@ public class MaudeDefaultInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(MaudeHonestyPreferences.HONESTY_MAUDE_PRINT_OUT, false);
 		store.setDefault(MaudeHonestyPreferences.HONESTY_MAUDE_EXEC, "/bin/maude");
 		store.setDefault(MaudeHonestyPreferences.HONESTY_MAUDE_CO2_DIR, System.getProperty("user.home")+"/co2-maude");
+		store.setDefault(MaudeHonestyPreferences.HONESTY_MAUDE_TIMEOUT, 10);
 	}
 
 }
