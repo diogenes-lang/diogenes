@@ -49,9 +49,10 @@ You can install it on older Eclipse versions (see [https://eclipse.org/Xtext/dow
 * maude files will be generated automatically into `src-gen`
 
 # Co2 syntax #
-The syntax is defined into `it.unica.co2.CO2.xtext` and `it.unica.co2.Contracts.xtext`
+The syntax is defined into `it.unica.co2.CO2.xtext`
 
 # Example #
+See other examples into `Co2Sample` project
 ```
 
 /*
