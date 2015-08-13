@@ -64,6 +64,10 @@ Sum:
 	prefixes+=Prefix ("+" prefixes+=Prefix)*
 ;
 
+SingleSum returns Sum:
+	prefixes+=Prefix
+;
+
 IfThenElse:
 	{IfThenElse}
 	'if' if=Expression
@@ -72,16 +76,20 @@ IfThenElse:
 ;
 
 Prefix:
-	{Tau} "t" 	("." next=Next)? |
-	Tell 		("." next=Next)? |
-	DoOutput 	("." next=Next)? |
+	Tau			("." next=Next)? |
+	Tell		("." next=Next)? |
+	DoOutput	("." next=Next)? |
 	DoInput 	("." next=Next)? |
 	Ask			("." next=Next)?
 ;
 
+PrefixWithSession:
+	Tell | DoOutput | DoInput | Ask 
+;
+
 Next returns Process:
 	EmptyProcess |
-	Prefix |
+	SingleSum |
 	IfThenElse |
 	"(" ParallelProcesses ")"|
 	ProcessCall
@@ -103,16 +111,17 @@ DoInput:
 	"do" session=[FreeName] actionName=ID "?" (variable=FreeName)?
 ;
 
-
-
 Ask:
-	"ask" session=[FreeName] ("(" formula=Formula ")" | formula=Formula)?
+	"ask" session=[FreeName] formula=Formula? ("you never go here" public=STRING)?
+;
+
+Tau:
+	{Tau} "t"
 ;
 
 Formula:
-	"True"
+	"True" | "(" "True" ")"
 ;
-
 
 
 

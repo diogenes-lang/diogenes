@@ -83,31 +83,18 @@ from {
 }
 
 rule Plus
-	G |- Plus plus : Type type
+	G |- Plus plus : IntType intType
 from {
-	G |- plus.left : var Type leftType
-	G |- plus.right : var Type rightType
-	
-	{
-		(leftType instanceof StringType && rightType instanceof StringType)
-		type = Co2Factory::eINSTANCE.createStringType
-	}
-	or
-	{
-		(leftType instanceof IntType && rightType instanceof IntType)
-		type = leftType // i.e., IntType
-	}
+	G |- plus.left : intType
+	G |- plus.right : intType
 }
 
 rule Comparison
 	G |- Comparison comparison : Co2Factory::eINSTANCE.createBooleanType
 from {
-	empty |- comparison.left : var Type leftType
-	empty |- comparison.right : var Type rightType
-	
-	// cannot compare booleans
-	(leftType instanceof IntType && rightType instanceof IntType) ||
-	(leftType instanceof StringType && rightType instanceof StringType)
+	var IntType intType
+	G |- comparison.left : intType
+	G |- comparison.right : intType
 }
 
 rule Equals
@@ -141,9 +128,9 @@ from {
 }
 
 rule ArithmeticSigned
-	G |- ArithmeticSigned signed : Co2Factory::eINSTANCE.createIntType
+	G |- ArithmeticSigned signed : IntType intType
 from {
-	G |- signed.expression : var IntType intType
+	G |- signed.expression : intType
 }
 
 rule VariableReference

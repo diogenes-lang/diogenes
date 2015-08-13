@@ -53,31 +53,38 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/then"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/else"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Prefix">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Prefix/next"/>
-    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Prefix"/>
+    <genClasses ecoreClass="CO2.ecore#//PrefixWithSession"/>
     <genClasses ecoreClass="CO2.ecore#//ProcessCall">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessCall/reference"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessCall/params"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Tell">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/session"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/contract"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/contractReference"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoOutput">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoOutput/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/value"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoInput">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoInput/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/variable"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Ask">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Ask/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Ask/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/formula"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/public"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Tau">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Tau/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Expression"/>
     <genClasses ecoreClass="CO2.ecore#//Typable"/>
@@ -116,7 +123,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Referrable/name"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ActionType"/>
-    <genClasses ecoreClass="CO2.ecore#//Tau"/>
     <genClasses ecoreClass="CO2.ecore#//OrExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/left"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/right"/>

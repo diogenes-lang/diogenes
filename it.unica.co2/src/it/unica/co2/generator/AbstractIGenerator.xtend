@@ -1,9 +1,12 @@
 package it.unica.co2.generator
 
-import it.unica.co2.co2.ContractDefinition
-import it.unica.co2.co2.Tell
-import org.eclipse.xtext.generator.IGenerator
 import it.unica.co2.co2.Co2Factory
+import it.unica.co2.co2.ContractDefinition
+import it.unica.co2.co2.Recursion
+import it.unica.co2.co2.Tell
+import java.util.HashMap
+import java.util.Map
+import org.eclipse.xtext.generator.IGenerator
 
 abstract class AbstractIGenerator implements IGenerator {
 		
@@ -25,5 +28,27 @@ abstract class AbstractIGenerator implements IGenerator {
 			tell.contractReference
 		}
 	}
+	
+	def void fixRecursions(Iterable<ContractDefinition> contracts) {
+		
+		for (c : contracts) {
+			var recursions = c.eAllContents.filter(Recursion).toSet
+			
+			val Map<String,Integer> counts = new HashMap()
+			
+			/*
+			 * fix recursion names in order to be unique
+			 */
+			recursions.forEach[x| 
+				if (!counts.containsKey(x.name)) 
+					counts.put(x.name, 0)
+				
+				var n = counts.put(x.name, counts.get(x.name)+1)
+				
+				x.name = '''rec_«c.name»_«x.name»_«n»'''
+			]
+		}
+	}
+	
 	
 }
