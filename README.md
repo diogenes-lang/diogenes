@@ -1,4 +1,6 @@
 #Version#
+2015-08-13: version **1.0.0** released!
+
 2015-08-03: version **0.1.0** released!
 
 2015-05-21: version **0.0.3** released!
@@ -8,7 +10,7 @@
 2015-04-03: version **0.0.1** released!
 
 #Changelog
-**1.0.0** (will published soon)
+**1.0.0**
 
 * **syntax is changed** (see example below)
 * added expressions
@@ -52,7 +54,7 @@ You can install it on older Eclipse versions (see [https://eclipse.org/Xtext/dow
 The syntax is defined into `it.unica.co2.CO2.xtext`
 
 # Example #
-See other examples into `Co2Sample` project
+See other examples into [`Co2Sample`](Co2Sample).
 ```
 
 /*
