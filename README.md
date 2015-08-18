@@ -26,7 +26,8 @@
 
 ##Plugin Users##
 * go to `Help -> Install New Software...` from the menu bar and `Add...`
-* add the update site for Xtext 2.8.\* ([http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releaes/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/)) *(1)*
+* add the update site for Xsemantics 1.8.x : [http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8](http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8) *(1)*
+* add the update site for Xtext 2.8.x (only for Eclipse IDE older than the *mars* version 4.5.x ): [http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releaes/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/) *(1)*
 * add Co2 update site [http://co2.unica.it/eclipse-plugin/](http://co2.unica.it/eclipse-plugin/)
 * install CO2 SDK Feature
 
@@ -39,7 +40,7 @@ You can install it on older Eclipse versions (see [https://eclipse.org/Xtext/dow
 * run as *Eclipse Application* *(3)*
 
 ###Notes###
-*(1)* Only for Eclipse IDE older than the *mars* version 4.5.\*. Moreover, **you don't need to install it**, the update site is required to solve Co2 plugin dependencies.
+*(1)* **You don't need to install it**, the update site is required to solve Co2 plugin dependencies.
 
 *(2)* you might need to create some folders manually due to the *mercurial feature* that not push empty directories. It's currently necessary for the project `it.unica.co2.tests` for `src` and `xtend-gen` folders.
 
