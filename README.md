@@ -1,4 +1,7 @@
 #Version#
+
+2015-08-22: version **1.1.0** released!
+
 2015-08-13: version **1.0.0** released!
 
 2015-08-03: version **0.1.0** released!
@@ -10,6 +13,10 @@
 2015-04-03: version **0.0.1** released!
 
 #Changelog
+**1.1.0**
+
+* added support to parallel processes
+
 **1.0.0**
 
 * **syntax is changed** (see example below)
