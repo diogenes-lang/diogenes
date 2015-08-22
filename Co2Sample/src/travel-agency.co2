@@ -23,13 +23,13 @@ contract Ch {
 }
 
 process P {
-	(xu:session) tell xu Cu . do xu tripDets? yt:string . do xu budget? bud:int . P1(xu,yt,bud)
+	(xu:session) tell xu Cu . ask xu . do xu tripDets? yt:string . do xu budget? bud:int . P1(xu,yt,bud)
 }
 
 process P1 (xu: session, yt:string, bud:int) {
 	(xf:session) (xh:session) (
-		(tell xf Cf. do xf flightDets! yt)
-		| (tell xh Ch . do xh hotelDets! yt)
+		(tell xf Cf. ask xf . do xf flightDets! yt)
+		| (tell xh Ch . ask xh . do xh hotelDets! yt)
 		| Pquote(xu,xf,xh,bud)
 	)
 }

@@ -54,6 +54,7 @@ import java.util.Date
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 
 import static extension it.unica.co2.generator.JavaGeneratorUtils.*
 
@@ -66,13 +67,14 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	override doGenerate(Resource resource, IFileSystemAccess fsa) {
 		
+		MESSAGE_COUNT=0;
+		CONTRACT_NAME_COUNT = 0
+		
 		for (e : resource.allContents.toIterable.filter(CO2System)) {
 			var outputFilename = e.systemDeclaration.fullyQualifiedName.toString("/") + ".java"
 			println('''generating «outputFilename»''')
 			fsa.generateFile(outputFilename, e.generateJava)
 		}
-		
-		MESSAGE_COUNT=0;
 	}
 	
 	
@@ -89,18 +91,23 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		//fix anonymous tells
 		contractDefinitions.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("_tell_contr_")].toSet )
+
+		val isTranslatable = co2System.isJavaTranslatable;
+		
 		
 		'''
 		«IF !packageName.empty»
 		package «packageName»;
 		«ENDIF»
 		
-		«IF !co2System.isJavaTranslatable»
+		«IF !isTranslatable.value»
 		/*
 		 * Sorry, your co2 system is not translatable to Java.
+		 * «var node = NodeModelUtils.getNode(isTranslatable.eobject)»
+		 * code    : «node.text.trim.replaceAll("\t", "").replaceAll("\n", " ")»
+		 * reason  : «isTranslatable.reason»
+		 * line(s) : «node.startLine»«IF node.startLine!=node.endLine»-«node.endLine»«ENDIF»
 		 *
-		 * If you use parallel processes, maybe they'll be supported in the future.
-		 * If you use sum(s) with do!-prefix or with more than one tau, please consider refactoring of your co2 process.
 		 */
 		«ELSE»
 		
@@ -289,9 +296,21 @@ class JavaGenerator extends AbstractIGenerator {
 		}'''
 	}
 	
-	def dispatch String toJava(ParallelProcesses p) {
-		//we not support more than one process at the moment
-		p.processes.get(0).toJava
+	def dispatch String toJava(ParallelProcesses pp) {
+		// pp.processes is always > 0
+		if (pp.processes.size>1) { 
+			'''
+			«FOR p : pp.processes »
+			
+			parallel(()->{
+				«p.toJava»
+			});
+			«ENDFOR»
+			'''
+		}
+		else {
+			pp.processes.get(0).toJava
+		}
 	}
 	
 	def dispatch String toJava(DelimitedProcess p) {
@@ -370,7 +389,6 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		«ELSE»
 		«p.getSwitchOfReceives(false)»
-		
 		«ENDIF»
 		'''
 	}
@@ -384,6 +402,8 @@ class JavaGenerator extends AbstractIGenerator {
 		var messageName = '''_msg_«session»_«MESSAGE_COUNT++»'''
 		var count=0;
 		'''
+		
+		«getLogString('''waiting on '«session»' for actions [«actionNames.join(",")»]''')»
 		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(",", [x|'''"«x»"'''])»);
 			
 		switch («messageName».getLabel()) {
@@ -400,7 +420,12 @@ class JavaGenerator extends AbstractIGenerator {
 					throw new RuntimeException(e);
 				}
 				«ELSE»
-				«a.variable.name»_«count» = String.valueof(«messageName».getStringValue());
+				try {
+					«a.variable.name»_«count» = «messageName».getStringValue();
+				}
+				catch (ContractException e) {
+					throw new RuntimeException(e);
+				}
 				«ENDIF»
 «««				change the free name on next EObject that use a.variable.name»
 				«val countF = count++»
@@ -413,6 +438,7 @@ class JavaGenerator extends AbstractIGenerator {
 			default:
 				throw new IllegalStateException("You should not be here");
 		}
+		
 		'''
 	}
 	
@@ -506,7 +532,7 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def dispatch String getJavaExpression(StringLiteral exp) {
-		exp.value
+		'''"«exp.value»"'''
 	}
 	
 	def dispatch String getJavaExpression(BooleanLiteral exp) {

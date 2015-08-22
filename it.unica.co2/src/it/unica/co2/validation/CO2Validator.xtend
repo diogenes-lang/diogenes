@@ -90,87 +90,6 @@ class CO2Validator extends CO2TypeSystemValidator {
 	}
 	
 	
-	
-	
-	
-	/*
-	 * check shadowed variables
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	
-	@Check
-	def void checkShadowDelimitedProcess(DelimitedProcess proc) {
-		
-		// we already check that fn into DelimitedProcess are unique
-		var i=0
-		for (fn : proc.freeNames) {
-			this.checkFreeName(proc.eContainer, fn, i)
-			i++
-		}
-	}
-	
-	@Check
-	def void checkShadowDoInput(DoInput proc) {
-		this.checkFreeName(proc.eContainer, proc.variable, 0)
-	}
-	
-	def dispatch void checkFreeName(EObject obj, FreeName fn, int i) {
-    	checkFreeName(obj.eContainer, fn, i)
-    }
-    
-    def dispatch void checkFreeName(DoInput obj, FreeName fn, int i) {
-    	if (obj.variable.name == fn.name) {
-    		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
-	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
-    	}
-    	checkFreeName(obj.eContainer, fn, i)
-    }
-    
-    def dispatch void checkFreeName(DelimitedProcess proc, FreeName fn, int i) {
-    	var j=0
-    	for (fn1 : proc.freeNames) {
-			if (fn1.name == fn.name) {
-	    		warning("Shadowed free-name", fn1.eContainer, fn1.eContainingFeature, j)
-	    		warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature, i)
-    		}
-    		j++
-		}
-    	checkFreeName(proc.eContainer, fn, i)
-    }
-    
-    def dispatch void checkFreeName(ProcessDefinition proc, FreeName fn, int i) {
-    	var j=0
-    	for (fn1 : proc.params) {
-			if (fn1.name == fn.name) {
-				warning("Shadowed free-name", fn1.eContainer, fn1.eContainingFeature, j)
-	    		warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature, i)
-    		}
-    		j++
-		}
-    	// stop recursion
-    }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@Check
 	def void checkContractNameIsUnique(ContractDefinition contractDef) {
 		var root = EcoreUtil2.getRootContainer(contractDef);
@@ -257,4 +176,68 @@ class CO2Validator extends CO2TypeSystemValidator {
     def dispatch void checkRecursionID(ContractDefinition obj, String name) {
     	// stop recursion
     }
+	
+	
+	/*
+	 * check shadowed variables
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	@Check
+	def void checkShadowDelimitedProcess(DelimitedProcess proc) {
+		
+		// we already check that fn into DelimitedProcess are unique
+		var i=0
+		for (fn : proc.freeNames) {
+			this.checkFreeName(proc.eContainer, fn, i)
+			i++
+		}
+	}
+	
+	@Check
+	def void checkShadowDoInput(DoInput proc) {
+		this.checkFreeName(proc.eContainer, proc.variable, 0)
+	}
+	
+	def dispatch void checkFreeName(EObject obj, FreeName fn, int i) {
+    	checkFreeName(obj.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(DoInput obj, FreeName fn, int i) {
+    	if (obj.variable.name == fn.name) {
+    		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
+	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
+    	}
+    	checkFreeName(obj.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(DelimitedProcess proc, FreeName fn, int i) {
+    	var j=0
+    	for (fn1 : proc.freeNames) {
+			if (fn1.name == fn.name) {
+	    		warning("Shadowed free-name", fn1.eContainer, fn1.eContainingFeature, j)
+	    		warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature, i)
+    		}
+    		j++
+		}
+    	checkFreeName(proc.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(ProcessDefinition proc, FreeName fn, int i) {
+    	var j=0
+    	for (fn1 : proc.params) {
+			if (fn1.name == fn.name) {
+				warning("Shadowed free-name", fn1.eContainer, fn1.eContainingFeature, j)
+	    		warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature, i)
+    		}
+    		j++
+		}
+    	// stop recursion
+    }
+	
+	
+	/*
+	 * check contract cycle-reference
+	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	 
+	 
 }

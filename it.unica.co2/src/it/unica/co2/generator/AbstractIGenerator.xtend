@@ -10,7 +10,7 @@ import org.eclipse.xtext.generator.IGenerator
 
 abstract class AbstractIGenerator implements IGenerator {
 		
-	private int CONTRACT_NAME_COUNT = 0;
+	protected int CONTRACT_NAME_COUNT = 0;
 	
 	/*
 	 * fix tell with anonymous contract

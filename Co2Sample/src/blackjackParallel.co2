@@ -1,5 +1,5 @@
 
-system it.unica.co2.blackjack.BlackJackNoJava
+system it.unica.co2.blackjack.BlackjackParallel
 
 honesty P
 
@@ -17,7 +17,10 @@ contract Cd {
 }
 
 process P {
-	(xd:session) (xp:session) tell xd Cd . ask xd . tell xp Cp . Pplay(xp, xd, 0)
+	(xd:session) (xp:session) tell xd Cd . ask xd . tell xp Cp . (
+		ask xp . Pplay(xp, xd, 0)
+		+ t . do xd abort! . ask xp . PabortP(xp)
+	)
 }
 
 process Pplay(xp:session, xd:session, np:int) {

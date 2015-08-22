@@ -16,6 +16,7 @@ contract Cd {
 	)
 }
 
+
 process P {
 	(xd:session) (xp:session) tell xd Cd . ask xd . tell xp Cp . (
 		ask xp . Pplay(xp, xd, 0)

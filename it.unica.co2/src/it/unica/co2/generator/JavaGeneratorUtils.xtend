@@ -5,6 +5,7 @@ import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.ParallelProcesses
+import it.unica.co2.co2.Prefix
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
@@ -12,88 +13,137 @@ import org.eclipse.emf.ecore.EObject
 
 class JavaGeneratorUtils {
 	
-	def static boolean isJavaTranslatable(CO2System co2System) {
-		println("START")
+	static class IsTranslatable {
+		new (boolean value) {
+			this(value, null, null)
+		}
+		
+		new (boolean value, EObject eobject, String reason) {
+			this.value=value
+			this.eobject=eobject
+			this.reason=reason
+		}
+		
+		public final boolean value
+		public final EObject eobject
+		public final String reason
+	}
+	
+	def static IsTranslatable isJavaTranslatable(CO2System co2System) {
+		
 		for (x : co2System.eAllContents.toIterable) {
-			println(x)
-			if (!x.check) {
-				println("false: "+x)
-				return false
+			var checkRes = x.check
+			if (! checkRes.value) {
+				return checkRes;
 			} 
 		}
 		
-		return true
+		return new IsTranslatable(true)
 	}
 	
-	def static dispatch boolean check(EObject obj) {
-		return true
+	def static dispatch IsTranslatable check(EObject obj) {
+		return new IsTranslatable(true)
 	}
 	
-	def static dispatch boolean check(ParallelProcesses p) {
-		return p.processes.size<=1
-	}
-	
-	def static dispatch boolean check(Tell tell) {
+
+	def static dispatch IsTranslatable check(Tell tell) {
 		//tell must be followed by a sum containing an ask-prefix and a possible tau
 		println("-->"+tell.next)
 		if (tell.next instanceof ParallelProcesses) {
 			
 			var pp = (tell.next as ParallelProcesses)
 			
-			if (pp.processes.size!=1) return false
-			if (!(pp.processes.get(0).process instanceof Sum)) return false
+			if (pp.processes.size!=1) 
+				return new IsTranslatable(false, tell, "unexpected parallel process after the tell")
+			if (!(pp.processes.get(0).process instanceof Sum)) 
+				return new IsTranslatable(false, tell, "unexpected object after the tell, sum expected")
 			
 			var sum = (pp.processes.get(0).process as Sum)
 			var taus = sum.prefixes.filter(Tau)
 			var asks = sum.prefixes.filter(Ask)
 			
-			if (sum.prefixes.size>2) return false
-			if (taus.size>1) return false
-			if (asks.size!=1) return false
+			if (sum.prefixes.size>2) return new IsTranslatable(false, tell, "the tell can't be followed by a sum with more than 2 elements")
+			if (taus.size>1) return new IsTranslatable(false, tell, "the tell can be followed by at most one tau prefix")
+			if (asks.size!=1) return new IsTranslatable(false, tell, "the tell must be followed by an ask prefix")
 			
-			return true
+			return new IsTranslatable(true)
 		}
 		else if (tell.next instanceof Sum) {
 			var sum = (tell.next as Sum)
 			var taus = sum.prefixes.filter(Tau)
 			var asks = sum.prefixes.filter(Ask)
 			
-			if (sum.prefixes.size>2) return false
-			if (taus.size>1) return false
-			if (asks.size!=1) return false
+			if (sum.prefixes.size>2) return new IsTranslatable(false, tell, "the tell can't be followed by a sum with more than 2 elements")
+			if (taus.size>1) return new IsTranslatable(false, tell, "the tell can be followed by at most one tau prefix")
+			if (asks.size!=1) return new IsTranslatable(false, tell, "the tell must be followed by an ask prefix")
 			
-			return true
+			return new IsTranslatable(true)
 		}
 		else {
-			return false
+			return new IsTranslatable(false, tell, "unexpected error")
 		}
 	}
 	
-	def static dispatch boolean check(Sum p) {
+	def static dispatch IsTranslatable check(Sum sum) {
 		
-		var taus = p.prefixes.filter(Tau)
-		var input = p.prefixes.filter(DoInput)
-		var output = p.prefixes.filter(DoOutput)
-		var tells = p.prefixes.filter(Tell)
-		var asks = p.prefixes.filter(Ask)
+		var taus = sum.prefixes.filter(Tau)
+		var input = sum.prefixes.filter(DoInput)
+		var output = sum.prefixes.filter(DoOutput)
+		var tells = sum.prefixes.filter(Tell)
+		var asks = sum.prefixes.filter(Ask)
 
-		println('''size) «p.prefixes.size»''')
-		println('''prefixes) «p.prefixes.join(" + ", [x|x.class.simpleName])»''')
+		println('''size) «sum.prefixes.size»''')
+		println('''prefixes) «sum.prefixes.join(" + ", [x|x.class.simpleName])»''')
 		
-		if (p.prefixes.size<=1) {
-			return p.prefixes.size==1 && taus.size==0
+		if (sum.prefixes.size<=1) {
+			return new IsTranslatable(true)
 		}
 		else {
-			if (output.size>0) return false	//output is not allowed	
-			if (tells.size>0) return false	//tells not permitted
-			if (taus.size>1) return false	//at most one tau
-			if (asks.size>1) return false	//at most one ask
+			if (output.size>0) return new IsTranslatable(false, sum, "the sum can't contain do!")	//output is not allowed	
+			if (tells.size>0) return new IsTranslatable(false, sum, "the sum can't contain the tell prefix")	//tells not permitted
+			if (taus.size>1) return new IsTranslatable(false, sum, "the sum can contain at most one tau prefix")	//at most one tau
+			if (asks.size>1) return new IsTranslatable(false, sum, "the sum can contain at most one ask prefix")	//at most one ask
 			
 			if (input.size==0 && asks.size==0)	//or input or asks
-				return false
+				return new IsTranslatable(false, sum, "ask and do? are not allowed on the same sum")
+
+			//prefixes are ok, check for session
+			var String session;
 			
-			return true;
+			for (var i=0; i<sum.prefixes.size; i++){
+				var prefix = sum.prefixes.get(i)
+				var pSession = prefix.session;
+				
+				if (pSession!=null) {
+					
+					if (session==null) 
+						session = pSession
+						
+					if (session!=pSession)
+						return new IsTranslatable(false, sum, "all prefixes must use the same session")
+				}
+			}
+			
+			return new IsTranslatable(true);
 		}
+	}
+	
+	
+	def static dispatch String getSession(DoInput p) {
+		p.session.name
+	}
+	
+	def static dispatch String getSession(Ask p) {
+		p.session.name
+	}
+	
+	def static dispatch String getSession(Prefix p) {
+		null
+	}
+	
+	
+	def static String getLogString(String str){
+		'''logger.log("«str»");'''
 	}
 	
 }

@@ -33,4 +33,4 @@ Export-Package: it.unica.co2.ui.contentassist,
  it.unica.co2.ui.quickfix;uses:="org.eclipse.xtext.ui.editor.quickfix"
 Bundle-Activator: it.unica.co2.ui.internal.CO2Activator
 Bundle-ClassPath: .,
- lib/co2-java-honesty-1.0.3.jar
+ lib/co2-java-honesty-1.1.0.jar

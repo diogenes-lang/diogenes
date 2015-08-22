@@ -1,0 +1,12 @@
+
+system it.unica.co2.parallel.ParallelExample
+
+
+process P {
+	(x:session) tell x {a! (+) b! (+) c!} . ask x . P1(x)
+}
+
+process P1 (x:session) {
+	do x a! 5 | do x b! "info" | do x c!
+}
+
