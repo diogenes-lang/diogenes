@@ -1,34 +1,3 @@
-#Version#
-
-2015-08-22: version **1.1.0** released!
-
-2015-08-13: version **1.0.0** released!
-
-2015-08-03: version **0.1.0** released!
-
-2015-05-21: version **0.0.3** released!
-
-2015-04-18: version **0.0.2** released!
-
-2015-04-03: version **0.0.1** released!
-
-#Changelog
-**1.1.0**
-
-* added support to parallel processes
-
-**1.0.0**
-
-* **syntax is changed** (see example below)
-* added expressions
-* added static type-check for expressions and freenames
-
-**0.1.0**
-
-* you can check the honesty of co2 maude process (right-click on the maude file)
-* add preferences page for maude model-checking
-
-
 #Installation#
 
 ##Plugin Users##
@@ -36,7 +5,7 @@
 * add the update site for Xsemantics 1.8.x : [http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8](http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8) *(1)*
 * add the update site for Xtext 2.8.x (only for Eclipse IDE older than the *mars* version 4.5.x ): [http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/) *(1)*
 * add Co2 update site [http://co2.unica.it/eclipse-plugin/](http://co2.unica.it/eclipse-plugin/)
-* install CO2 SDK Feature
+* install `CO2 SDK Feature`
 
 ##Plugin Developers##
 I recommend you to install the last Eclipse IDE (*mars* 4.5.\* at the moment) for Java and DSL Developers (see [http://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/marsr](http://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/marsr)), that embed the Xtext module 2.8.\*, required by the plugin. 
@@ -53,13 +22,17 @@ You can install it on older Eclipse versions (see [https://eclipse.org/Xtext/dow
 
 *(3)* if it fails due to memory problems, such as `OutOfMemoryException` or similar, go to `Run -> Run configurations..`, select *Eclipse Application*, *Arguments*, and set `-Xms40m -Xmx512m -XX:MaxPermSize=256m` into *VM arguments*
 
+- - - - - -
+
 #Co2 Project#
 * create a Java project
 * create files with extension `co2` into the `src` folder (see example below)
 * maude files will be generated automatically into `src-gen`
+* in order to compile the java classes, you must add the following dependencies:
+    * [http://co2.unica.it/tst/co2api.jar](http://co2.unica.it/tst/co2api.jar) (if does not work, set 
+    * **co2-honesty-checker** (no jar available, set as project dependency)
 
-# Co2 syntax #
-The syntax is defined into `it.unica.co2.CO2.xtext`
+- - - - - -
 
 # Example #
 See other examples into [`Co2Sample`](Co2Sample).
@@ -110,3 +83,34 @@ process INS (x:session) {
     )
 }
 ```
+- - - - -
+
+#Versions#
+
+2015-08-22: version **1.1.0** released!
+
+2015-08-13: version **1.0.0** released!
+
+2015-08-03: version **0.1.0** released!
+
+2015-05-21: version **0.0.3** released!
+
+2015-04-18: version **0.0.2** released!
+
+2015-04-03: version **0.0.1** released!
+
+#Changelog
+**1.1.0**
+
+* added support to parallel processes
+
+**1.0.0**
+
+* **syntax is changed** (see example below)
+* added expressions
+* added static type-check for expressions and freenames
+
+**0.1.0**
+
+* you can check the honesty of co2 maude process (right-click on the maude file)
+* add preferences page for maude model-checking
