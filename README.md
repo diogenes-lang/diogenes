@@ -34,7 +34,7 @@
 ##Plugin Users##
 * go to `Help -> Install New Software...` from the menu bar and `Add...`
 * add the update site for Xsemantics 1.8.x : [http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8](http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8) *(1)*
-* add the update site for Xtext 2.8.x (only for Eclipse IDE older than the *mars* version 4.5.x ): [http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releaes/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/) *(1)*
+* add the update site for Xtext 2.8.x (only for Eclipse IDE older than the *mars* version 4.5.x ): [http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/) *(1)*
 * add Co2 update site [http://co2.unica.it/eclipse-plugin/](http://co2.unica.it/eclipse-plugin/)
 * install CO2 SDK Feature
 
