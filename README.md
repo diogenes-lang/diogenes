@@ -7,6 +7,19 @@
 * add Co2 update site [http://co2.unica.it/eclipse-plugin/](http://co2.unica.it/eclipse-plugin/)
 * install `CO2 SDK Feature`
 
+###Settings###
+In order to check the honesty of a maude file (click-right on *.maude* file, click `Honesty (maude)`), you must set two mandatory properties into preferences `Window -> Preferences -> CO2 -> Maude honesty`:
+
+* `CO2 maude directory`: the directory containing the maude honesty checker (i.e. the directory of the repository `tcsunicait/co2-maude`)
+* `Maude executable`: the executable maude file
+
+Optional properties:
+
+* `Delete temporary file`: in order to check honesty, a temp file is created into `CO2 maude directory`
+* `Model-checker timeout`: seconds to wait before kill the maude process (avoid infinite wait)
+* `Print input maude process`: print the process passed to maude executable
+* `Print output stream`: print the maude executable output
+
 ##Plugin Developers##
 I recommend you to install the last Eclipse IDE (*mars* 4.5.\* at the moment) for Java and DSL Developers (see [http://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/marsr](http://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/marsr)), that embed the Xtext module 2.8.\*, required by the plugin. 
 
