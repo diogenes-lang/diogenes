@@ -1,12 +1,15 @@
 syntax: glob
 
-.classpath # eclipse
-.project   # eclipse
-.settings  # eclipse
+#.classpath # eclipse
+#.project   # eclipse
+#.settings  # eclipse
 .launch    # eclipse
 
 bin
 xtend-gen
+src-gen
+xsemantics-gen
 
 *.xtendbin
 *.class
+

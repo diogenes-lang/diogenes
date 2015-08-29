@@ -1,18 +1,14 @@
 /*
  *  Insured-sale
  */
-system it.unica.co2.test.InsuredSale
+system it.unica.co2.insuredsale.InsuredSale
 
 // list of processes will be checked for honesty
 honesty PA
 
 
-contract PIPPO  {
-	pippo! int
-}
-
 contract CA  {
-	order ? int . (amount! int . pay ? (+) abort!.PIPPO)
+	order ? int . (amount! int . pay ? (+) abort!)
 }
 
 contract CI {
@@ -29,7 +25,7 @@ process PA {
 }
 
 process PAY (x:session) {
-    do x amount ! . do x pay ? + do x abort !
+	(n:int)  do x amount ! n . do x pay ? + do x abort !
 }
    
 process INS (x:session) {
