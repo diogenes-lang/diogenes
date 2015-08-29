@@ -42,7 +42,7 @@ You can install it on older Eclipse versions (see [https://eclipse.org/Xtext/dow
 * create files with extension `co2` into the `src` folder (see example below)
 * maude files will be generated automatically into `src-gen`
 * in order to compile the java classes, you must add the following dependencies:
-    * [http://co2.unica.it/tst/co2api.jar](http://co2.unica.it/tst/co2api.jar) (if does not work, set 
+    * [http://co2.unica.it/tst/co2api.jar](http://co2.unica.it/tst/co2api.jar)
     * **co2-honesty-checker** (no jar available, set as project dependency)
 
 - - - - - -
