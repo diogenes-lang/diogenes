@@ -1,5 +1,8 @@
 #Installation#
 
+##Requirements##
+* **Java 1.8**: if you have other java versions, set 1.8 as default. If not possible, make sure to run Eclipse with this java version.
+
 ##Plugin Users##
 * go to `Help -> Install New Software...` from the menu bar and `Add...`
 * add the update site for Xsemantics 1.8.x : [http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8](http://master.dl.sourceforge.net/project/xsemantics/updates/releases/1.8) *(1)*
