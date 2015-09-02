@@ -1,0 +1,31 @@
+system it.unica.co2.voucher.Distributor
+
+honesty P
+
+contract CB {
+	clickPay? . pay? string 
+	+ clickVoucher? . (
+		reject!. pay?string (+) accept!.voucher?string
+	)
+}
+
+contract CV {
+	ok? + no?
+}
+
+process P {
+	(x:session) tell x CB . (
+		do x clickPay?. do x pay? code:string 
+		+ do x clickVoucher? . ((y:session) tell y CV. Q(x,y))
+	)
+}
+
+process Q (x:session, y:session) {
+	do y ok? . do x accept!. do x voucher?
+	+ do y no? . do x reject!. do x pay? code:string
+	+ t. R(x)
+}
+
+process R (x:session){
+	do x reject! . do x pay? code:string
+}

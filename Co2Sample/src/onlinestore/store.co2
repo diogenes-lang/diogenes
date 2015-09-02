@@ -1,0 +1,30 @@
+system it.unica.co2.onlinestore.Store
+
+honesty P
+
+contract C {
+	addToCart? int . ( rec Z . ( addToCart? int . Z + checkout? . Cpay )	)
+}
+
+contract Cpay {
+	rec Y . ( pay? string . (ok! (+) no!.Y (+) abort! ) + cancel? )
+}
+
+process P {
+	(x:session) (tell x C . ask x . do x addToCart? n:int. Padd(x,n))
+}
+
+process Padd (x:session, total:int) {
+	do x addToCart? n:int . Padd(x, total+n)
+	+ do x checkout? . Ppay(x, total)
+}
+
+process Ppay (x:session, amount:int) {
+	do x pay? s:string . Pack(x,amount) + do x cancel?
+}
+
+process Pack (x:session, amount:int) {
+	if amount<100 then do x ok! else do x no!.Ppay(x,amount)
+}
+
+
