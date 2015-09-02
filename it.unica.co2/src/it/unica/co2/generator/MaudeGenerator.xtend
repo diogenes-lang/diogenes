@@ -240,7 +240,7 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	def dispatch String toMaude(DelimitedProcess obj, String padLeft) {
 		if (obj.freeNames.length>0)
-			'''«obj.freeNames.join(" ", [x| '''("«x.name»")'''])» «obj.process.toMaude(padLeft)»'''
+			'''(«obj.freeNames.join(" ", [x| '''("«x.name»")'''])» «obj.process.toMaude(padLeft)»)'''
 		else
 			obj.process.toMaude(padLeft)
 	}
