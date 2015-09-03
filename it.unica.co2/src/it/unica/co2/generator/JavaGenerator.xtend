@@ -229,7 +229,7 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def dispatch String getJavaContract(Recursion c) {
-		c.body.javaContract
+		c.name//c.body.javaContract
 	}
 	
 	def dispatch String getJavaContract(EmptyContract c) {
