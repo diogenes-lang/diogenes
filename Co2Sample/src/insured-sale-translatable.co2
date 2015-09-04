@@ -1,18 +1,14 @@
 /*
  *  Insured-sale
  */
-system it.unica.co2.test.InsuredSaleJava
+system it.unica.co2.insuredsale.InsuredSaleTranslatable
 
 // list of processes will be checked for honesty
 honesty PA
 
 
-contract PIPPO  {
-	pippo! int
-}
-
 contract CA  {
-	order ? int . (amount! int . pay ? (+) abort!.PIPPO)
+	order ? int . (amount! int . pay ? (+) abort!)
 }
 
 contract CI {

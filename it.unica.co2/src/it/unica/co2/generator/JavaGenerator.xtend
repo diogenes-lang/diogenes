@@ -52,6 +52,7 @@ import it.unica.co2.co2.VariableReference
 import java.text.SimpleDateFormat
 import java.util.Date
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
@@ -64,11 +65,13 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	int WAIT_TIMEOUT = 10000
 	int MESSAGE_COUNT = 0
+	int ASK_COUNT = 0
 	
 	override doGenerate(Resource resource, IFileSystemAccess fsa) {
 		
 		MESSAGE_COUNT=0;
 		CONTRACT_NAME_COUNT = 0
+		ASK_COUNT = 0
 		
 		for (e : resource.allContents.toIterable.filter(CO2System)) {
 			var outputFilename = e.systemDeclaration.fullyQualifiedName.toString("/") + ".java"
@@ -289,6 +292,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	
 	def String getRunBody(ProcessDefinition p) {
+		MESSAGE_COUNT=0		//message count can be reset
 		'''
 		@Override
 		public void run() {
@@ -315,10 +319,6 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(DelimitedProcess p) {
 		'''
-		«FOR fn:p.freeNames»
-		«fn.javaType» «fn.name»;
-		«ENDFOR»
-		
 		«p.process.toJava»
 		'''
 	}
@@ -342,18 +342,17 @@ class JavaGenerator extends AbstractIGenerator {
 		}
 		
 		var taus = tellNext.prefixes.filter(Tau)
-		var asks = tellNext.prefixes.filter(Ask)
-		
+		var asks = tellNext.prefixes.filter(Ask)		
 		var useTimeout = taus.size==1 && asks.size==1
 		
-		val publicName = '''_pbl_«tell.session.name»_«tell.contractReference.name»'''
+		val publicName = '''pbl$«tell.session.name»$«tell.contractReference.name»'''
 		
 		'''
 		Public<TST> «publicName» = tell(«tell.contractReference.name»);
 		«IF useTimeout»
 		
 		try {
-			«tell.session.name» = waitForSession(«publicName», «WAIT_TIMEOUT»);
+			Session2<TST> «tell.session.name» = waitForSession(«publicName», «WAIT_TIMEOUT»);
 			«asks.get(0).toJava»
 		}
 		catch(TimeExpiredException e) {
@@ -361,7 +360,7 @@ class JavaGenerator extends AbstractIGenerator {
 			«taus.get(0).toJava»
 		}
 		«ELSE»
-		«tell.session.name» = waitForSession(«publicName»);
+		Session2<TST> «tell.session.name» = waitForSession(«publicName»);
 		
 		«tell.next.toJava»
 		«ENDIF»
@@ -399,48 +398,68 @@ class JavaGenerator extends AbstractIGenerator {
 		val session = inputActions.get(0).session.name
 		val actionNames = inputActions.map[x|x.actionName]
 		
-		var messageName = '''_msg_«session»_«MESSAGE_COUNT++»'''
-		var count=0;
-		'''
+		var messageName = '''msg$«MESSAGE_COUNT++»'''
 		
+		'''		
 		«getLogString('''waiting on '«session»' for actions [«actionNames.join(",")»]''')»
 		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(",", [x|'''"«x»"'''])»);
-			
-		switch («messageName».getLabel()) {
-			
+		
+		«IF inputActions.size==1»
+			«inputActions.get(0).getJavaDoInput(messageName)»
+		«ELSE»				
+		switch («messageName».getLabel()) {			
 			«FOR a : inputActions»
+			
 			case "«a.actionName»":
-				«IF a.variable!=null»
-				«a.variable.javaType» «a.variable.name»_«count»;
-				«IF a.variable.type instanceof IntType»
-				try {
-					«a.variable.name»_«count» = Integer.parseInt(«messageName».getStringValue());
-				}
-				catch (NumberFormatException | ContractException e) {
-					throw new RuntimeException(e);
-				}
-				«ELSE»
-				try {
-					«a.variable.name»_«count» = «messageName».getStringValue();
-				}
-				catch (ContractException e) {
-					throw new RuntimeException(e);
-				}
-				«ENDIF»
-«««				change the free name on next EObject that use a.variable.name»
-				«val countF = count++»
-				«a.eAllContents.filter(FreeName).forEach[x|x.name=a.variable.name+"_"+countF]»
-				«ENDIF»
-				«IF a.next!=null»«a.next.toJava»«ENDIF»
+				logger.log("received [«a.actionName»]");
+				«a.getJavaDoInput(messageName)»
 				break;
 			«ENDFOR»
 			
 			default:
 				throw new IllegalStateException("You should not be here");
 		}
-		
+		«ENDIF»
 		'''
 	}
+	
+	/**
+	 * Change variable name in order to be uniqueon sums, i.e. <code>do a? n:int + do b? n:int</code>.
+	 * All references will be updated.
+	 */
+	def void fixVariableName(DoInput input) {
+		if (input.variable!=null) 
+			input.variable.name=input.variable.name+"$"+input.actionName+"$msg"+MESSAGE_COUNT
+	}
+	
+	def String getJavaDoInput(DoInput input, String messageName) {
+		
+		// change variable name in order to be unique, i.e. like  do a? n:int + do b? n:int
+		input.fixVariableName
+		
+		'''
+		«IF input.variable!=null»
+			«input.variable.javaType» «input.variable.name»;
+			«IF input.variable.type instanceof IntType»
+				try {
+					«input.variable.name» = Integer.parseInt(«messageName».getStringValue());
+				}
+				catch (NumberFormatException | ContractException e) {
+					throw new RuntimeException(e);
+				}
+				«ELSE»
+				try {
+					«input.variable.name» = «messageName».getStringValue();
+				}
+				catch (ContractException e) {
+					throw new RuntimeException(e);
+				}
+			«ENDIF»
+		«ENDIF»
+		«IF input.next!=null»«input.next.toJava»«ENDIF»
+		'''
+	}
+	
 	
 	def dispatch String toJava(IfThenElse p) {
 		'''
@@ -476,11 +495,13 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(Ask ask) {
 		'''
-		«IF ask.public!=null»«ask.session.name» = waitForSession(«ask.public»);«ENDIF»
+		«IF ask.public!=null»
+		«ask.session.name = ask.session.name+"$"+ASK_COUNT++»
+		Session2<TST> «ask.session.name» = waitForSession(«ask.public»);
+		«ENDIF»
 		«IF ask.next!=null»«ask.next.toJava»«ENDIF»
 		'''
 	}
-	
 	
 	
 	

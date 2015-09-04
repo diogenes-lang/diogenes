@@ -1,5 +1,5 @@
 
-system it.unica.co2.blackjack.BlackJackJava
+system it.unica.co2.blackjack.Blackjack
 
 honesty P
 
@@ -16,7 +16,6 @@ contract Cd {
 	)
 }
 
-
 process P {
 	(xd:session) (xp:session) tell xd Cd . ask xd . tell xp Cp . (
 		ask xp . Pplay(xp, xd, 0)
@@ -32,7 +31,7 @@ process Pplay(xp:session, xd:session, np:int) {
 
 process Pdeck(xp:session, xd:session, np:int) {
 	do xd card? n:int . Pcard(xp,xd,np+n,n)
-	+ t . do xp abort! . PabortDcard(xd)
+	+ t . do xp abort! . PabortD(xd)
 }
 
 process Pcard(xp:session, xd:session, np:int, n:int) {
@@ -49,7 +48,7 @@ process Qstand(xp:session, xd:session, np:int, nd:int) {
 
 process Qdeck(xp:session, xd:session, np:int, nd:int) {
 	do xd card? n:int. Qcard(xp,xd,np,nd)
-	+ t . do xp abort!. PabortDcard(xd)
+	+ t . do xp abort!. PabortD(xd)
 }
 
 process Qcard(xp:session, xd:session, np:int, nd:int) {
@@ -65,8 +64,5 @@ process PabortP(xp:session) {
 
 process PabortD(xd:session) {
 	do xd abort! 
-}
-
-process PabortDcard(xd:session) {
-	do xd card? n:int. do xd abort!
+	| do xd card? n:int. do xd abort!
 }

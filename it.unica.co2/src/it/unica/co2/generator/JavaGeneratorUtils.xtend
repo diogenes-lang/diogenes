@@ -48,7 +48,6 @@ class JavaGeneratorUtils {
 
 	def static dispatch IsTranslatable check(Tell tell) {
 		//tell must be followed by a sum containing an ask-prefix and a possible tau
-		println("-->"+tell.next)
 		if (tell.next instanceof ParallelProcesses) {
 			
 			var pp = (tell.next as ParallelProcesses)
@@ -92,9 +91,6 @@ class JavaGeneratorUtils {
 		var tells = sum.prefixes.filter(Tell)
 		var asks = sum.prefixes.filter(Ask)
 
-		println('''size) «sum.prefixes.size»''')
-		println('''prefixes) «sum.prefixes.join(" + ", [x|x.class.simpleName])»''')
-		
 		if (sum.prefixes.size<=1) {
 			return new IsTranslatable(true)
 		}

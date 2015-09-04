@@ -1,9 +1,9 @@
-system it.unica.co2.voucher.Distributor
+system it.unica.co2.voucher.VoucherDishonest
 
 honesty P
 
 contract CB {
-	clickPay? . pay? string 
+	clickPay? . pay? string
 	+ clickVoucher? . (
 		reject! . pay? string (+) accept! . voucher? string
 	)
@@ -36,7 +36,7 @@ process Q1 (x:session, y:session) {
 }
 
 process R1 (x:session, y:session){
-	abortX(x)// | abortY(y)
+	abortX(x) //| abortY(y)
 }
 
 process abortX (x:session){
