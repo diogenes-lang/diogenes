@@ -52,7 +52,6 @@ import it.unica.co2.co2.VariableReference
 import java.text.SimpleDateFormat
 import java.util.Date
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
@@ -405,6 +404,7 @@ class JavaGenerator extends AbstractIGenerator {
 		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(",", [x|'''"«x»"'''])»);
 		
 		«IF inputActions.size==1»
+			logger.log("received [«inputActions.get(0).actionName»]");
 			«inputActions.get(0).getJavaDoInput(messageName)»
 		«ELSE»				
 		switch («messageName».getLabel()) {			
