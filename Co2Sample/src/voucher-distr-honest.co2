@@ -2,6 +2,9 @@ system it.unica.co2.voucher.VoucherHonest
 
 honesty P
 
+/*
+ * CONTRACTS
+ */
 contract CB {
 	clickPay? . pay? string
 	+ clickVoucher? . (
@@ -13,6 +16,9 @@ contract CV {
 	ok? + no?
 }
 
+/* 
+ * PROCESSES
+ */
 process P {
 	(x:session) tell x CB . ask x . (
 		do x clickPay? . do x pay? code:string 

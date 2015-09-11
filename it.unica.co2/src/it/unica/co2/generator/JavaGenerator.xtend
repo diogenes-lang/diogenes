@@ -295,7 +295,7 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 		@Override
 		public void run() {
-			«p.process.toJava»
+			«IF p.process!=null»«p.process.toJava»«ENDIF»
 		}'''
 	}
 	
