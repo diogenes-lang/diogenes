@@ -36,7 +36,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 		for (other: EcoreUtil2.getAllContentsOfType(root, ProcessDefinition)){
 			
 			if (procDef!=other && procDef.getName.equals(other.name)) {
-				error("Process names have to be unique", 
+				error("Process names must be unique", 
 					Co2Package.Literals.PROCESS_DEFINITION__NAME
 				);
 				return;
@@ -96,7 +96,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 		for (other: EcoreUtil2.getAllContentsOfType(root, ContractDefinition)){
 			
 			if (contractDef!=other && contractDef.getName.equals(other.name)) {
-				error("Contract names have to be unique",
+				error("Contract names must be unique",
 					contractDef,
 					Co2Package.Literals.REFERRABLE__NAME
 				);
@@ -112,7 +112,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 			for (other: (internalAction.eContainer() as IntSum).actions){
 				
 				if (internalAction!=other && internalAction.actionName.equals(other.actionName)) {
-					error("Action names have to be unique", 
+					error("Action names must be unique", 
 						Co2Package.Literals.INT_ACTION__ACTION_NAME
 					);
 					return;
@@ -127,7 +127,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 			for (other: (externalAction.eContainer() as ExtSum).actions){
 				
 				if (externalAction!=other && externalAction.actionName.equals(other.actionName)) {
-					error("Action names have to be unique", 
+					error("Action names must be unique", 
 						Co2Package.Literals.EXT_ACTION__ACTION_NAME
 					);
 					return;

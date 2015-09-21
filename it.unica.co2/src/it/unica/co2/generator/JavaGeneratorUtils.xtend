@@ -103,9 +103,14 @@ class JavaGeneratorUtils {
 			if (input.size==0 && asks.size==0)	//or input or asks
 				return new IsTranslatable(false, sum, "ask and do? are not allowed on the same sum")
 
+			var inputActionNames = input.map[x|x.actionName].toSet
+
+			if (inputActionNames.size!=input.size)
+				return new IsTranslatable(false, sum, "action name repeated between two or more prefix")
+
 			//prefixes are ok, check for session
 			var String session;
-			
+						
 			for (var i=0; i<sum.prefixes.size; i++){
 				var prefix = sum.prefixes.get(i)
 				var pSession = prefix.session;

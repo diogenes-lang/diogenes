@@ -227,14 +227,26 @@ rule Tell
 	G |= Tell tell
 from {
 	G ||- tell.session : var Type fnType		// get FreeName type
-	fnType instanceof SessionType				// check the type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source tell
+			feature Co2Package::eINSTANCE.tell_Session
+	}
 }
 
 rule Ask
 	G |= Ask ask
 from {
 	G ||- ask.session : var Type fnType		// get FreeName type
-	fnType instanceof SessionType				// check the type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source ask
+			feature Co2Package::eINSTANCE.ask_Session
+	}
 }
 
 rule DoInput
@@ -281,7 +293,7 @@ from {
 		fail
 			error "invalid type '"+stringRep(sessionType)+"', 'session' expected"			
 			source doOutput
-			feature Co2Package::eINSTANCE.doInput_Session
+			feature Co2Package::eINSTANCE.doOutput_Session
 	}
 	
 	/*
