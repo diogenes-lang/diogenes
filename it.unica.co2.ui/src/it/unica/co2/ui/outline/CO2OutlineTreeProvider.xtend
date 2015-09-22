@@ -21,9 +21,6 @@ import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
  */
 class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 	
-	
-//	s
-    
     //cut off <unamed> due to "." token
 //    def void _createNode(IOutlineNode parentNode, AbstractNextProcess next) {
 //    	if (next.nextProcess!=null)
@@ -34,33 +31,33 @@ class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 //    }
     
 	//cut off + if the sum is single element
-    def void _createNode(IOutlineNode parentNode, Sum sum) {
-    	if (sum.prefixes.length==1)
-			createNode(parentNode, sum.prefixes.get(0))		//cut
-		else
-			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
-    }
+//    def void _createNode(IOutlineNode parentNode, Sum sum) {
+//    	if (sum.prefixes.length==1)
+//			createNode(parentNode, sum.prefixes.get(0))		//cut
+//		else
+//			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
+//    }
     
     //cut off | if the sum is single element
-    def void _createNode(IOutlineNode parentNode, ParallelProcesses paral) {
-    	if (paral.processes.length==1)
-			createNode(parentNode, paral.processes.get(0))		//cut
-		else
-			createChildren(createEObjectNode(parentNode,paral), paral)	//normal behavior
-    }
+//    def void _createNode(IOutlineNode parentNode, ParallelProcesses paral) {
+//    	if (paral.processes.length==1)
+//			createNode(parentNode, paral.processes.get(0))		//cut
+//		else
+//			createChildren(createEObjectNode(parentNode,paral), paral)	//normal behavior
+//    }
     
     //cut off free names if no one is defined
-    def void _createNode(IOutlineNode parentNode, DelimitedProcess process) {
-    	if (process.freeNames.length==0)
-			createNode(parentNode, process.process)		//cut
-		else
-			createChildren(createEObjectNode(parentNode,process), process)	//normal behavior
-    }
+//    def void _createNode(IOutlineNode parentNode, DelimitedProcess process) {
+//    	if (process.freeNames.length==0)
+//			createNode(parentNode, process.process)		//cut
+//		else
+//			createChildren(createEObjectNode(parentNode,process), process)	//normal behavior
+//    }
     
     //
-    def void _createNode(IOutlineNode parentNode, ProcessCall process) {
-		createNode(parentNode, process.reference)		//cut
-    }
+//    def void _createNode(IOutlineNode parentNode, ProcessCall process) {
+//		createNode(parentNode, process.reference)		//cut
+//    }
 //    def void _createNode(IOutlineNode parentNode, ProcessReference process) {
 //		createChildren(createEObjectNode(parentNode,process), process)
 //    }
@@ -85,18 +82,18 @@ class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 //    }
     
     //cut off (+) if the sum is single element
-    def void _createNode(IOutlineNode parentNode, IntSum sum) {
-    	if (sum.actions.length==1)
-			createNode(parentNode, sum.actions.get(0))		//cut
-		else
-			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
-    }
+//    def void _createNode(IOutlineNode parentNode, IntSum sum) {
+//    	if (sum.actions.length==1)
+//			createNode(parentNode, sum.actions.get(0))		//cut
+//		else
+//			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
+//    }
     
     //cut off + if the sum is single element
-    def void _createNode(IOutlineNode parentNode, ExtSum sum) {
-    	if (sum.actions.length==1)
-			createNode(parentNode, sum.actions.get(0))		//cut
-		else
-			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
-    }
+//    def void _createNode(IOutlineNode parentNode, ExtSum sum) {
+//    	if (sum.actions.length==1)
+//			createNode(parentNode, sum.actions.get(0))		//cut
+//		else
+//			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
+//    }
 }

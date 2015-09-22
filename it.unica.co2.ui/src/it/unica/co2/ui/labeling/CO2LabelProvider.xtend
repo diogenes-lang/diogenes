@@ -23,6 +23,7 @@ import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
+import java.beans.Expression
 
 /**
  * Provides labels for EObjects.
@@ -36,100 +37,105 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		super(delegate);
 	}
 
-	def image(ProcessDefinition ele) {
-		'process.png'
-	}
-	
-	
-	
-	def String text(ProcessDefinition ele) {
-		var name = ele.name?: '<anonymous>'
-		if (ele.params.length!=0)
-			'''«name» «ele.params.join("(", ",", ")", [x|x.name])»'''
-		else
-			name
-	}
-	
-	def text(DelimitedProcess ele) {
-		ele.freeNames.join(" ", [ FreeName x | "("+x.name+")"])
-	}
-	
-	def text(Sum ele) {
-		"+"
-	}
-	
-	def text(ParallelProcesses ele) {
-		"|"
-	}
-	
-	def text(Tell ele) {
-		if (ele.contractReference!=null)
-			"tell " + ele.session + " [" + ele.contractReference.name + "]"
-		else
-			"tell " + ele.session
-	}
-	
-	def text(DoInput ele) {
-		"do "+ ele.session + " " + ele.actionName + "?"
-	}
-	
-	def text(DoOutput ele) {
-		"do "+ ele.session + " " + ele.actionName + "!"
-	}
-	
-	def text(Tau ele) {
-		"\u03c4"
-	}
-	
-	def text(IfThenElse ele) {
-		"ifThenElse"
-	}
-		
-	def String text(ProcessCall ele) {
-		var name = ele.reference.name?: '<anonymous>'
-		if (ele.params.length!=0)
-			'''«name» «ele.params.join("(", ",", ")", [x|x.toString])»'''
-		else
-			name
-	}
+//	def image(ProcessDefinition ele) {
+//		'process.png'
+//	}
+//	
+//	
+//	
+//	def String text(ProcessDefinition ele) {
+//		var name = ele.name?: '<anonymous>'
+//		if (ele.params.length!=0)
+//			'''«name» «ele.params.join("(", ",", ")", [x|x.name])»'''
+//		else
+//			name
+//	}
+//
+//	
+//	def text(DelimitedProcess ele) {
+//		ele.freeNames.join(" ", [ FreeName x | "("+x.name+")"])
+//	}
+//	
+//	def text(Sum ele) {
+//		"+"
+//	}
+//	
+//	def text(ParallelProcesses ele) {
+//		"|"
+//	}
+//	
+//	def text(Tell ele) {
+//		if (ele.contractReference!=null)
+//			"tell " + ele.session + " [" + ele.contractReference.name + "]"
+//		else
+//			"tell " + ele.session
+//	}
+//	
+//	def text(DoInput ele) {
+//		"do "+ ele.session + " " + ele.actionName + "?"
+//	}
+//	
+//	def text(DoOutput ele) {
+//		"do "+ ele.session + " " + ele.actionName + "!"
+//	}
+//	
+//	def text(Tau ele) {
+//		"\u03c4"
+//	}
+//	
+//	def text(IfThenElse ele) {
+//		"ifThenElse"
+//	}
+//		
+//	def String text(ProcessCall ele) {
+//		var name = ele.reference.name?: '<anonymous>'
+//		if (ele.params.length!=0)
+//			'''«name» «ele.params.join("(", ",", ")", [x| text(x).toString])»'''
+//		else
+//			name
+//	}
+//	
+//	def String text(Expression e) {
+//		"exp"
+//	}
 	
 
 	// Labels and icons can be computed like this:
-	def image(ContractDefinition ele) {
-		'contract.png'
-	}
+//	def image(ContractDefinition ele) {
+//		'contract.png'
+//	}
 
 //	def image(AbstractNextContract ele) {
 //		if (ele.contractReference != null)
 //			'contract.png'
 //	}
-
-	def image(IntAction ele) {
-		'output.png'
-	}
-
-	def image(ExtAction ele) {
-		'input.png'
-	}
-
-	def text(ContractDefinition ele) {
-		if (ele.name != null)
-			ele.name
-		else
-			'<anonymous>'
-	}
-
-	def text(IntSum ele) {
-		"(+)"
-	}
-
-	def text(ExtSum ele) {
-		"+"
-	}
-
-	def text(Recursion ele) {
-		"rec " + ele.name
-	}
+//
+//	def image(IntAction ele) {
+//		'output.png'
+//	}
+//
+//	def image(ExtAction ele) {
+//		'input.png'
+//	}
+//
+//	def text(ContractDefinition ele) {
+//		if (ele.name != null)
+//			ele.name
+//		else
+//			'<anonymous>'
+//	}
+//
+//	def text(IntSum ele) {
+//		"(+)"
+//	}
+//
+//	def text(ExtSum ele) {
+//		"+"
+//	}
+//
+//	def text(Recursion ele) {
+//		"rec " + ele.name
+//	}
 
 //	def text(IntAction ele) {
 //		if (ele.type != null) {
