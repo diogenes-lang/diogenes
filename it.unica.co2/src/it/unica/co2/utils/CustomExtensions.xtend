@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
+import org.eclipse.xtext.xbase.lib.Functions.Function1
 
 class CustomExtensions {
 	
@@ -21,18 +22,40 @@ class CustomExtensions {
 		return Scopes.scopeFor(candidates);									// return the scope
 	}
 	
-	/*
-	 * utils: recursively find the first Eobject of the given class (from <obj> up to <clazz>)
+	/**
+	 * recursively find the first Eobject of the given <code>clazz</code> (from <code>obj</code> up to CO2System)
 	 */
 	def static <T extends EObject> T getFirstUpOccurrenceOf(EObject obj, Class<T> clazz) {
-		
-		if (obj instanceof CO2System)
-			return null
+		getFirstUpOccurrenceOf(obj, clazz, [x| x instanceof CO2System])
+	}
+	
+	/**
+	 * recursively find the first Eobject of the given <code>clazz</code> (from <code>obj</code> up to <code>upToClazz</code>)
+	 * 
+	 * @param obj the starting point
+	 * @param clazz the class of the object you are searching
+	 * @param uToClazz the ending point 
+	 */
+	def static <T extends EObject, T1 extends EObject> T getFirstUpOccurrenceOf(EObject obj, Class<T> clazz, Function1<EObject, Boolean> predicate) {
 		
 		if (clazz.isInstance(obj))
 			return clazz.cast(obj)
+		
+		if (predicate.apply(obj))	// stop search
+			return null
+		else
+			return getFirstUpOccurrenceOf(obj.eContainer, clazz, predicate);
+	}
+	
+	def static EObject searchTop(EObject obj, Function1<EObject, Boolean> predicate) {
+		
+		if (obj instanceof CO2System)
+			return null				// emergency stop
 
-		return getFirstUpOccurrenceOf(obj.eContainer, clazz);
+		if (predicate.apply(obj))	// stop search
+			return obj
+		else
+			return searchTop(obj.eContainer, predicate);
 	}
 	
 	/*

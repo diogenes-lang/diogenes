@@ -6,10 +6,18 @@ import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.Prefix
+import it.unica.co2.co2.ProcessCall
+import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.VariableReference
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.xbase.lib.Functions.Function1
+
+import static extension it.unica.co2.utils.CustomExtensions.*
+import it.unica.co2.co2.DelimitedProcess
 
 class JavaGeneratorUtils {
 	
@@ -129,6 +137,41 @@ class JavaGeneratorUtils {
 		}
 	}
 	
+	def static dispatch IsTranslatable check(ProcessCall pCall) {
+		
+		var varRefs = pCall.eAllContents.filter(VariableReference).filter[x|(x.ref.type instanceof SessionType)]
+		
+		for (v : varRefs.toIterable) {
+					
+			var Function1<EObject,Boolean> predicate = [x|
+				x instanceof ProcessDefinition ||
+				(x instanceof DelimitedProcess && (x as DelimitedProcess).freeNames.contains(v.ref)) ||
+				(x instanceof Ask && (x as Ask).session==v.ref)
+			]
+			
+			val result = v.searchTop(predicate)
+			
+			if (result instanceof Ask) {
+				// everything ok
+				return new IsTranslatable(true);
+			}
+			else if (result instanceof ProcessDefinition) {
+				if ( (result as ProcessDefinition).params.contains(v.ref) ) {
+					// the session in passed as parameter, ok
+					return new IsTranslatable(true);
+				}
+				else {
+					return new IsTranslatable(false, pCall, '''you must ask the session «v.ref.name» before passing it as parameter''');
+				}
+			}
+			else if (result instanceof DelimitedProcess) {
+				//variable redefined, no ask
+				return new IsTranslatable(false, pCall, '''you must ask the session «v.ref.name» before passing it as parameter''');
+			}
+		}
+		
+		return new IsTranslatable(false, pCall, "unexpected error: please report to the developer");
+	}
 	
 	def static dispatch String getSession(DoInput p) {
 		p.session.name
@@ -141,6 +184,13 @@ class JavaGeneratorUtils {
 	def static dispatch String getSession(Prefix p) {
 		null
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	def static String getLogString(String str){
