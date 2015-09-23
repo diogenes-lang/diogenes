@@ -108,14 +108,12 @@
   <eClassifiers xsi:type="ecore:EClass" name="Type">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ContractDefinition" eSuperTypes="#//Referrable">
+  <eClassifiers xsi:type="ecore:EClass" name="ContractDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Contract">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Contract"
-        containment="true"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Contract"/>
   <eClassifiers xsi:type="ecore:EClass" name="IntSum" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
         eType="#//IntAction" containment="true"/>
@@ -123,10 +121,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="ExtSum" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
         eType="#//ExtAction" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Recursion" eSuperTypes="#//Contract #//Referrable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="body" eType="#//Contract"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntAction">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -143,10 +137,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ContractReference" eSuperTypes="#//Contract">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//Referrable"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Referrable">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//ContractDefinition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ActionType"/>
   <eClassifiers xsi:type="ecore:EClass" name="OrExpression" eSuperTypes="#//Expression">

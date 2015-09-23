@@ -3,21 +3,17 @@
  */
 package it.unica.co2.scoping
 
-import com.google.common.base.Predicate
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.Recursion
 import it.unica.co2.co2.Tell
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
-import org.eclipse.xtext.scoping.impl.FilteringScope
 
 import static extension it.unica.co2.utils.CustomExtensions.*
 
@@ -84,8 +80,9 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 */
 	def IScope scope_Referrable(ContractReference ctx, EReference ref) {
 		Scopes.scopeFor(
-			scope_ContractDefinition(ctx, ref).allElements.map[x|x.EObjectOrProxy],
-			scope_Recursion(ctx, ref)
+			scope_ContractDefinition(ctx, ref).allElements.map[x|x.EObjectOrProxy]
+//			,
+//			scope_Recursion(ctx, ref)
 		)
 	}
 
@@ -93,28 +90,28 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * Recursion reference: 
 	 * refers only to recursions defined before ctx but into the same contract definition
 	 */
-	def IScope scope_Recursion(ContractReference ctx, EReference ref) {
-		return definedRecursions(ctx.eContainer);
-	}
-
-	/*
-	 * utils: recursively bind all rec definition until ContractDefinition is reached
-	 */
-	def dispatch IScope definedRecursions(EObject cont) {
-		return definedRecursions(cont.eContainer);
-	}
-
-	def dispatch IScope definedRecursions(Recursion rec) {
-		return Scopes.scopeFor(
-			newArrayList(rec)
-			,
-			definedRecursions(rec.eContainer) // outer
-		);
-	}
-
-	def dispatch IScope definedRecursions(ContractDefinition obj) {
-		return IScope.NULLSCOPE; // stop recursion
-	}
+//	def IScope scope_Recursion(ContractReference ctx, EReference ref) {
+//		return definedRecursions(ctx.eContainer);
+//	}
+//
+//	/*
+//	 * utils: recursively bind all rec definition until ContractDefinition is reached
+//	 */
+//	def dispatch IScope definedRecursions(EObject cont) {
+//		return definedRecursions(cont.eContainer);
+//	}
+//
+//	def dispatch IScope definedRecursions(Recursion rec) {
+//		return Scopes.scopeFor(
+//			newArrayList(rec)
+//			,
+//			definedRecursions(rec.eContainer) // outer
+//		);
+//	}
+//
+//	def dispatch IScope definedRecursions(ContractDefinition obj) {
+//		return IScope.NULLSCOPE; // stop recursion
+//	}
 
 
 
@@ -124,15 +121,17 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 */
 	def IScope scope_ContractDefinition(ContractReference ctx, EReference ref) {
 		var scope = ctx.getIScopeForAllContentsOfClass(ContractDefinition);
-		val contractDef = ctx.getFirstUpOccurrenceOf(ContractDefinition)
-
-		new FilteringScope(scope, new Predicate<IEObjectDescription>() {
-
-			override apply(IEObjectDescription input) {
-				return input.getEObjectOrProxy() != contractDef;
-			}
-
-		});
+//		val contractDef = ctx.getFirstUpOccurrenceOf(ContractDefinition)
+//
+//		new FilteringScope(scope, new Predicate<IEObjectDescription>() {
+//
+//			override apply(IEObjectDescription input) {
+//				return input.getEObjectOrProxy() != contractDef;
+//			}
+//
+//		});
+		
+		return scope;
 	}
 	
 	/*

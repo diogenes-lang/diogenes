@@ -92,19 +92,15 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Type/value"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ContractDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ContractDefinition/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractDefinition/contract"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Contract">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Contract/next"/>
-    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Contract"/>
     <genClasses ecoreClass="CO2.ecore#//IntSum">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntSum/actions"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ExtSum">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtSum/actions"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Recursion">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Recursion/body"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//IntAction">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//IntAction/actionName"/>
@@ -118,9 +114,6 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ContractReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractReference/ref"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Referrable">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Referrable/name"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ActionType"/>
     <genClasses ecoreClass="CO2.ecore#//OrExpression">

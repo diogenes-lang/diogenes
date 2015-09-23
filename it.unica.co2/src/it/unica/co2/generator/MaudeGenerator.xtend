@@ -5,7 +5,6 @@ import it.unica.co2.co2.ActionType
 import it.unica.co2.co2.Ask
 import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.Co2Factory
-import it.unica.co2.co2.Contract
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
@@ -25,7 +24,6 @@ import it.unica.co2.co2.IntType
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.Recursion
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringType
@@ -74,13 +72,12 @@ class MaudeGenerator extends AbstractIGenerator{
 		var contracts = co2System.contractsAndProcessesDeclaration.contracts.toSet
 		
 		//fix anonymous tells
-		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("TELL-CONTR#")].toSet )
-		
-		
+		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("TELL-CONTR")].toSet )
+			
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet
 		var contractNames = contracts.map[c | c.name].toSet
-		var recContractNames = co2System.eAllContents.filter(Recursion).map[c | c.name].toSet
+//		var recContractNames = co2System.eAllContents.filter(Recursion).map[c | c.name].toSet
 		
 		return '''
 		***
@@ -92,7 +89,8 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		mod «moduleName» is
 		
-		    including CO2-ABS-SEM .
+		«TAB»including CO2-ABS-SEM .
+		«TAB»including CONTR-EQ .
 		«TAB»including STRING .
 		
 		«TAB»subsort String < ActName .
@@ -100,12 +98,32 @@ class MaudeGenerator extends AbstractIGenerator{
 		«TAB»ops unit int string : -> BType [ctor] .
 		«TAB»ops exp : -> Expression [ctor] .
 		
-		«IF recContractNames.size>0»
-		«TAB»ops «recContractNames.join(" ")» : -> Var [ctor] .
+		«TAB»**********************************
+		«TAB»***          CONTRACTS         ***
+		«TAB»**********************************
+		«TAB»op env : -> CEnv .
+		«IF contractNames.size>0»
+		«TAB»ops «contractNames.join(" ", [x|x+"env"])» : -> Var [ctor] .
 		«ENDIF»
 		«IF contractNames.size>0»
 		«TAB»ops «contractNames.join(" ")» : -> UniContract .
 		«ENDIF»
+		
+		«IF contracts.size>0»
+		«TAB»*** env contracts
+		«TAB»eq env = (
+		«TAB»«TAB»«contracts.join("\n"+TAB+TAB+"&\n"+TAB+TAB, [c| c.maudeCode])»
+		«TAB») .
+		
+		«TAB»*** list of contracts
+		«FOR contract : contracts»
+		«TAB»eq «contract.name» = defToRec(«contract.name»env, env) .
+		«ENDFOR»
+		«ENDIF»
+		
+		«TAB»**********************************
+		«TAB»***          PROCESSES         ***
+		«TAB»**********************************
 		«IF processNames.size>0»
 		«TAB»ops «processNames.join(" ")» : -> Process .
 		«ENDIF»
@@ -113,18 +131,13 @@ class MaudeGenerator extends AbstractIGenerator{
 		«TAB»ops «envProcessNames.join(" ")» : -> ProcIde .
 		«ENDIF»
 		
-		«TAB»*** list of contracts
-		«FOR contract : contracts»
-		«TAB»«contract.maudeCode»
-		«ENDFOR»
-		
 		«TAB»*** list of processes
 		«FOR process : processes»    
 		«TAB»«process.toMaude(TAB)»
 		«ENDFOR»
 		
 		«IF envProcesses.size>0»
-		«TAB»*** env
+		«TAB»*** env processes
 		«TAB»eq env = (
 		«TAB»«TAB»«envProcesses.join("\n"+TAB+TAB+"&\n"+TAB+TAB, [p| p.toMaude(TAB+TAB)])»
 		«TAB») .
@@ -146,11 +159,7 @@ class MaudeGenerator extends AbstractIGenerator{
 	 * maude code generation
 	 */
 	def dispatch String maudeCode(ContractDefinition contractDef) {
-		'''eq «contractDef.name» = «IF contractDef.contract!=null»«contractDef.contract.maudeCode»«ELSE»0«ENDIF» .'''
-	}
-	
-	def dispatch String maudeCode(Recursion obj) {
-		'''( rec «obj.name» . ( «obj.body.maudeCode» ) )'''
+		'''«contractDef.name»env =def «IF contractDef.contract!=null»«contractDef.contract.maudeCode»«ELSE»0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(IntSum obj) {
@@ -180,12 +189,9 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(ContractReference obj) {
-		obj.ref.name
+		obj.ref.name+"env"
 	}
-	
-	def dispatch String maudeCode(Contract obj) {
-		obj.next.maudeCode
-	}
+
 	
 	
 	/*

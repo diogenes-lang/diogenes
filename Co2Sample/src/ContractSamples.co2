@@ -32,42 +32,42 @@ contract c5{
  * simple recursion
  */
 contract c6{
-	rec Y . (a!. Y)
+	a!. c6
 }
 
 contract c7{
-	rec X . a? . X
+	a? . c7
 }
 
 contract c8{
 	a!.(a! (+) b!) (+) b!.(a? + b?) (+) c!.c?.c7
 }
 
-contract scope {
-	a!. (
-		rec A . (
-			a!.A (+) b!. (
-				rec B. (
-					a?.A + b?.B + c?.(
-						rec C. (
-							a!.A (+) b!.B (+) c!.C 
-						)
-					)
-				)
-			)
-		)
-	) (+) b!. nil
-}
-
-contract shadows {
-	rec A. (
-		a!.A (+) b!. (
-			rec A. (	//hide the first definition
-				c!. A	//reference to the last declaration
-			)
-		)
-	)
-}
+//contract scope {
+//	a!. (
+//		rec A . (
+//			a!.A (+) b!. (
+//				rec B. (
+//					a?.A + b?.B + c?.(
+//						rec C. (
+//							a!.A (+) b!.B (+) c!.C 
+//						)
+//					)
+//				)
+//			)
+//		)
+//	) (+) b!. nil
+//}
+//
+//contract shadows {
+//	rec A. (
+//		a!.A (+) b!. (
+//			rec A. (	//hide the first definition
+//				c!. A	//reference to the last declaration
+//			)
+//		)
+//	)
+//}
 
 /*
  * Contracts with name

@@ -16,7 +16,6 @@ import it.unica.co2.co2.HonestyDeclaration
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.Recursion
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
 import org.eclipse.emf.ecore.EObject
@@ -98,7 +97,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 			if (contractDef!=other && contractDef.getName.equals(other.name)) {
 				error("Contract names must be unique",
 					contractDef,
-					Co2Package.Literals.REFERRABLE__NAME
+					Co2Package.Literals.CONTRACT_DEFINITION__NAME
 				);
 				return;
 			}
@@ -155,27 +154,27 @@ class CO2Validator extends CO2TypeSystemValidator {
 		);
 	}
 	
-	@Check
-	def void checkRecursionDefinition(Recursion recursion) {
-		this.checkRecursionID(recursion.eContainer, recursion.name)
-	}
-	
-	def dispatch void checkRecursionID(EObject obj, String name) {
-    	checkRecursionID(obj.eContainer, name)
-    }
-    
-    def dispatch void checkRecursionID(Recursion obj, String name) {
-    	if (obj.name.equals(name)) {
-    		warning("You are hiding an existing name",
-    			Co2Package.Literals.REFERRABLE__NAME
-    		)
-    	}
-    	checkRecursionID(obj.eContainer, name)
-    }
-    
-    def dispatch void checkRecursionID(ContractDefinition obj, String name) {
-    	// stop recursion
-    }
+//	@Check
+//	def void checkRecursionDefinition(Recursion recursion) {
+//		this.checkRecursionID(recursion.eContainer, recursion.name)
+//	}
+//	
+//	def dispatch void checkRecursionID(EObject obj, String name) {
+//    	checkRecursionID(obj.eContainer, name)
+//    }
+//    
+//    def dispatch void checkRecursionID(Recursion obj, String name) {
+//    	if (obj.name.equals(name)) {
+//    		warning("You are hiding an existing name",
+//    			Co2Package.Literals.REFERRABLE__NAME
+//    		)
+//    	}
+//    	checkRecursionID(obj.eContainer, name)
+//    }
+//    
+//    def dispatch void checkRecursionID(ContractDefinition obj, String name) {
+//    	// stop recursion
+//    }
 	
 	
 	/*

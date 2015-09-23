@@ -203,9 +203,13 @@ ContractDefinition:
 Contract:
 	IntSum | 
 	ExtSum | 
-	Recursion |
-	{EmptyContract} value="nil" |
+//	Recursion |
+	EmptyContract |
 	"(" Contract ")"
+;
+
+EmptyContract:
+	value="nil"
 ;
 
 IntSum:
@@ -216,15 +220,16 @@ ExtSum:
 	actions+=ExtAction ( "+"  actions+=ExtAction)*
 ;
 
-Recursion:
-	"rec" name=ID "." body=NextContract
-;
+//Recursion:
+//	"rec" name=ID "." body=NextContract
+//;
 
 NextContract returns Contract:
 	SingleIntSum |
 	SingleExtSum |
-	{EmptyContract} value="nil" |
-	"(" Contract ")"
+	EmptyContract |
+	"(" Contract ")" |
+	{ContractReference}	ref=[ContractDefinition]
 ;
 
 SingleIntSum returns IntSum:
@@ -236,25 +241,25 @@ SingleExtSum returns ExtSum:
 ;
 
 IntAction:
-	actionName=ID "!" (type=ActionType)? ("." next=AbstractNextContract)?
+	actionName=ID "!" (type=ActionType)? ("." next=(NextContract))?
 ;
 
 ExtAction:
-	actionName=ID "?" (type=ActionType)? ("." next=AbstractNextContract)?
+	actionName=ID "?" (type=ActionType)? ("." next=(NextContract))?
 ;
 
-AbstractNextContract returns Contract:
-	next=NextContract |
-	ContractReference
-;
+//AbstractNextContract returns Contract:
+//	next=NextContract |
+//	ContractReference
+//;
 
 ContractReference:
-	ref=[Referrable]
+	ref=[ContractDefinition]
 ;
 
-Referrable:
-	ContractDefinition | Recursion
-;
+//Referrable:
+//	ContractDefinition | Recursion
+//;
 
 ActionType: 
 	{UnitActionType} "unit" |

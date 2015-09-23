@@ -4,26 +4,8 @@
 package it.unica.co2.ui.labeling
 
 import com.google.inject.Inject
-import it.unica.co2.co2.ContractDefinition
-import it.unica.co2.co2.DelimitedProcess
-import it.unica.co2.co2.DoInput
-import it.unica.co2.co2.DoOutput
-import it.unica.co2.co2.ExtAction
-import it.unica.co2.co2.ExtSum
-import it.unica.co2.co2.FreeName
-import it.unica.co2.co2.IfThenElse
-import it.unica.co2.co2.IntAction
-import it.unica.co2.co2.IntSum
-import it.unica.co2.co2.ParallelProcesses
-import it.unica.co2.co2.ProcessCall
-import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.Recursion
-import it.unica.co2.co2.Sum
-import it.unica.co2.co2.Tau
-import it.unica.co2.co2.Tell
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
-import java.beans.Expression
 
 /**
  * Provides labels for EObjects.

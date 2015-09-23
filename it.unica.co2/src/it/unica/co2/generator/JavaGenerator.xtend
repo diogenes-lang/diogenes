@@ -11,7 +11,6 @@ import it.unica.co2.co2.BooleanType
 import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.Co2Factory
 import it.unica.co2.co2.Comparison
-import it.unica.co2.co2.Contract
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
@@ -39,7 +38,6 @@ import it.unica.co2.co2.Prefix
 import it.unica.co2.co2.Process
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.Recursion
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringLiteral
@@ -89,7 +87,7 @@ class JavaGenerator extends AbstractIGenerator {
 		var honestyProcess = if (co2System.honesty!=null) co2System.honesty.process else null
 		
 		//fix recursion name
-		contractDefinitions.fixRecursions()
+//		contractDefinitions.fixRecursions()
 		
 		//fix anonymous tells
 		contractDefinitions.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("_tell_contr_")].toSet )
@@ -164,7 +162,7 @@ class JavaGenerator extends AbstractIGenerator {
 		 */
 		«FOR c : contracts»
 			«c.javaContractDeclaration»
-			«c.javaRecursionContractDeclaration»
+«««			«c.javaRecursionContractDeclaration»
 			«ENDFOR»
 		«ENDIF»
 		'''
@@ -180,7 +178,7 @@ class JavaGenerator extends AbstractIGenerator {
 		static {
 			«FOR c : contracts»
 			«c.javaContractDefinition»
-			«c.javaRecursionContractDefinition»
+«««			«c.javaRecursionContractDefinition»
 			«ENDFOR»
 		«ENDIF»
 		}
@@ -191,32 +189,29 @@ class JavaGenerator extends AbstractIGenerator {
 		'''private static ContractWrapper «c.name» = wrapper();'''
 	}
 
-	def String getJavaRecursionContractDeclaration(ContractDefinition c) {
-		var recursions = c.eAllContents.filter(Recursion).toSet
-		'''
-		«FOR r : recursions»
-		private static Recursion «r.name» = recursion();
-		«ENDFOR»
-		'''
-	}
+//	def String getJavaRecursionContractDeclaration(ContractDefinition c) {
+//		var recursions = c.eAllContents.filter(Recursion).toSet
+//		'''
+//		«FOR r : recursions»
+//		private static Recursion «r.name» = recursion();
+//		«ENDFOR»
+//		'''
+//	}
 	
 	def String getJavaContractDefinition(ContractDefinition c) {
 		c.contract = c.contract?: Co2Factory.eINSTANCE.createEmptyContract
 		'''«c.name».setContract(«c.contract.javaContract»);'''
 	}
 	
-	def String getJavaRecursionContractDefinition(ContractDefinition c) {
-		var recursions = c.eAllContents.filter(Recursion).toSet
-		'''
-		«FOR r : recursions»
-		«r.name».setContract(«r.body.javaContract»);
-		«ENDFOR»
-		'''
-	}
-	
-	def dispatch String getJavaContract(Contract c) {
-		if (c.next!=null) c.next.javaContract else ""
-	}
+//	def String getJavaRecursionContractDefinition(ContractDefinition c) {
+//		var recursions = c.eAllContents.filter(Recursion).toSet
+//		'''
+//		«FOR r : recursions»
+//		«r.name».setContract(«r.body.javaContract»);
+//		«ENDFOR»
+//		'''
+//	}
+
 	
 	def dispatch String getJavaContract(IntSum c) {
 		'''internalSum()«FOR a : c.actions»«a.getJavaIntAction»«ENDFOR»'''
@@ -230,9 +225,9 @@ class JavaGenerator extends AbstractIGenerator {
 		c.ref.name
 	}
 	
-	def dispatch String getJavaContract(Recursion c) {
-		c.name//c.body.javaContract
-	}
+//	def dispatch String getJavaContract(Recursion c) {
+//		c.name//c.body.javaContract
+//	}
 	
 	def dispatch String getJavaContract(EmptyContract c) {
 		'''null'''

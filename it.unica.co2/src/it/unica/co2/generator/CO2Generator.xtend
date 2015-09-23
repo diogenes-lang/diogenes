@@ -23,6 +23,7 @@ class CO2Generator implements IGenerator {
 		
 		maudeGenerator.doGenerate(resource, fsa)
 		javaGenerator.doGenerate(resource, fsa)
+
 	}
 	
 }
