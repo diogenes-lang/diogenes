@@ -83,10 +83,6 @@ Prefix:
 	Ask			("." next=Next)?
 ;
 
-PrefixWithSession:
-	Tell | DoOutput | DoInput | Ask 
-;
-
 Next returns Process:
 	EmptyProcess |
 	SingleSum |
@@ -203,7 +199,6 @@ ContractDefinition:
 Contract:
 	IntSum | 
 	ExtSum | 
-//	Recursion |
 	EmptyContract |
 	"(" Contract ")"
 ;
@@ -219,10 +214,6 @@ IntSum:
 ExtSum:
 	actions+=ExtAction ( "+"  actions+=ExtAction)*
 ;
-
-//Recursion:
-//	"rec" name=ID "." body=NextContract
-//;
 
 NextContract returns Contract:
 	SingleIntSum |
@@ -248,18 +239,9 @@ ExtAction:
 	actionName=ID "?" (type=ActionType)? ("." next=(NextContract))?
 ;
 
-//AbstractNextContract returns Contract:
-//	next=NextContract |
-//	ContractReference
-//;
-
 ContractReference:
 	ref=[ContractDefinition]
 ;
-
-//Referrable:
-//	ContractDefinition | Recursion
-//;
 
 ActionType: 
 	{UnitActionType} "unit" |
