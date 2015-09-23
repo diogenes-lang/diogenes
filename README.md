@@ -116,6 +116,10 @@ process INS (x:session) {
 2015-04-03: version **0.0.1** released!
 
 #Changelog
+**1.1.1**
+
+* fix execution environment setup (not released)
+
 **1.1.0**
 
 * added support to parallel processes
