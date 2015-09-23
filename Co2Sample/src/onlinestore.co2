@@ -3,11 +3,15 @@ system it.unica.co2.onlinestore.OnlineStore
 honesty P
 
 contract C {
-	addToCart? int . ( rec Z . ( addToCart? int . Z + checkout? . Cpay )	)
+	addToCart? int . C1
+}
+
+contract C1 {
+	addToCart? int . C1 + checkout? . Cpay
 }
 
 contract Cpay {
-	rec Y . ( pay? string . (ok! (+) no!.Y (+) abort! ) + cancel? )
+	pay? string . (ok! (+) no!.Cpay (+) abort! ) + cancel?
 }
 
 process P {

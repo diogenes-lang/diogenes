@@ -27,7 +27,7 @@ process P {
 }
 
 process P1 (xu: session, yt:string, bud:int) {
-	(xf:session) (xh:session) (
+	(xf:session, xh:session) (
 		(tell xf Cf. ask xf . do xf flightDets! yt)
 		| (tell xh Ch . ask xh . do xh hotelDets! yt)
 		| Pquote(xu,xf,xh,bud)

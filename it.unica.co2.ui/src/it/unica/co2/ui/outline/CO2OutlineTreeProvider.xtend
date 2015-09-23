@@ -3,97 +3,128 @@
  */
 package it.unica.co2.ui.outline
 
-import it.unica.co2.co2.ContractDefinition
+import it.unica.co2.co2.ContractsAndProcessesDeclaration
 import it.unica.co2.co2.DelimitedProcess
+import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
+import it.unica.co2.co2.FreeName
+import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
+import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Sum
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
-import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
 
 /**
  * Customization of the default outline structure.
- *
+ * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#outline
  */
 class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
-	
-    //cut off <unamed> due to "." token
-//    def void _createNode(IOutlineNode parentNode, AbstractNextProcess next) {
-//    	if (next.nextProcess!=null)
-//			createNode(parentNode, next.nextProcess)		//cut
-//		else
-//			createNode(parentNode, next.processReference)
-//			//createChildren(createEObjectNode(parentNode,next), next)	//normal behavior
-//    }
-    
+
+	// cut off <unamed> due to ContractsAndProcessesDeclaration token
+	def void _createNode(IOutlineNode parentNode, ContractsAndProcessesDeclaration elm) {
+
+		for (element : elm.contracts) {
+			createNode(parentNode, element);
+		}
+
+		for (element : elm.processes) {
+			createNode(parentNode, element);
+		}
+	}
+
+	// cut off node of parameters
+	def void _createChildren(IOutlineNode parentNode, ProcessDefinition elm) {
+		createNode(parentNode, elm.process);
+	}
+
 	//cut off + if the sum is single element
-//    def void _createNode(IOutlineNode parentNode, Sum sum) {
-//    	if (sum.prefixes.length==1)
-//			createNode(parentNode, sum.prefixes.get(0))		//cut
-//		else
-//			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
-//    }
+    def void _createNode(IOutlineNode parentNode, Sum sum) {
+    	if (sum.prefixes.length==1)
+			createNode(parentNode, sum.prefixes.get(0))		//cut
+		else
+			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
+    }
     
     //cut off | if the sum is single element
-//    def void _createNode(IOutlineNode parentNode, ParallelProcesses paral) {
-//    	if (paral.processes.length==1)
-//			createNode(parentNode, paral.processes.get(0))		//cut
-//		else
-//			createChildren(createEObjectNode(parentNode,paral), paral)	//normal behavior
-//    }
+    def void _createNode(IOutlineNode parentNode, ParallelProcesses paral) {
+    	if (paral.processes.length==1)
+			createNode(parentNode, paral.processes.get(0))		//cut
+		else {
+			var newParentNode = createEObjectNode(parentNode,paral);
+			for (p : paral.processes) {
+				var node = createEObjectNode(newParentNode, p);
+				createChildren(node, p)
+			}
+		}
+    }
     
-    //cut off free names if no one is defined
-//    def void _createNode(IOutlineNode parentNode, DelimitedProcess process) {
-//    	if (process.freeNames.length==0)
-//			createNode(parentNode, process.process)		//cut
-//		else
-//			createChildren(createEObjectNode(parentNode,process), process)	//normal behavior
-//    }
-    
-    //
-//    def void _createNode(IOutlineNode parentNode, ProcessCall process) {
-//		createNode(parentNode, process.reference)		//cut
-//    }
-//    def void _createNode(IOutlineNode parentNode, ProcessReference process) {
-//		createChildren(createEObjectNode(parentNode,process), process)
-//    }
 
 
-//	def void _createChildren(DocumentRootNode parentNode, ContractGrammar grammar) {
-//        for(ContractDefinition element: grammar.contracts) {
-//            createNode(parentNode, element);
-//        }
-//    }
+	// 
+	def void _createNode(IOutlineNode parentNode, DelimitedProcess process) {
+
+		if (process.freeNames.length > 0) {
+			for (fn : process.freeNames)
+				createNode(parentNode, fn)
+		}
+
+		createNode(parentNode, process.process)
+	}
+
+	// don't create children of ProcessCall type node
+    def void _createChildren(IOutlineNode parentNode, ProcessCall process) {
+    }
     
-    //cut off <unamed> due to "." token
-//    def void _createNode(IOutlineNode parentNode, AbstractNextContract next) {
-//    	if (next.nextContract!=null)
-//			createNode(parentNode, next.nextContract)		//cut
-//		else
-//			createChildren(createEObjectNode(parentNode,next), next)	//normal behavior
-//    }
-    
-    //don't create type node
-//    def void _createChildren(IOutlineNode parentNode, Type type) {
-//    }
-    
-    //cut off (+) if the sum is single element
-//    def void _createNode(IOutlineNode parentNode, IntSum sum) {
-//    	if (sum.actions.length==1)
-//			createNode(parentNode, sum.actions.get(0))		//cut
-//		else
-//			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
-//    }
-    
-    //cut off + if the sum is single element
-//    def void _createNode(IOutlineNode parentNode, ExtSum sum) {
-//    	if (sum.actions.length==1)
-//			createNode(parentNode, sum.actions.get(0))		//cut
-//		else
-//			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
-//    }
+	def boolean _isLeaf(ProcessCall elm) {
+		return true;
+	}
+	
+	// don't create freename type node
+	def void _createChildren(IOutlineNode parentNode, FreeName elm) {
+	}
+
+	def boolean _isLeaf(FreeName elm) {
+		return true;
+	}
+	
+	
+	def void _createChildren(IOutlineNode parentNode, IntAction elm) {
+		if (elm.next!=null)
+			createNode(parentNode, elm.next)
+	}
+
+	def boolean _isLeaf(IntAction elm) {
+		return elm.next==null;
+	}
+	
+	
+	def void _createChildren(IOutlineNode parentNode, ExtAction elm) {
+		if (elm.next!=null)
+			createNode(parentNode, elm.next)
+	}
+
+	def boolean _isLeaf(ExtAction elm) {
+		return elm.next==null;
+	}
+	
+
+	// cut off (+) if the sum is single element
+	def void _createNode(IOutlineNode parentNode, IntSum sum) {
+		if (sum.actions.length == 1)
+			createNode(parentNode, sum.actions.get(0)) // cut
+		else
+			createChildren(createEObjectNode(parentNode, sum), sum) // normal behavior
+	}
+
+	// cut off + if the sum is single element
+	def void _createNode(IOutlineNode parentNode, ExtSum sum) {
+		if (sum.actions.length == 1)
+			createNode(parentNode, sum.actions.get(0)) // cut
+		else
+			createChildren(createEObjectNode(parentNode, sum), sum) // normal behavior
+	}
 }

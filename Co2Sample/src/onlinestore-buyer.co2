@@ -1,8 +1,6 @@
 system it.unica.co2.onlinestore.Buyer
 
 contract CB {
-	rec Z . ( 
-		addToCart!int.Z (+) 
-		checkout! . pay!string . (ok? + no?.cancel! + abort?)
-	)
+	addToCart!int.CB (+) 
+	checkout! . pay!string . (ok? + no?.cancel! + abort?)
 }

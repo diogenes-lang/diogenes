@@ -41,7 +41,7 @@ ParallelProcesses:
 ;
 
 DelimitedProcess:
-	("("freeNames+=FreeName")")* process=Process
+	("(" (freeNames+=FreeName ("," freeNames+=FreeName)*)? ")")? process=Process
 ;
 
 FreeName:
@@ -174,7 +174,6 @@ Typable:
 	FreeName | Expression
 ;
 
-// the types will be used only internally by the type system
 Type:
     {IntType} value='int' |
     {StringType} value='string' |
@@ -244,7 +243,7 @@ ContractReference:
 ;
 
 ActionType: 
-	{UnitActionType} "unit" |
-	{IntActionType} "int" |
-	{StringActionType} "string"
+	{UnitActionType} value="unit" |
+	{IntActionType} value="int" |
+	{StringActionType} value="string"
 ;

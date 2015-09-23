@@ -4,20 +4,16 @@ system it.unica.co2.blackjack.Blackjack
 honesty P
 
 contract Cp {
-	rec Z . (
-		hit?. (card! int.Z (+) lose! (+) abort!) + 
-		stand? . (win! (+) lose! (+) abort!)
-	)
+	hit?. (card! int.Cp (+) lose! (+) abort!) 
+	+ stand? . (win! (+) lose! (+) abort!)
 }
 
 contract Cd {
-	rec Z . (
-		next!. card? int .Z (+) abort!
-	)
+	next!. card? int .Cd (+) abort!
 }
 
 process P {
-	(xd:session) (xp:session) tell xd Cd . ask xd . tell xp Cp . (
+	(xd:session, xp:session) tell xd Cd . ask xd . tell xp Cp . (
 		ask xp . Pplay(xp, xd, 0)
 		+ t . do xd abort! . ask xp . PabortP(xp)
 	)

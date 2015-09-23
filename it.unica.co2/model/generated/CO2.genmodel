@@ -53,39 +53,34 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/then"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IfThenElse/else"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Prefix"/>
-    <genClasses ecoreClass="CO2.ecore#//PrefixWithSession"/>
+    <genClasses ecoreClass="CO2.ecore#//Prefix">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Prefix/next"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ProcessCall">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessCall/reference"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ProcessCall/params"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Tell">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/session"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/contract"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Tell/contractReference"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoOutput">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoOutput/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/value"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoInput">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoInput/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/variable"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Ask">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Ask/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Ask/session"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/formula"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/public"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Tau">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Tau/next"/>
-    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Tau"/>
     <genClasses ecoreClass="CO2.ecore#//Expression"/>
     <genClasses ecoreClass="CO2.ecore#//Typable"/>
     <genClasses ecoreClass="CO2.ecore#//Type">
@@ -96,6 +91,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractDefinition/contract"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Contract"/>
+    <genClasses ecoreClass="CO2.ecore#//EmptyContract">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//EmptyContract/value"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//IntSum">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntSum/actions"/>
     </genClasses>
@@ -115,7 +113,9 @@
     <genClasses ecoreClass="CO2.ecore#//ContractReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//ContractReference/ref"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//ActionType"/>
+    <genClasses ecoreClass="CO2.ecore#//ActionType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ActionType/value"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//OrExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/left"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/right"/>
@@ -169,9 +169,6 @@
     <genClasses ecoreClass="CO2.ecore#//StringType"/>
     <genClasses ecoreClass="CO2.ecore#//BooleanType"/>
     <genClasses ecoreClass="CO2.ecore#//SessionType"/>
-    <genClasses ecoreClass="CO2.ecore#//EmptyContract">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//EmptyContract/value"/>
-    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//UnitActionType"/>
     <genClasses ecoreClass="CO2.ecore#//IntActionType"/>
     <genClasses ecoreClass="CO2.ecore#//StringActionType"/>

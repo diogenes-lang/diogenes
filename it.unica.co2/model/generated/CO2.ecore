@@ -61,48 +61,39 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="else" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Prefix"/>
-  <eClassifiers xsi:type="ecore:EClass" name="PrefixWithSession"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ProcessCall" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="reference" eType="#//ProcessDefinition"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="params" upperBound="-1"
         eType="#//Expression" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Tell" eSuperTypes="#//Prefix #//PrefixWithSession">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Tell" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DoOutput" eSuperTypes="#//Prefix #//PrefixWithSession">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DoOutput" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DoInput" eSuperTypes="#//Prefix #//PrefixWithSession">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DoInput" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//FreeName"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Ask" eSuperTypes="#//Prefix #//PrefixWithSession">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Ask" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="formula" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="public" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Tau" eSuperTypes="#//Prefix">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
-        containment="true"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Tau" eSuperTypes="#//Prefix"/>
   <eClassifiers xsi:type="ecore:EClass" name="Expression" eSuperTypes="#//Typable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Typable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Type">
@@ -114,6 +105,9 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contract"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EmptyContract" eSuperTypes="#//Contract">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntSum" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
         eType="#//IntAction" containment="true"/>
@@ -139,7 +133,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="ContractReference" eSuperTypes="#//Contract">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//ContractDefinition"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ActionType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ActionType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OrExpression" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="left" eType="#//Expression"
         containment="true"/>
@@ -209,9 +205,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="StringType" eSuperTypes="#//Type"/>
   <eClassifiers xsi:type="ecore:EClass" name="BooleanType" eSuperTypes="#//Type"/>
   <eClassifiers xsi:type="ecore:EClass" name="SessionType" eSuperTypes="#//Type"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EmptyContract" eSuperTypes="#//Contract">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="UnitActionType" eSuperTypes="#//ActionType"/>
   <eClassifiers xsi:type="ecore:EClass" name="IntActionType" eSuperTypes="#//ActionType"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringActionType" eSuperTypes="#//ActionType"/>

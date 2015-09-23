@@ -4,6 +4,26 @@
 package it.unica.co2.ui.labeling
 
 import com.google.inject.Inject
+import it.unica.co2.co2.Ask
+import it.unica.co2.co2.ContractDefinition
+import it.unica.co2.co2.ContractReference
+import it.unica.co2.co2.DelimitedProcess
+import it.unica.co2.co2.DoInput
+import it.unica.co2.co2.DoOutput
+import it.unica.co2.co2.Expression
+import it.unica.co2.co2.ExtAction
+import it.unica.co2.co2.ExtSum
+import it.unica.co2.co2.FreeName
+import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.IntAction
+import it.unica.co2.co2.IntSum
+import it.unica.co2.co2.ParallelProcesses
+import it.unica.co2.co2.ProcessCall
+import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Sum
+import it.unica.co2.co2.SystemDeclaration
+import it.unica.co2.co2.Tau
+import it.unica.co2.co2.Tell
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
@@ -18,141 +38,142 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	new(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
-
-//	def image(ProcessDefinition ele) {
-//		'process.png'
-//	}
-//	
-//	
-//	
-//	def String text(ProcessDefinition ele) {
-//		var name = ele.name?: '<anonymous>'
-//		if (ele.params.length!=0)
-//			'''«name» «ele.params.join("(", ",", ")", [x|x.name])»'''
-//		else
-//			name
-//	}
-//
-//	
-//	def text(DelimitedProcess ele) {
-//		ele.freeNames.join(" ", [ FreeName x | "("+x.name+")"])
-//	}
-//	
-//	def text(Sum ele) {
-//		"+"
-//	}
-//	
-//	def text(ParallelProcesses ele) {
-//		"|"
-//	}
-//	
-//	def text(Tell ele) {
-//		if (ele.contractReference!=null)
-//			"tell " + ele.session + " [" + ele.contractReference.name + "]"
-//		else
-//			"tell " + ele.session
-//	}
-//	
-//	def text(DoInput ele) {
-//		"do "+ ele.session + " " + ele.actionName + "?"
-//	}
-//	
-//	def text(DoOutput ele) {
-//		"do "+ ele.session + " " + ele.actionName + "!"
-//	}
-//	
-//	def text(Tau ele) {
-//		"\u03c4"
-//	}
-//	
-//	def text(IfThenElse ele) {
-//		"ifThenElse"
-//	}
-//		
-//	def String text(ProcessCall ele) {
-//		var name = ele.reference.name?: '<anonymous>'
-//		if (ele.params.length!=0)
-//			'''«name» «ele.params.join("(", ",", ")", [x| text(x).toString])»'''
-//		else
-//			name
-//	}
-//	
-//	def String text(Expression e) {
-//		"exp"
-//	}
 	
+	/*
+	 * IMAGE
+	 */
+	def image(ProcessDefinition ele) {
+		'process.png'
+	}
+	
+	def image(ContractDefinition ele) {
+		'contract.png'
+	}
 
-	// Labels and icons can be computed like this:
-//	def image(ContractDefinition ele) {
-//		'contract.png'
-//	}
+	def image(IntAction ele) {
+		'output.png'
+	}
 
-//	def image(AbstractNextContract ele) {
-//		if (ele.contractReference != null)
-//			'contract.png'
-//	}
-//
-//	def image(IntAction ele) {
-//		'output.png'
-//	}
-//
-//	def image(ExtAction ele) {
-//		'input.png'
-//	}
-//
-//	def text(ContractDefinition ele) {
-//		if (ele.name != null)
-//			ele.name
-//		else
-//			'<anonymous>'
-//	}
-//
-//	def text(IntSum ele) {
-//		"(+)"
-//	}
-//
-//	def text(ExtSum ele) {
-//		"+"
-//	}
-//
-//	def text(Recursion ele) {
-//		"rec " + ele.name
-//	}
+	def image(ExtAction ele) {
+		'input.png'
+	}
+	
+	def image(DelimitedProcess ele) {
+		'wave.png'
+	}
+		
+	def image(ParallelProcesses ele) {
+		'waves.png'
+	}
+		
+	def image(FreeName ele) {
+		'variable.png'
+	}
+	
+	def image(IntSum ele) {
+		'xor.png'
+	}
+	
+	def image(ExtSum ele) {
+		'plus.png'
+	}
+	
+	
+	/*
+	 * TEXT
+	 */
+	def Object text(SystemDeclaration elm) {
+		'''system «elm.name»'''
+	}
+	
+	def text(IntSum ele) {
+		""
+	}
 
-//	def text(IntAction ele) {
-//		if (ele.type != null) {
-//			
-//			if (ele.type instanceof UnitType)
-//				ele.actionName + "! " + "unit"
-//			else if (ele.type instanceof IntegerType)
-//				ele.actionName + "! " + "int"
-//			else if (ele.type instanceof StringValue)
-//				ele.actionName + "! " + "string"
-//			else
-//				"ERROR"
-//			
-//		} else
-//			ele.actionName + "! unit"
-//	}
-//
-//	def text(ExtAction ele) {
-//		if (ele.type != null) {
-//			if (ele.type instanceof UnitType)
-//				ele.actionName + "? " + "unit"
-//			else if (ele.type instanceof IntegerType)
-//				ele.actionName + "? " + "int"
-//			else if (ele.type instanceof StringType)
-//				ele.actionName + "? " + "string"
-//			else
-//				"ERROR"
-//		} else
-//			ele.actionName + "? unit"
-//	}
+	def text(ExtSum ele) {
+		""
+	}
+	
+	def text(ContractReference elm) {
+		elm.ref.name
+	}
+	 
+	def String text(ProcessDefinition ele) {
+		var name = ele.name?: '<anonymous>'
+		if (ele.params.length!=0)
+			'''«name» «ele.params.join("(", ", ", ")", [x| text(x)])»'''
+		else
+			name
+	}
 
-//	def text(AbstractNextContract ele) {
-//		if (ele.recursionReference != null)
-//			"[" + ele.recursionReference.name + "]"
-//		else if (ele.contractReference != null)
-//			"[" + ele.contractReference.name + "]"
-//	}
+	def text(DelimitedProcess ele) {
+		""
+	}
+	
+	def text(Sum ele) {
+		"+"
+	}
+	
+	def text(ParallelProcesses ele) {
+		""
+	}
+	
+	def text(Tell ele) {
+		if (ele.contractReference!=null)
+			"tell " + ele.session.name + " [" + ele.contractReference.name + "]"
+		else
+			"tell " + ele.session.name
+	}
+	
+	def text(DoInput ele) {
+		"do "+ ele.session.name + " " + ele.actionName + "?"
+	}
+	
+	def text(DoOutput ele) {
+		"do "+ ele.session.name + " " + ele.actionName + "!"
+	}
+	
+	def text(Tau ele) {
+		"\u03c4"
+	}
+	
+	def text(Ask ele) {
+		"ask "+ ele.session.name
+	}
+	
+	def text(IfThenElse ele) {
+		"ifThenElse"
+	}
+		
+	def String text(ProcessCall ele) {
+		var name = ele.reference.name?: '<anonymous>'
+		if (ele.params.length!=0)
+			'''«name» «ele.params.join("(", ", ", ")", [x| text(x)])»'''
+		else
+			name
+	}
+	
+	def String text(Expression e) {
+		"exp"
+	}
+
+	
+	def text(FreeName elm) {
+		elm.name+" : "+elm.type.value
+	}
+
+	def text(IntAction ele) {
+		if (ele.type != null)
+			ele.actionName + "! : " + ele.type.value
+		else
+			ele.actionName + "! : unit"
+	}
+
+	def text(ExtAction ele) {
+		if (ele.type != null)
+			ele.actionName + "! : " + ele.type.value
+		else
+			ele.actionName + "! : unit"
+	}
+
 }
