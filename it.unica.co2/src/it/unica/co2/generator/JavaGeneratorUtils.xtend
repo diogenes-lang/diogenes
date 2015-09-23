@@ -79,7 +79,7 @@ class JavaGeneratorUtils {
 			return new IsTranslatable(true)
 		}
 		else {
-			return new IsTranslatable(false, tell, "unexpected error")
+			return new IsTranslatable(false, tell, "the tell must be followed by an ask prefix")
 		}
 	}
 	
