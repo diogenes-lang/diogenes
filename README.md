@@ -103,6 +103,8 @@ process INS (x:session) {
 
 #Versions#
 
+2015-09-24: version **2.0.0** released!
+
 2015-08-22: version **1.1.0** released!
 
 2015-08-13: version **1.0.0** released!
@@ -116,6 +118,12 @@ process INS (x:session) {
 2015-04-03: version **0.0.1** released!
 
 #Changelog
+
+**2.0.0**
+
+* **syntax is changed** (removed 'rec' constructor)
+* bugfixes
+
 **1.1.1**
 
 * fix execution environment setup (not released)
@@ -126,11 +134,11 @@ process INS (x:session) {
 
 **1.0.0**
 
-* **syntax is changed** (see example below)
+* **syntax is changed** (see example above)
 * added expressions
 * added static type-check for expressions and freenames
 
 **0.1.0**
 
 * you can check the honesty of co2 maude process (right-click on the maude file)
-* add preferences page for maude model-checking
+* added preferences page for maude model-checking
