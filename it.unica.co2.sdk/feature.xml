@@ -2,14 +2,11 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="1.1.1">
+      version="2.0.0">
 
    <description>
-      1.1.1
-	fix execution environment of it.unica.co2.ui (requires 1.8)
-
-1.1.0
-	added support to parallel processes
+		removed &apos;rec&apos; constructor (syntax is changed)
+		bugfixes
    </description>
 
    <requires>
