@@ -40,6 +40,8 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import it.unica.co2.co2.Retract
+import it.unica.co2.co2.TellRetract
 
 class MaudeGenerator extends AbstractIGenerator{
 	
@@ -73,6 +75,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		//fix anonymous tells
 		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("TELL-CONTR")].toSet )
+		contracts.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("TELLR-CONTR")].toSet )
 			
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet
@@ -318,6 +321,11 @@ class MaudeGenerator extends AbstractIGenerator{
 		'''tell "«obj.session.name»" «obj.contractReference.name» . «obj.next.toMaude(padLeft)»'''
 	}
 	
+	def dispatch String toMaude(TellRetract obj, String padLeft) {
+		if (obj.RProcess==null) obj.RProcess = Co2Factory.eINSTANCE.createEmptyProcess
+		'''tell "«obj.session.name»" «obj.contractReference.name» . ( ask "«obj.session.name»" True . «obj.process.toMaude(padLeft)» + retract "«obj.session.name»" . «obj.RProcess.toMaude(padLeft)» )'''
+	}
+	
 	def dispatch String toMaude(DoInput obj, String padLeft) {
 		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
 		'''do "«obj.session.name»" "«obj.actionName»" ? «getFreeNameType(obj.variable)» . «obj.next.toMaude(padLeft)»'''
@@ -331,6 +339,11 @@ class MaudeGenerator extends AbstractIGenerator{
 	def dispatch String toMaude(Ask obj, String padLeft) {
 		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
 		'''ask "«obj.session.name»" True . «obj.next.toMaude(padLeft)»'''
+	}
+	
+	def dispatch String toMaude(Retract obj, String padLeft) {
+		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
+		'''retract "«obj.session.name»" . «obj.next.toMaude(padLeft)»'''
 	}
 	
 	def dispatch String toMaude(ProcessCall obj, String padLeft) {

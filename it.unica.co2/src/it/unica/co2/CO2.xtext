@@ -80,7 +80,9 @@ Prefix:
 	Tell		("." next=Next)? |
 	DoOutput	("." next=Next)? |
 	DoInput 	("." next=Next)? |
-	Ask			("." next=Next)?
+	Ask			("." next=Next)? |
+	Retract		("." next=Next)? |
+	TellRetract
 ;
 
 Next returns Process:
@@ -97,6 +99,16 @@ ProcessCall:
 
 Tell:
 	"tell" session=[FreeName]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
+;
+
+TellRetract:
+	"tell?" session=[FreeName]  
+	("{" contract=Contract? "}" | contractReference=[ContractDefinition])
+	process=Next (":" rProcess=Next)?
+;
+
+Retract:
+	"retract" session=[FreeName]
 ;
 
 DoOutput:

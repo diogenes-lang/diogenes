@@ -23,6 +23,7 @@ import it.unica.co2.co2.Plus
 import it.unica.co2.co2.Prefix
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Retract
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringLiteral
 import it.unica.co2.co2.StringType
@@ -32,6 +33,7 @@ import it.unica.co2.co2.Type
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.validation.AbstractCO2Validator
 import org.eclipse.emf.ecore.EObject
+import it.unica.co2.co2.TellRetract
 
 system it.unica.co2.xsemantics.CO2TypeSystem
 
@@ -236,6 +238,19 @@ from {
 	}
 }
 
+rule TellRetract
+	G |= TellRetract tell
+from {
+	G ||- tell.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source tell
+			feature Co2Package::eINSTANCE.tellRetract_Session
+	}
+}
+
 rule Ask
 	G |= Ask ask
 from {
@@ -248,6 +263,20 @@ from {
 			feature Co2Package::eINSTANCE.ask_Session
 	}
 }
+
+rule Restract
+	G |= Retract restract
+from {
+	G ||- restract.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source restract
+			feature Co2Package::eINSTANCE.retract_Session
+	}
+}
+
 
 rule DoInput
 	G |= DoInput doInput

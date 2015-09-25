@@ -61,39 +61,62 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="else" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Prefix">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
-        containment="true"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Prefix"/>
   <eClassifiers xsi:type="ecore:EClass" name="ProcessCall" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="reference" eType="#//ProcessDefinition"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="params" upperBound="-1"
         eType="#//Expression" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Tell" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TellRetract" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rProcess" eType="#//Process"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Retract" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DoOutput" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DoInput" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//FreeName"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Ask" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//FreeName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="formula" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="public" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Tau" eSuperTypes="#//Prefix"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Tau" eSuperTypes="#//Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Expression" eSuperTypes="#//Typable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Typable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Type">

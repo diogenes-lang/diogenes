@@ -18,6 +18,7 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1
 
 import static extension it.unica.co2.utils.CustomExtensions.*
 import it.unica.co2.co2.DelimitedProcess
+import it.unica.co2.co2.Retract
 
 class JavaGeneratorUtils {
 	
@@ -53,6 +54,10 @@ class JavaGeneratorUtils {
 		return new IsTranslatable(true)
 	}
 	
+	
+	def static dispatch IsTranslatable check(Retract obj) {
+		return new IsTranslatable(false, obj, "cannot translate programs containing the retract prefix")
+	}
 
 	def static dispatch IsTranslatable check(Tell tell) {
 		//tell must be followed by a sum containing an ask-prefix and a possible tau
