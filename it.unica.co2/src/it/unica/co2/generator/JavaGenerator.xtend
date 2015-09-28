@@ -55,12 +55,14 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 
 import static extension it.unica.co2.generator.JavaGeneratorUtils.*
+import it.unica.co2.co2.TellRetract
 
 class JavaGenerator extends AbstractIGenerator {
 	
 	@Inject extension IQualifiedNameProvider qNameProvider
 	
-	int WAIT_TIMEOUT = 10000
+	int WAIT_TIMEOUT = 10_000
+	int TELL_RETRACT_TIMEOUT = 10_000
 	int MESSAGE_COUNT = 0
 	int ASK_COUNT = 0
 	
@@ -323,6 +325,26 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(EmptyProcess p) {
 		""
+	}
+	
+	def dispatch String toJava(TellRetract tell) {
+		
+		val publicName = '''pbl$«tell.session.name»$«tell.contractReference.name»'''
+		
+		'''
+		Public<TST> «publicName» = tell(«tell.contractReference.name», «TELL_RETRACT_TIMEOUT»);
+		
+		try {
+			Session2<TST> «tell.session.name» = waitForSession(«publicName»);
+			
+			«tell.process.toJava»
+		}
+		catch(ContractExpiredException e) {
+			//retract «tell.session.name»
+			
+			«tell.RProcess.toJava»
+		}
+		'''
 	}
 	
 	def dispatch String toJava(Tell tell) {
