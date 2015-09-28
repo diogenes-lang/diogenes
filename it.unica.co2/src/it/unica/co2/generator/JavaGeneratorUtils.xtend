@@ -108,8 +108,8 @@ class JavaGeneratorUtils {
 			return new IsTranslatable(true)
 		}
 		else {
-			if (output.size>0) return new IsTranslatable(false, sum, "the sum can't contain do!")	//output is not allowed	
-			if (tells.size>0) return new IsTranslatable(false, sum, "the sum can't contain the tell prefix")	//tells not permitted
+			if (output.size>0) return new IsTranslatable(false, sum, "the sum can not contain do!")	//output is not allowed	
+			if (tells.size>0) return new IsTranslatable(false, sum, "the sum can not contain the tell prefix")	//tells not permitted
 			if (taus.size>1) return new IsTranslatable(false, sum, "the sum can contain at most one tau prefix")	//at most one tau
 			if (asks.size>1) return new IsTranslatable(false, sum, "the sum can contain at most one ask prefix")	//at most one ask
 			
@@ -147,7 +147,8 @@ class JavaGeneratorUtils {
 		var varRefs = pCall.eAllContents.filter(VariableReference).filter[x|(x.ref.type instanceof SessionType)]
 		
 		for (v : varRefs.toIterable) {
-					
+			
+			// stop condition for searching	
 			var Function1<EObject,Boolean> predicate = [x|
 				x instanceof ProcessDefinition ||
 				(x instanceof DelimitedProcess && (x as DelimitedProcess).freeNames.contains(v.ref)) ||
@@ -158,12 +159,10 @@ class JavaGeneratorUtils {
 			
 			if (result instanceof Ask) {
 				// everything ok
-				return new IsTranslatable(true);
 			}
 			else if (result instanceof ProcessDefinition) {
 				if ( (result as ProcessDefinition).params.contains(v.ref) ) {
 					// the session in passed as parameter, ok
-					return new IsTranslatable(true);
 				}
 				else {
 					return new IsTranslatable(false, pCall, '''you must ask the session «v.ref.name» before passing it as parameter''');
@@ -175,7 +174,7 @@ class JavaGeneratorUtils {
 			}
 		}
 		
-		return new IsTranslatable(false, pCall, "unexpected error: please report to the developer");
+		return new IsTranslatable(true);
 	}
 	
 	def static dispatch String getSession(DoInput p) {
