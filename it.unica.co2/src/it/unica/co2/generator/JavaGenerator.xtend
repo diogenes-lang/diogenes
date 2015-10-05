@@ -93,6 +93,7 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		//fix anonymous tells
 		contractDefinitions.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("_tell_contr_")].toSet )
+		contractDefinitions.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("_tell_contr_")].toSet )
 
 		val isTranslatable = co2System.isJavaTranslatable;
 		
@@ -114,15 +115,16 @@ class JavaGenerator extends AbstractIGenerator {
 		«ELSE»
 		
 		
-		import static it.unica.co2.api.contract.ContractFactory.*;
+		import static it.unica.co2.api.contract.utils.ContractFactory.*;
 		import it.unica.co2.api.Session2;
 		import it.unica.co2.api.contract.Contract;
-		import it.unica.co2.api.contract.ContractWrapper;
+		import it.unica.co2.api.contract.ContractDefinition;
 		import it.unica.co2.api.contract.Recursion;
 		import it.unica.co2.api.contract.Sort;
 		import it.unica.co2.api.process.CO2Process;
 		import it.unica.co2.api.process.Participant;
 		import co2api.ContractException;
+		import co2api.ContractExpiredException;
 		import co2api.Message;
 		import co2api.Public;
 		import co2api.TST;
@@ -188,7 +190,7 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def String getJavaContractDeclaration(ContractDefinition c) {
-		'''private static ContractWrapper «c.name» = wrapper();'''
+		'''private static ContractDefinition «c.name» = def("«c.name»");'''
 	}
 
 //	def String getJavaRecursionContractDeclaration(ContractDefinition c) {
@@ -224,7 +226,7 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def dispatch String getJavaContract(ContractReference c) {
-		c.ref.name
+		'''ref(«c.ref.name»)'''
 	}
 	
 //	def dispatch String getJavaContract(Recursion c) {

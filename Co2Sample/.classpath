@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-jdk"/>
-	<classpathentry kind="lib" path="/home/nicola/workspace-mars/co2-api/co2apiHL.jar" sourcepath="/co2-api"/>
-	<classpathentry kind="lib" path="/co2-honesty-checker/co2-java-honesty-1.1.0.jar"/>
-	<classpathentry kind="lib" path="/co2-honesty-checker/co2-java-honesty-2.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/nicola/workspace-mars/co2-java/co2-honesty-checker/co2-java-honesty-2.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
