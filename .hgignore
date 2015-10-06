@@ -13,3 +13,4 @@ xsemantics-gen
 *.xtendbin
 *.class
 
+local.properties
