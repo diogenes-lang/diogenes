@@ -1,7 +1,7 @@
 #Installation#
 
 ##Requirements##
-* **Java 1.8**: if you have other java versions, set 1.8 as default. If not possible, make sure to run Eclipse with this java version.
+* **Java 1.8**: if you have other java versions, set 1.8 as default JVM or make sure to run Eclipse with this java version.
 
 ##Plugin Users##
 * go to `Help -> Install New Software...` from the menu bar and `Add...`
