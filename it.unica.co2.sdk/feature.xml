@@ -2,11 +2,11 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="2.0.0">
+      version="2.1.0">
 
    <description>
-		removed &apos;rec&apos; constructor (syntax is changed)
-		bugfixes
+      added tell? macro
+bugfixes
    </description>
 
    <requires>
