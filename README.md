@@ -103,6 +103,8 @@ process INS (x:session) {
 
 #Versions#
 
+2015-10-06: version **2.1.0** released!
+
 2015-09-24: version **2.0.0** released!
 
 2015-08-22: version **1.1.0** released!
@@ -119,9 +121,9 @@ process INS (x:session) {
 
 #Changelog
 
-**2.0.1**
+**2.1.0**
 
-* added macro **tell? x P : P'** == *tell x . (ask x . P + retract x . P')*
+* added macro **tell? x C P : P'** == *tell x C . (ask x . P + retract x . P')*
 * addde *retract x* prefix
 * bugfixes
 
