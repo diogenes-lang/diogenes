@@ -44,9 +44,9 @@ You can install it on older Eclipse versions (see [https://eclipse.org/Xtext/dow
 * create a Java project
 * create files with extension `co2` into the `src` folder (see example below)
 * maude files will be generated automatically into `src-gen`
-* in order to compile the java classes, you must add the following dependencies:
-    * [http://co2.unica.it/tst/co2api.jar](http://co2.unica.it/tst/co2api.jar)
-    * **co2-honesty-checker** (no jar available, set as project dependency)
+* in order to compile the java classes:
+    * download the last version of co2-java-honesty-x.y.z.jar from [http://co2.unica.it/co2-java-honesty/](http://co2.unica.it/co2-java-honesty/) and set as jar-dependency of your project (now your code must compile)
+    * to check the honesty of a class, download the file local.properties at [link](http://co2.unica.it/co2-java-honesty/local.properties) and save into a resource folder (ie /src). Then, set the three properties into the file. ```HonestyChecker.isHonest(Class<? extends Participant>)``` allows to check the honesty of a `Participant`
 
 - - - - - -
 
