@@ -119,6 +119,12 @@ process INS (x:session) {
 
 #Changelog
 
+**2.0.1**
+
+* added macro **tell? x P : P'** == *tell x . (ask x . P + retract x . P')*
+* addde *retract x* prefix
+* bugfixes
+
 **2.0.0**
 
 * **syntax is changed** (removed 'rec' constructor)
