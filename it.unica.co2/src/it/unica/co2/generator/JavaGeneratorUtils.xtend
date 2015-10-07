@@ -19,6 +19,7 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1
 import static extension it.unica.co2.utils.CustomExtensions.*
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.Retract
+import it.unica.co2.co2.TellRetract
 
 class JavaGeneratorUtils {
 	
@@ -152,12 +153,13 @@ class JavaGeneratorUtils {
 			var Function1<EObject,Boolean> predicate = [x|
 				x instanceof ProcessDefinition ||
 				(x instanceof DelimitedProcess && (x as DelimitedProcess).freeNames.contains(v.ref)) ||
-				(x instanceof Ask && (x as Ask).session==v.ref)
+				(x instanceof Ask && (x as Ask).session==v.ref) ||
+				(x instanceof TellRetract && (x as TellRetract).session==v.ref)
 			]
 			
 			val result = v.searchTop(predicate)
 			
-			if (result instanceof Ask) {
+			if (result instanceof Ask || result instanceof TellRetract) {
 				// everything ok
 			}
 			else if (result instanceof ProcessDefinition) {

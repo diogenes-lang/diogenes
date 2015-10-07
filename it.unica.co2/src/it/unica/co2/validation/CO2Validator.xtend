@@ -148,7 +148,6 @@ class CO2Validator extends CO2TypeSystemValidator {
 	
 	@Check
 	def void checkEmptyContract(EmptyContract empty) {
-		
 		info("Empty contract can be omitted", 
 			Co2Package.Literals.EMPTY_CONTRACT__VALUE
 		);
