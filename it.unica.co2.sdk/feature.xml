@@ -2,11 +2,10 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="2.1.0">
+      version="2.1.1">
 
    <description>
-      added tell? macro
-bugfixes
+      bugfixes
    </description>
 
    <requires>
