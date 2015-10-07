@@ -26,6 +26,7 @@ import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
+import it.unica.co2.co2.TellRetract
 
 /**
  * Provides labels for EObjects.
@@ -123,6 +124,13 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 			"tell " + ele.session.name + " [" + ele.contractReference.name + "]"
 		else
 			"tell " + ele.session.name
+	}
+	
+	def text(TellRetract ele) {
+		if (ele.contractReference!=null)
+			"tell? " + ele.session.name + " [" + ele.contractReference.name + "]"
+		else
+			"tell? " + ele.session.name
 	}
 	
 	def text(DoInput ele) {
