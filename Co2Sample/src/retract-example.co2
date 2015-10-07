@@ -5,6 +5,6 @@ honesty P
 
 process P {
 	
-	(x:session) tell? x {a! (+) b!} do x a! : nil
+	(x:session) tell? x {a! (+) b!} do x a!
 	
 }

@@ -343,8 +343,9 @@ class JavaGenerator extends AbstractIGenerator {
 		}
 		catch(ContractExpiredException e) {
 			//retract «tell.session.name»
-			
+			«IF tell.RProcess!=null»
 			«tell.RProcess.toJava»
+			«ENDIF»
 		}
 		'''
 	}
