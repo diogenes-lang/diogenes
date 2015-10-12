@@ -487,7 +487,7 @@ class JavaGenerator extends AbstractIGenerator {
 			«p.^then.toJava»
 		}
 		else {
-			«p.^else.toJava»
+			«IF p.^else!=null»«p.^else.toJava»«ENDIF»
 		}
 		'''
 	}
