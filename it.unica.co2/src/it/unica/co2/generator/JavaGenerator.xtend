@@ -45,8 +45,10 @@ import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.VariableReference
+import it.unica.co2.xsemantics.CO2TypeSystem
 import java.text.SimpleDateFormat
 import java.util.Date
 import org.eclipse.emf.ecore.resource.Resource
@@ -55,11 +57,11 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 
 import static extension it.unica.co2.generator.JavaGeneratorUtils.*
-import it.unica.co2.co2.TellRetract
 
 class JavaGenerator extends AbstractIGenerator {
 	
 	@Inject extension IQualifiedNameProvider qNameProvider
+	@Inject CO2TypeSystem typeSystem
 	
 	int WAIT_TIMEOUT = 10_000
 	int TELL_RETRACT_TIMEOUT = 10_000
@@ -545,7 +547,14 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def dispatch String getJavaExpression(Equals exp) {
-		'''(«exp.left.javaExpression»«exp.op»«exp.right.javaExpression»)'''
+		
+		var lType = typeSystem.type(exp.left).value
+		var rType = typeSystem.type(exp.right).value
+		
+		if (lType instanceof StringType || rType instanceof StringType)
+			'''(«exp.left.javaExpression».equals(«exp.right.javaExpression»))'''
+		else
+			'''(«exp.left.javaExpression»==«exp.right.javaExpression»)'''
 	}
 	
 	def dispatch String getJavaExpression(Plus exp) {
