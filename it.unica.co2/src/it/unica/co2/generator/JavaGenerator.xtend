@@ -168,7 +168,6 @@ class JavaGenerator extends AbstractIGenerator {
 		 */
 		«FOR c : contracts»
 			«c.javaContractDeclaration»
-«««			«c.javaRecursionContractDeclaration»
 			«ENDFOR»
 		«ENDIF»
 		'''
@@ -184,7 +183,6 @@ class JavaGenerator extends AbstractIGenerator {
 		static {
 			«FOR c : contracts»
 			«c.javaContractDefinition»
-«««			«c.javaRecursionContractDefinition»
 			«ENDFOR»
 		}
 		«ENDIF»
@@ -194,30 +192,12 @@ class JavaGenerator extends AbstractIGenerator {
 	def String getJavaContractDeclaration(ContractDefinition c) {
 		'''private static ContractDefinition «c.name» = def("«c.name»");'''
 	}
-
-//	def String getJavaRecursionContractDeclaration(ContractDefinition c) {
-//		var recursions = c.eAllContents.filter(Recursion).toSet
-//		'''
-//		«FOR r : recursions»
-//		private static Recursion «r.name» = recursion();
-//		«ENDFOR»
-//		'''
-//	}
 	
 	def String getJavaContractDefinition(ContractDefinition c) {
 		c.contract = c.contract?: Co2Factory.eINSTANCE.createEmptyContract
 		'''«c.name».setContract(«c.contract.javaContract»);'''
 	}
 	
-//	def String getJavaRecursionContractDefinition(ContractDefinition c) {
-//		var recursions = c.eAllContents.filter(Recursion).toSet
-//		'''
-//		«FOR r : recursions»
-//		«r.name».setContract(«r.body.javaContract»);
-//		«ENDFOR»
-//		'''
-//	}
-
 	
 	def dispatch String getJavaContract(IntSum c) {
 		'''internalSum()«FOR a : c.actions»«a.getJavaIntAction»«ENDFOR»'''
@@ -231,12 +211,8 @@ class JavaGenerator extends AbstractIGenerator {
 		'''ref(«c.ref.name»)'''
 	}
 	
-//	def dispatch String getJavaContract(Recursion c) {
-//		c.name//c.body.javaContract
-//	}
-	
 	def dispatch String getJavaContract(EmptyContract c) {
-		'''null'''
+		'''empty()'''
 	}
 	
 	def String getJavaIntAction(IntAction a) {
