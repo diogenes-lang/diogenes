@@ -7,8 +7,10 @@ import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
+import it.unica.co2.co2.Input
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellRetract
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.scoping.IScope
@@ -30,7 +32,7 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * Contract reference:
 	 * refers to any contract definition except for this
 	 */
-	def IScope scope_Tell_contractReference(Tell ctx, EReference ref) {
+	def IScope scope_ContractDefinition(EObject ctx, EReference ref) {
 		ctx.getIScopeForAllContentsOfClass(ContractDefinition);
 	}
 	
@@ -66,6 +68,33 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 				,
 				getDeclaredFreeNames(proc.eContainer) // outer
 			);
+	}
+	
+	def dispatch IScope getDeclaredFreeNames(Input proc) {
+		if (proc.variable==null)
+			return getDeclaredFreeNames(proc.eContainer)
+		else
+			return Scopes.scopeFor(
+				newArrayList(proc.variable)
+				,
+				getDeclaredFreeNames(proc.eContainer) // outer
+			);
+	}
+	
+	def dispatch IScope getDeclaredFreeNames(TellRetract proc) {
+		return Scopes.scopeFor(
+			newArrayList(proc.session)
+			,
+			getDeclaredFreeNames(proc.eContainer) // outer
+		);
+	}
+
+	def dispatch IScope getDeclaredFreeNames(TellAndWait proc) {
+		return Scopes.scopeFor(
+			newArrayList(proc.session)
+			,
+			getDeclaredFreeNames(proc.eContainer) // outer
+		);
 	}
 
 	def dispatch IScope getDeclaredFreeNames(ProcessDefinition obj) {

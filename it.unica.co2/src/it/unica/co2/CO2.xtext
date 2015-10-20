@@ -31,7 +31,7 @@ ContractsAndProcessesDeclaration:
 ;
 
 ProcessDefinition:
-	{ProcessDefinition} "process" name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
+	{ProcessDefinition} (withoutRestrictions?="process" | "co2Spec") name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
 		process=(ParallelProcesses)?
 	"}"
 ;
@@ -45,15 +45,19 @@ DelimitedProcess:
 ;
 
 FreeName:
-	name=ID ":" type=Type
+	(name=ID ":" type=Type ) | Session
 ;
 
 Process:
 	EmptyProcess |
 	Sum |
 	IfThenElse |
-	ProcessCall |
-	"(" ParallelProcesses ")"
+	TellAndWait |
+	TellRetract |
+	Send |
+	Receive |
+	"(" ParallelProcesses ")"|
+	ProcessCall
 ;
 
 EmptyProcess:
@@ -75,36 +79,36 @@ IfThenElse:
 	(=>'else' else=Next)?
 ;
 
+ProcessCall:
+	reference=[ProcessDefinition] ("("(params+=Expression ("," params+=Expression)*)?")")?
+;
+
 Prefix:
 	Tau			("." next=Next)? |
 	Tell		("." next=Next)? |
 	DoOutput	("." next=Next)? |
 	DoInput 	("." next=Next)? |
 	Ask			("." next=Next)? |
-	Retract		("." next=Next)? |
-	TellRetract
+	Retract		("." next=Next)?
 ;
 
 Next returns Process:
 	EmptyProcess |
 	SingleSum |
 	IfThenElse |
+	TellAndWait |
+	TellRetract |
+	Send |
+	Receive |
 	"(" ParallelProcesses ")"|
 	ProcessCall
 ;
 
-ProcessCall:
-	reference=[ProcessDefinition] ("("(params+=Expression ("," params+=Expression)*)?")")?
-;
+
+/* PREFIXES */
 
 Tell:
 	"tell" session=[FreeName]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
-;
-
-TellRetract:
-	"tell?" session=[FreeName]  
-	("{" contract=Contract? "}" | contractReference=[ContractDefinition])
-	process=Next (":" rProcess=Next)?
 ;
 
 Retract:
@@ -131,6 +135,82 @@ Formula:
 	"True" | "(" "True" ")"
 ;
 
+
+
+
+
+/* MACROS */
+
+//Definition:
+//	ProcessDefinition | Co2SpecDefinition
+//;
+//
+//Co2SpecDefinition:
+//	{Co2SpecDefinition} "co2Spec" name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
+//		process=(ParallelCo2Spec)?
+//	"}"
+//;
+//
+//ParallelCo2Spec:
+//	processes+=Co2Spec  ("|" processes+=Co2Spec)*
+//;
+//
+//Co2Spec:
+//	EmptyProcess |
+//	IfThenElse2 |
+//	TellAndWait |
+//	TellRetract |
+//	Send |
+//	Case |
+//	"(" ParallelCo2Spec ")"
+//;
+//
+//NextCo2Spec returns Co2Spec:
+//	Co2Spec | Co2SpecCall
+//;
+//
+//IfThenElse2:
+//	{IfThenElse}
+//	'if' if=Expression
+//	"then "then=NextCo2Spec
+//	(=>'else' else=NextCo2Spec)?
+//;
+//
+//
+//
+//Co2SpecCall:
+//	reference=[Co2SpecDefinition] ("("(params+=Expression ("," params+=Expression)*)?")")?
+//;
+//
+
+TellAndWait:
+	"tellAndWait" session=Session  
+	("{" contract=Contract? "}" | contractReference=[ContractDefinition])
+	("." process=Next)?
+;
+
+TellRetract:
+	"tell?" session=Session
+	("{" contract=Contract? "}" | contractReference=[ContractDefinition])
+	("." process=Next (":" rProcess=Next)?)?
+;
+
+Send:
+	"send" session=[FreeName] actionName=ID "!" (value=Expression)? ("." next=Next)?
+;
+
+Receive:
+	"receive" session=[FreeName] 
+	"[" (actions+=Input ("+" actions+=Input)* ) ("+" timeout?="t" ("." tProcess=Next)?)? "]"
+;
+
+Input:
+	actionName=ID "?" (variable=FreeName)? ("." next=Next)?
+;
+
+Session:
+	name=ID
+;
 
 
 // ======================================================================================
@@ -178,7 +258,7 @@ Atomic returns Expression:
     {NumberLiteral} value=INT |
     {StringLiteral} value=STRING |
     {BooleanLiteral} value=('true'|'false') |
-    {VariableReference} ref=[FreeName]
+    {VariableReference} ref=([FreeName]|[Session])
 ;
 
 
@@ -192,7 +272,6 @@ Type:
     {BooleanType} value='boolean' |
     {SessionType} value='session'
 ;
-
 
 
 

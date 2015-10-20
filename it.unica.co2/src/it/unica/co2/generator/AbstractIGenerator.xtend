@@ -3,8 +3,8 @@ package it.unica.co2.generator
 import it.unica.co2.co2.Co2Factory
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.Tell
-import org.eclipse.xtext.generator.IGenerator
 import it.unica.co2.co2.TellRetract
+import org.eclipse.xtext.generator.IGenerator
 
 abstract class AbstractIGenerator implements IGenerator {
 		
@@ -63,6 +63,7 @@ abstract class AbstractIGenerator implements IGenerator {
 //			]
 //		}
 //	}
+	
 	
 	
 }

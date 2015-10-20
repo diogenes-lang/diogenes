@@ -24,12 +24,18 @@ import it.unica.co2.co2.IntType
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Receive
+import it.unica.co2.co2.Retract
+import it.unica.co2.co2.Send
+import it.unica.co2.co2.Session
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.xsemantics.CO2TypeSystem
@@ -40,8 +46,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import it.unica.co2.co2.Retract
-import it.unica.co2.co2.TellRetract
 
 class MaudeGenerator extends AbstractIGenerator{
 	
@@ -321,11 +325,6 @@ class MaudeGenerator extends AbstractIGenerator{
 		'''tell "«obj.session.name»" «obj.contractReference.name» . «obj.next.toMaude(padLeft)»'''
 	}
 	
-	def dispatch String toMaude(TellRetract obj, String padLeft) {
-		if (obj.RProcess==null) obj.RProcess = Co2Factory.eINSTANCE.createEmptyProcess
-		'''tell "«obj.session.name»" «obj.contractReference.name» . ( ask "«obj.session.name»" True . «obj.process.toMaude(padLeft)» + retract "«obj.session.name»" . «obj.RProcess.toMaude(padLeft)» )'''
-	}
-	
 	def dispatch String toMaude(DoInput obj, String padLeft) {
 		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
 		'''do "«obj.session.name»" "«obj.actionName»" ? «getFreeNameType(obj.variable)» . «obj.next.toMaude(padLeft)»'''
@@ -358,8 +357,11 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	def dispatch String toMaude(Expression exp, String padLeft) {
 		if (
-			exp instanceof VariableReference 
-			&& (exp as VariableReference).ref.type instanceof SessionType
+			exp instanceof VariableReference && 
+			(
+				(exp as VariableReference).ref.type instanceof SessionType ||
+				(exp as VariableReference).ref instanceof Session
+			)
 		)
 			return '''"«(exp as VariableReference).ref.name»"'''
 		else
@@ -370,6 +372,76 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	
 	
+	def dispatch String toMaude(TellAndWait obj, String padLeft) {
+		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
+		var pad = padLeft;
+		'''
+		«"\n"+pad»(
+		«pad=pad.addPad»
+		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.contractReference.name» . ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
+		«pad.removePad»)'''
+	}
+	
+	def dispatch String toMaude(TellRetract obj, String padLeft) {
+		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
+		obj.RProcess = obj.RProcess ?: Co2Factory.eINSTANCE.createEmptyProcess
+		
+		var pad=padLeft
+		''' 
+		«"\n"+pad»(
+		«pad=pad.addPad»
+		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.contractReference.name» . (
+		«pad=pad.addPad»
+		«pad»ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
+		«pad»+ retract "«obj.session.name»" . «obj.RProcess.toMaude(pad)»
+		«pad=pad.removePad»)
+		«pad.removePad»)
+		'''
+	}
+	
+	def dispatch String toMaude(Send obj, String padLeft) {
+		obj.next = obj.next ?: Co2Factory.eINSTANCE.createEmptyProcess
+		'''do "«obj.session.name»" "«obj.actionName»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
+	}
+	
+	def dispatch String toMaude(Receive obj, String padLeft) {
+		
+		var pad = padLeft;
+		var sb = new StringBuilder()
+		
+		if (obj.actions.size>1 || obj.isTimeout) {
+			sb.append("\n").append(pad).append("(")
+			pad=pad.addPad
+		}
+		
+		var i=0;
+		for (a : obj.actions) {
+			
+			if (obj.actions.size()>1 || obj.isTimeout) {
+				sb.append("\n").append(pad)
+			}
+
+			if (i++>0) {
+				sb.append("+ ");
+			}
+			
+			a.next = a.next?: Co2Factory.eINSTANCE.createEmptyProcess
+			sb.append('''do "«obj.session.name»" "«a.actionName»" ? «getFreeNameType(a.variable)» . «a.next.toMaude(pad)»''');
+		}
+		
+		if (obj.isTimeout) {
+			obj.TProcess = obj.TProcess ?: Co2Factory.eINSTANCE.createEmptyProcess
+			sb.append("\n").append(pad)
+			sb.append('''+ t . «obj.TProcess.toMaude(pad)»''')
+		}
+	
+		if (obj.actions.size>1|| obj.isTimeout) {
+			pad=pad.removePad
+			sb.append("\n").append(pad).append(")")
+		}
+		
+		return sb.toString
+	}
 	
 	def String getActionType(ActionType type) {
 		if (type==null || type instanceof UnitActionType) return "unit"

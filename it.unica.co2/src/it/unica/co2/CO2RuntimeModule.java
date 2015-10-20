@@ -3,6 +3,8 @@
  */
 package it.unica.co2;
 
+import org.eclipse.xtext.linking.impl.AbstractCleaningLinker;
+
 import it.unica.co2.xsemantics.CO2StringRepresentation;
 import it.xsemantics.runtime.StringRepresentation;
 
@@ -15,6 +17,7 @@ public class CO2RuntimeModule extends it.unica.co2.AbstractCO2RuntimeModule {
 	 * custom implementation for xsemantics.
 	 */
 	public Class<? extends StringRepresentation> bindStringRepresentation() {
-	    return CO2StringRepresentation.class;
+		return CO2StringRepresentation.class;
 	}
+	
 }

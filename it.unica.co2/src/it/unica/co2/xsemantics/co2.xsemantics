@@ -24,6 +24,7 @@ import it.unica.co2.co2.Prefix
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Retract
+import it.unica.co2.co2.Session
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringLiteral
 import it.unica.co2.co2.StringType
@@ -33,7 +34,6 @@ import it.unica.co2.co2.Type
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.validation.AbstractCO2Validator
 import org.eclipse.emf.ecore.EObject
-import it.unica.co2.co2.TellRetract
 
 system it.unica.co2.xsemantics.CO2TypeSystem
 
@@ -147,13 +147,16 @@ axiom FreeName
 	G ||- FreeName fn : fn.type
 
 
+axiom Session
+	G ||- Session session : Co2Factory.eINSTANCE.createSessionType
+
 
 /*
  * CO2 processes
  */
  
 rule ProcessDefinition
-	G |= ProcessDefinition p 
+	G |= ProcessDefinition p
 from {
 	//check unique name of the parameters
 	for (var i=0; i<p.params.size; i++) {
@@ -163,6 +166,30 @@ from {
 					error "duplicate parameter name '"+p.params.get(i).name+"'" 
 					source p.params.get(j)
 			}
+		}
+	}
+	
+	if (!p.withoutRestrictions) {
+		/*
+		 * the program cannot contain
+		 * - prefixes
+		 * - delimited processes with freeNames
+		 */
+		println("checking the process: "+p.name)
+		var children = p.eAllContents.filter[x| x instanceof Prefix || x instanceof DelimitedProcess].toIterable
+		for (node : children) {
+			
+			println("node: "+node)
+			if (
+				(node instanceof DelimitedProcess && !(node as DelimitedProcess).freeNames.isEmpty) ||
+				node instanceof Prefix
+			) {
+				// fail only if declare freenames
+				fail 
+					error "this code is not allowed" 
+					source node
+			}
+			
 		}
 	}	
 }
@@ -238,18 +265,6 @@ from {
 	}
 }
 
-rule TellRetract
-	G |= TellRetract tell
-from {
-	G ||- tell.session : var Type fnType		// get FreeName type
-	
-	if (!(fnType instanceof SessionType)) {		// check the type
-		fail
-			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
-			source tell
-			feature Co2Package::eINSTANCE.tellRetract_Session
-	}
-}
 
 rule Ask
 	G |= Ask ask
@@ -339,6 +354,7 @@ from {
 		}
 	}
 }
+
 
 
 /*

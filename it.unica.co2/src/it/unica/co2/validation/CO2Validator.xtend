@@ -28,6 +28,28 @@ import org.eclipse.xtext.validation.Check
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class CO2Validator extends CO2TypeSystemValidator {
+	
+	
+//	@Check
+//	def void checkLanguageVersion(CO2System sys){
+//		var versionWithMacros = if (sys.version!=null) sys.version.macro else true
+//		
+//		println('''versionWithMacros: «versionWithMacros»''');
+//		
+//		if (versionWithMacros) {
+//			/*
+//			 * the program cannot contain
+//			 * - prefixes
+//			 * - delimited processes with freeNames
+//			 */
+//			var children = sys.eAllContents.filter[x| x instanceof Prefix || x instanceof DelimitedProcess].toIterable
+//			for (node : children) {
+//				error("This code is not allowed with the given language version", 
+//					node.
+//				);
+//			}
+//		}
+//	}
 
 	@Check
 	def void checkContractNameIsUnique(ProcessDefinition procDef) {
