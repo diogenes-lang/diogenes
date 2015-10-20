@@ -31,7 +31,7 @@ ContractsAndProcessesDeclaration:
 ;
 
 ProcessDefinition:
-	{ProcessDefinition} (withoutRestrictions?="process" | "co2Spec") name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
+	{ProcessDefinition} (withoutRestrictions?="process" | "specification") name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
 		process=(ParallelProcesses)?
 	"}"
 ;

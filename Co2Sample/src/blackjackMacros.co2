@@ -11,12 +11,12 @@ contract Cd {
 	next!. card? int .Cd (+) abort!
 }
 
-co2Spec P {
+specification P {
 	tellAndWait xd Cd .	
 	tell? xp Cp . Pplay(xp, xd, 0) : send xd abort!
 }
 
-co2Spec Pplay(xp:session, xd:session, np:int) {
+specification Pplay(xp:session, xd:session, np:int) {
 	
 	receive xp [
 		hit? . send xd next! . Pdeck(xp, xd, np)
@@ -25,46 +25,46 @@ co2Spec Pplay(xp:session, xd:session, np:int) {
 	]
 }
 
-co2Spec Pdeck(xp:session, xd:session, np:int) {
+specification Pdeck(xp:session, xd:session, np:int) {
 	receive xd [
 		card? n:int . Pcard(xp,xd,np+n,n)
 		+ t . send xp abort! . PabortD(xd)
 	]
 }
 
-co2Spec Pcard(xp:session, xd:session, np:int, n:int) {
+specification Pcard(xp:session, xd:session, np:int, n:int) {
 	if np<21
 	then send xp card! n . Pplay(xp,xd,np)
 	else send xp lose! . PabortD(xd)
 }
 
-co2Spec Qstand(xp:session, xd:session, np:int, nd:int) {
+specification Qstand(xp:session, xd:session, np:int, nd:int) {
 	if nd<21
 	then send xd next! . Qdeck(xp,xd,np,nd)
 	else send xp win! . send xd abort!
 }
 
-co2Spec Qdeck(xp:session, xd:session, np:int, nd:int) {
+specification Qdeck(xp:session, xd:session, np:int, nd:int) {
 	receive xd [
 		card? n:int. Qcard(xp,xd,np,nd)
 		+ t . send xp abort!. PabortD(xd)
 	]
 }
 
-co2Spec Qcard(xp:session, xd:session, np:int, nd:int) {
+specification Qcard(xp:session, xd:session, np:int, nd:int) {
 	if nd<np
 	then Qstand(xp,xd,np,nd)
 	else send xp lose! . PabortD(xd)
 }
 
-co2Spec PabortP(xp:session) {
+specification PabortP(xp:session) {
 	receive xp [
 		hit?. send xp abort!
 		+ stand?. send xp abort!
 	] 
 }
 
-co2Spec PabortD(xd:session) {
+specification PabortD(xd:session) {
 	send xd abort! 
 	| receive xd [ card? n:int. send xd abort!]
 }
