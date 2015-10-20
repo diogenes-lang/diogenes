@@ -294,22 +294,18 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String toMaude(IfThenElse obj, String padLeft) {
-		if (obj.^else==null) obj.^else = Co2Factory.eINSTANCE.createEmptyProcess
+		obj.^else = obj.^else?: Co2Factory.eINSTANCE.createEmptyProcess
 
 		var pad = padLeft;
-		var sb = new StringBuilder()
+		'''
 		
-		sb.append("\n").append(pad).append("(")
-		pad=pad.addPad
-			
-		sb.append("\n").append(pad).append('''if «obj.^if.toMaude(pad)» ''')
-		sb.append("\n").append(pad).append('''then «obj.then.toMaude(pad)» ''')
-		sb.append("\n").append(pad).append('''else «obj.^else.toMaude(pad)» ''')
-
-		pad=pad.removePad
-		sb.append("\n").append(padLeft).append(")")	
-		
-		return sb.toString		
+		«pad»(
+		«pad=pad.addPad»
+		«pad»if «obj.^if.toMaude(pad)» 
+		«pad»then «obj.then.toMaude(pad)» 
+		«pad»else «obj.^else.toMaude(pad)» 
+		«pad.removePad»)
+		'''
 	}
 	
 	/*
@@ -346,13 +342,7 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String toMaude(ProcessCall obj, String padLeft) {
-		if (obj.params.length==0)
-			'''«obj.reference.name»'''
-		else {
-			'''«obj.reference.name»«obj.params.join("("," ; ", ")",[
-				n|'''«n.toMaude(padLeft)»'''
-			])»'''
-		}
+		'''«obj.reference.name»«IF obj.params.length!=0»«obj.params.join("("," ; ", ")",[n|'''«n.toMaude(padLeft)»'''])»«ENDIF»'''
 	}
 	
 	def dispatch String toMaude(Expression exp, String padLeft) {
@@ -439,8 +429,9 @@ class MaudeGenerator extends AbstractIGenerator{
 			pad=pad.removePad
 			sb.append("\n").append(pad).append(")")
 		}
-		
+
 		return sb.toString
+		
 	}
 	
 	def String getActionType(ActionType type) {
