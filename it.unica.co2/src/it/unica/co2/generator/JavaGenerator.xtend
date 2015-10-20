@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import it.unica.co2.co2.ActionType
 import it.unica.co2.co2.AndExpression
 import it.unica.co2.co2.ArithmeticSigned
-import it.unica.co2.co2.Ask
 import it.unica.co2.co2.BooleanLiteral
 import it.unica.co2.co2.BooleanNegation
 import it.unica.co2.co2.BooleanType
@@ -14,8 +13,6 @@ import it.unica.co2.co2.Comparison
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
-import it.unica.co2.co2.DoInput
-import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.EmptyContract
 import it.unica.co2.co2.EmptyProcess
 import it.unica.co2.co2.Equals
@@ -24,6 +21,7 @@ import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
 import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
 import it.unica.co2.co2.IntSum
@@ -34,23 +32,24 @@ import it.unica.co2.co2.NumberLiteral
 import it.unica.co2.co2.OrExpression
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.Plus
-import it.unica.co2.co2.Prefix
-import it.unica.co2.co2.Process
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Receive
+import it.unica.co2.co2.Send
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringLiteral
 import it.unica.co2.co2.StringType
-import it.unica.co2.co2.Sum
-import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.xsemantics.CO2TypeSystem
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.eclipse.emf.common.util.EList
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.naming.IQualifiedNameProvider
@@ -109,7 +108,7 @@ class JavaGenerator extends AbstractIGenerator {
 		/*
 		 * Sorry, your co2 system is not translatable to Java.
 		 * «var node = NodeModelUtils.getNode(isTranslatable.eobject)»
-		 * code    : «node.text.trim.replaceAll("\t", "").replaceAll("\n", " ")»
+		 * code    : «node.getString»
 		 * reason  : «isTranslatable.reason»
 		 * line(s) : «node.startLine»«IF node.startLine!=node.endLine»-«node.endLine»«ENDIF»
 		 *
@@ -293,14 +292,17 @@ class JavaGenerator extends AbstractIGenerator {
 		}
 	}
 	
-	def dispatch String toJava(DelimitedProcess p) {
+	def dispatch String toJava(EObject obj) {
 		'''
-		«p.process.toJava»
+		/* 
+		 * ERROR: please report to the author 
+		 * node: «NodeModelUtils.getNode(obj).text.trim.replaceAll("\t", "").replaceAll("\n", " ")»
+		 */
 		'''
 	}
-	
-	def dispatch String toJava(Process p) {
-		"/* ERROR */"
+
+	def dispatch String toJava(DelimitedProcess p) {
+		p.process.toJava
 	}
 	
 	def dispatch String toJava(EmptyProcess p) {
@@ -328,71 +330,33 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 	}
 	
-	def dispatch String toJava(Tell tell) {
-		//tell must be followed by a sum containing an ask-prefix and a possible tau
-		var Sum tellNext
-		if (tell.next instanceof Sum) {
-			tellNext = tell.next as Sum
-		}
-		else if (tell.next instanceof ParallelProcesses) {
-			tellNext = (tell.next as ParallelProcesses).processes.get(0).process as Sum
-		}
-		
-		var taus = tellNext.prefixes.filter(Tau)
-		var asks = tellNext.prefixes.filter(Ask)		
-		var useTimeout = taus.size==1 && asks.size==1
-		
-		val publicName = '''pbl$«tell.session.name»$«tell.contractReference.name»'''
-		
+	def dispatch String toJava(TellAndWait tell) {
 		'''
-		Public<TST> «publicName» = tell(«tell.contractReference.name»);
-		«IF useTimeout»
+		Session2<TST> «tell.session.name» = tellAndWait(«tell.contractReference.name»);
 		
-		try {
-			Session2<TST> «tell.session.name» = waitForSession(«publicName», «WAIT_TIMEOUT»);
-			«asks.get(0).toJava»
-		}
-		catch(TimeExpiredException e) {
-			«taus.get(0).eAllContents.filter(Ask).forEach[x|x.public=publicName]»
-			«taus.get(0).toJava»
-		}
-		«ELSE»
-		Session2<TST> «tell.session.name» = waitForSession(«publicName»);
-		
-		«tell.next.toJava»
-		«ENDIF»
+		«tell.process.toJava»
 		'''
 	}
 	
-	def dispatch String toJava(Sum p) {
+	def dispatch String toJava(Receive receive) {
 		
-		if (p.prefixes.size==1 && !(p.prefixes.get(0) instanceof DoInput)) {
-			return p.prefixes.get(0).toJava
-		}
-		
-		//sum can contain only DoInput (on same session) and at most one tau
-		var taus = p.prefixes.filter(Tau)
-		val containsTau =taus.size>0
-
 		'''
-		«IF containsTau»
+		«IF receive.isTimeout»
 		try {
-			«p.getSwitchOfReceives(true)»
+			«receive.actions.getSwitchOfReceives(receive.session.name, true)»
 		}
 		catch (TimeExpiredException e) {
-			«taus.get(0).toJava»
+			«receive.TProcess.toJava»
 		}
 		
 		«ELSE»
-		«p.getSwitchOfReceives(false)»
+		«receive.actions.getSwitchOfReceives(receive.session.name, false)»
 		«ENDIF»
 		'''
 	}
 	
-	def String getSwitchOfReceives(Sum p, boolean timeout) {
+	def String getSwitchOfReceives(EList<Input> inputActions, String session, boolean timeout) {
 		
-		var inputActions = p.prefixes.filter(DoInput)
-		val session = inputActions.get(0).session.name
 		val actionNames = inputActions.map[x|x.actionName]
 		
 		var messageName = '''msg$«MESSAGE_COUNT++»'''
@@ -422,15 +386,15 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	/**
-	 * Change variable name in order to be uniqueon sums, i.e. <code>do a? n:int + do b? n:int</code>.
+	 * Change variable name in order to be unique on sums, i.e. <code>do a? n:int + do b? n:int</code>.
 	 * All references will be updated.
 	 */
-	def void fixVariableName(DoInput input) {
+	def void fixVariableName(Input input) {
 		if (input.variable!=null) 
 			input.variable.name=input.variable.name+"$"+input.actionName+"$msg"+MESSAGE_COUNT
 	}
 	
-	def String getJavaDoInput(DoInput input, String messageName) {
+	def String getJavaDoInput(Input input, String messageName) {
 		
 		// change variable name in order to be unique, i.e. like  do a? n:int + do b? n:int
 		input.fixVariableName
@@ -476,30 +440,13 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 	}
 	
-	def dispatch String toJava(Prefix p) {
-		"/* ERROR */"
-	}
-	
-	def dispatch String toJava(DoOutput p) {
+	def dispatch String toJava(Send p) {
 		'''
 		«p.session.name».send("«p.actionName»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
 		«IF p.next!=null»«p.next.toJava»«ENDIF»
 		'''
 	}
 	
-	def dispatch String toJava(Tau p) {
-		'''«IF p.next!=null»«p.next.toJava»«ENDIF»'''
-	}
-	
-	def dispatch String toJava(Ask ask) {
-		'''
-		«IF ask.public!=null»
-		«ask.session.name = ask.session.name+"$"+ASK_COUNT++»
-		Session2<TST> «ask.session.name» = waitForSession(«ask.public»);
-		«ENDIF»
-		«IF ask.next!=null»«ask.next.toJava»«ENDIF»
-		'''
-	}
 	
 	
 	

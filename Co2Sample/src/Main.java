@@ -6,7 +6,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		HonestyChecker.isHonest(it.unica.co2.blackjack.Blackjack.P.class);
+		HonestyChecker.isHonest(it.unica.co2.blackjack.BlackjackMacros.P.class);
 	}
 
 }

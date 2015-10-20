@@ -141,48 +141,6 @@ Formula:
 
 /* MACROS */
 
-//Definition:
-//	ProcessDefinition | Co2SpecDefinition
-//;
-//
-//Co2SpecDefinition:
-//	{Co2SpecDefinition} "co2Spec" name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
-//		process=(ParallelCo2Spec)?
-//	"}"
-//;
-//
-//ParallelCo2Spec:
-//	processes+=Co2Spec  ("|" processes+=Co2Spec)*
-//;
-//
-//Co2Spec:
-//	EmptyProcess |
-//	IfThenElse2 |
-//	TellAndWait |
-//	TellRetract |
-//	Send |
-//	Case |
-//	"(" ParallelCo2Spec ")"
-//;
-//
-//NextCo2Spec returns Co2Spec:
-//	Co2Spec | Co2SpecCall
-//;
-//
-//IfThenElse2:
-//	{IfThenElse}
-//	'if' if=Expression
-//	"then "then=NextCo2Spec
-//	(=>'else' else=NextCo2Spec)?
-//;
-//
-//
-//
-//Co2SpecCall:
-//	reference=[Co2SpecDefinition] ("("(params+=Expression ("," params+=Expression)*)?")")?
-//;
-//
-
 TellAndWait:
 	"tellAndWait" session=Session  
 	("{" contract=Contract? "}" | contractReference=[ContractDefinition])

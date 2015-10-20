@@ -66,5 +66,5 @@ specification PabortP(xp:session) {
 
 specification PabortD(xd:session) {
 	send xd abort! 
-	| receive xd [ card? n:int. send xd abort!]
+	| receive xd [ card? n:int. send xd abort! ]
 }
