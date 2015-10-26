@@ -181,11 +181,9 @@ from {
 		 * - prefixes
 		 * - delimited processes with freeNames
 		 */
-		println("checking the process: "+p.name)
 		var children = p.eAllContents.filter[x| x instanceof Prefix || x instanceof DelimitedProcess].toIterable
 		for (node : children) {
 			
-			println("node: "+node)
 			if (
 				(node instanceof DelimitedProcess && !(node as DelimitedProcess).freeNames.isEmpty) ||
 				node instanceof Prefix
