@@ -14,15 +14,21 @@ import it.unica.co2.co2.Expression
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
 import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Receive
+import it.unica.co2.co2.Referrable
+import it.unica.co2.co2.Send
+import it.unica.co2.co2.Session
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.SystemDeclaration
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Variable
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
@@ -67,7 +73,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		'waves.png'
 	}
 		
-	def image(Variable ele) {
+	def image(Referrable ele) {
 		'variable.png'
 	}
 	
@@ -133,12 +139,31 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 			"tell? " + ele.session.name
 	}
 	
+	def text(TellAndWait ele) {
+		if (ele.contractReference!=null)
+			"tellAndWait " + ele.session.name + " [" + ele.contractReference.name + "]"
+		else
+			"tellAndWait " + ele.session.name
+	}
+	
 	def text(DoInput ele) {
 		"do "+ ele.session.name + " " + ele.actionName + "?"
 	}
 	
+	def text(Receive ele) {
+		"receive "+ ele.session.name
+	}
+	
+	def text(Input ele) {
+		ele.actionName + "?"
+	}
+	
 	def text(DoOutput ele) {
 		"do "+ ele.session.name + " " + ele.actionName + "!"
+	}
+	
+	def text(Send ele) {
+		"send "+ ele.session.name + " " + ele.actionName + "!"
 	}
 	
 	def text(Tau ele) {
@@ -168,6 +193,10 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	
 	def text(Variable elm) {
 		elm.name+" : "+elm.type.value
+	}
+	
+	def text(Session elm) {
+		elm.name+" : session"
 	}
 
 	def text(IntAction ele) {
