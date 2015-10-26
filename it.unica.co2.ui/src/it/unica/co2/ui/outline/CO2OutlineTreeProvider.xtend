@@ -7,13 +7,13 @@ import it.unica.co2.co2.ContractsAndProcessesDeclaration
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
-import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Sum
+import it.unica.co2.co2.Variable
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 
@@ -84,10 +84,10 @@ class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 	
 	// don't create freename type node
-	def void _createChildren(IOutlineNode parentNode, FreeName elm) {
+	def void _createChildren(IOutlineNode parentNode, Variable elm) {
 	}
 
-	def boolean _isLeaf(FreeName elm) {
+	def boolean _isLeaf(Variable elm) {
 		return true;
 	}
 	

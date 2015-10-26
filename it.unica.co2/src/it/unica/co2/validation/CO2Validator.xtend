@@ -11,11 +11,14 @@ import it.unica.co2.co2.EmptyContract
 import it.unica.co2.co2.EmptyProcess
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
-import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.HonestyDeclaration
+import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Referrable
+import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
 import org.eclipse.emf.ecore.EObject
@@ -169,11 +172,26 @@ class CO2Validator extends CO2TypeSystemValidator {
 		this.checkFreeName(proc.eContainer, proc.variable, 0)
 	}
 	
-	def dispatch void checkFreeName(EObject obj, FreeName fn, int i) {
+	@Check
+	def void checkShadowTellRetract(TellRetract proc) {
+		this.checkFreeName(proc.eContainer, proc.session, 0)
+	}
+	
+	@Check
+	def void checkShadowTellAndWait(TellAndWait proc) {
+		this.checkFreeName(proc.eContainer, proc.session, 0)
+	}
+	
+	@Check
+	def void checkShadowInput(Input proc) {
+		this.checkFreeName(proc.eContainer, proc.variable, 0)
+	}
+	
+	def dispatch void checkFreeName(EObject obj, Referrable fn, int i) {
     	checkFreeName(obj.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(DoInput obj, FreeName fn, int i) {
+    def dispatch void checkFreeName(DoInput obj, Referrable fn, int i) {
     	if (obj.variable.name == fn.name) {
     		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
 	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
@@ -181,7 +199,31 @@ class CO2Validator extends CO2TypeSystemValidator {
     	checkFreeName(obj.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(DelimitedProcess proc, FreeName fn, int i) {
+    def dispatch void checkFreeName(Input obj, Referrable fn, int i) {
+    	if (obj.variable.name == fn.name) {
+    		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
+	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
+    	}
+    	checkFreeName(obj.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(TellRetract obj, Referrable fn, int i) {
+    	if (obj.session.name == fn.name) {
+    		warning("Shadowed free-name", obj.session.eContainer, obj.session.eContainingFeature)
+	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
+    	}
+    	checkFreeName(obj.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(TellAndWait obj, Referrable fn, int i) {
+    	if (obj.session.name == fn.name) {
+    		warning("Shadowed free-name", obj.session.eContainer, obj.session.eContainingFeature)
+	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
+    	}
+    	checkFreeName(obj.eContainer, fn, i)
+    }
+    
+    def dispatch void checkFreeName(DelimitedProcess proc, Referrable fn, int i) {
     	var j=0
     	for (fn1 : proc.freeNames) {
 			if (fn1.name == fn.name) {
@@ -193,7 +235,7 @@ class CO2Validator extends CO2TypeSystemValidator {
     	checkFreeName(proc.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(ProcessDefinition proc, FreeName fn, int i) {
+    def dispatch void checkFreeName(ProcessDefinition proc, Referrable fn, int i) {
     	var j=0
     	for (fn1 : proc.params) {
 			if (fn1.name == fn.name) {

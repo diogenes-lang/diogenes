@@ -40,64 +40,64 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	/*
 	 * FreeName reference
 	 */
-	def IScope scope_FreeName(EObject ctx, EReference ref) {
-		return getDeclaredFreeNames(ctx.eContainer);
+	def IScope scope_Referrable(EObject ctx, EReference ref) {
+		return getDeclaredVariables(ctx.eContainer);
 	}
 
 	/*
 	 * utils: recursively get all free-names declarations until ProcessDefinition
 	 */
-	def dispatch IScope getDeclaredFreeNames(EObject cont) {
-		return getDeclaredFreeNames(cont.eContainer);
+	def dispatch IScope getDeclaredVariables(EObject cont) {
+		return getDeclaredVariables(cont.eContainer);
 	}
 	
-	def dispatch IScope getDeclaredFreeNames(DelimitedProcess proc) {
+	def dispatch IScope getDeclaredVariables(DelimitedProcess proc) {
 		return Scopes.scopeFor(
 			proc.freeNames
 			,
-			getDeclaredFreeNames(proc.eContainer) // outer
+			getDeclaredVariables(proc.eContainer) // outer
 		);
 	}
 	
-	def dispatch IScope getDeclaredFreeNames(DoInput proc) {
+	def dispatch IScope getDeclaredVariables(DoInput proc) {
 		if (proc.variable==null)
-			return getDeclaredFreeNames(proc.eContainer)
+			return getDeclaredVariables(proc.eContainer)
 		else
 			return Scopes.scopeFor(
 				newArrayList(proc.variable)
 				,
-				getDeclaredFreeNames(proc.eContainer) // outer
+				getDeclaredVariables(proc.eContainer) // outer
 			);
 	}
 	
-	def dispatch IScope getDeclaredFreeNames(Input proc) {
+	def dispatch IScope getDeclaredVariables(Input proc) {
 		if (proc.variable==null)
-			return getDeclaredFreeNames(proc.eContainer)
+			return getDeclaredVariables(proc.eContainer)
 		else
 			return Scopes.scopeFor(
 				newArrayList(proc.variable)
 				,
-				getDeclaredFreeNames(proc.eContainer) // outer
+				getDeclaredVariables(proc.eContainer) // outer
 			);
 	}
 	
-	def dispatch IScope getDeclaredFreeNames(TellRetract proc) {
+	def dispatch IScope getDeclaredVariables(TellRetract proc) {
 		return Scopes.scopeFor(
 			newArrayList(proc.session)
 			,
-			getDeclaredFreeNames(proc.eContainer) // outer
+			getDeclaredVariables(proc.eContainer) // outer
 		);
 	}
 
-	def dispatch IScope getDeclaredFreeNames(TellAndWait proc) {
+	def dispatch IScope getDeclaredVariables(TellAndWait proc) {
 		return Scopes.scopeFor(
 			newArrayList(proc.session)
 			,
-			getDeclaredFreeNames(proc.eContainer) // outer
+			getDeclaredVariables(proc.eContainer) // outer
 		);
 	}
 
-	def dispatch IScope getDeclaredFreeNames(ProcessDefinition obj) {
+	def dispatch IScope getDeclaredVariables(ProcessDefinition obj) {
 		return Scopes.scopeFor(obj.params); // stop recursion
 	}
 	

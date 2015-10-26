@@ -31,7 +31,7 @@ ContractsAndProcessesDeclaration:
 ;
 
 ProcessDefinition:
-	{ProcessDefinition} (withoutRestrictions?="process" | "specification") name=ID ("("(params+=FreeName ("," params+=FreeName)*)?")")? "{" 
+	{ProcessDefinition} (withoutRestrictions?="process" | "specification") name=ID ("("(params+=Variable ("," params+=Variable)*)?")")? "{" 
 		process=(ParallelProcesses)?
 	"}"
 ;
@@ -41,12 +41,15 @@ ParallelProcesses:
 ;
 
 DelimitedProcess:
-	("(" (freeNames+=FreeName ("," freeNames+=FreeName)*)? ")")? process=Process
+	("(" (freeNames+=Variable ("," freeNames+=Variable)*)? ")")? process=Process
 ;
 
-FreeName:
-	(name=ID ":" type=Type ) | Session
+
+Variable:
+	name=ID ":" type=Type
 ;
+
+
 
 Process:
 	EmptyProcess |
@@ -108,23 +111,23 @@ Next returns Process:
 /* PREFIXES */
 
 Tell:
-	"tell" session=[FreeName]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
+	"tell" session=[Variable]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
 ;
 
 Retract:
-	"retract" session=[FreeName]
+	"retract" session=[Variable]
 ;
 
 DoOutput:
-	"do" session=[FreeName] actionName=ID "!" (value=Expression)?
+	"do" session=[Variable] actionName=ID "!" (value=Expression)?
 ;
 
 DoInput:
-	"do" session=[FreeName] actionName=ID "?" (variable=FreeName)?
+	"do" session=[Variable] actionName=ID "?" (variable=Variable)?
 ;
 
 Ask:
-	"ask" session=[FreeName] formula=Formula? ("you never go here" public=STRING)?
+	"ask" session=[Variable] formula=Formula?
 ;
 
 Tau:
@@ -154,16 +157,16 @@ TellRetract:
 ;
 
 Send:
-	"send" session=[FreeName] actionName=ID "!" (value=Expression)? ("." next=Next)?
+	"send" session=[Referrable] actionName=ID "!" (value=Expression)? ("." next=Next)?
 ;
 
 Receive:
-	"receive" session=[FreeName] 
+	"receive" session=[Referrable] 
 	"[" (actions+=Input ("+" actions+=Input)* ) ("+" timeout?="t" ("." tProcess=Next)?)? "]"
 ;
 
 Input:
-	actionName=ID "?" (variable=FreeName)? ("." next=Next)?
+	actionName=ID "?" (variable=Variable)? ("." next=Next)?
 ;
 
 Session:
@@ -216,12 +219,16 @@ Atomic returns Expression:
     {NumberLiteral} value=INT |
     {StringLiteral} value=STRING |
     {BooleanLiteral} value=('true'|'false') |
-    {VariableReference} ref=([FreeName]|[Session])
+    {VariableReference} ref=[Referrable]
 ;
 
 
 Typable:
-	FreeName | Expression
+	Variable | Expression
+;
+
+Referrable:
+	Variable | Session
 ;
 
 Type:
@@ -285,10 +292,6 @@ IntAction:
 
 ExtAction:
 	actionName=ID "?" (type=ActionType)? ("." next=(NextContract))?
-;
-
-ContractReference:
-	ref=[ContractDefinition]
 ;
 
 ActionType: 

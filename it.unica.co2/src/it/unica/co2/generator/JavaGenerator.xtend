@@ -19,7 +19,6 @@ import it.unica.co2.co2.Equals
 import it.unica.co2.co2.Expression
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
-import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
@@ -44,10 +43,13 @@ import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
+import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.xsemantics.CO2TypeSystem
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.HashMap
+import java.util.Map
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
@@ -64,14 +66,10 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	int WAIT_TIMEOUT = 10_000
 	int TELL_RETRACT_TIMEOUT = 10_000
-	int MESSAGE_COUNT = 0
-	int ASK_COUNT = 0
 	
 	override doGenerate(Resource resource, IFileSystemAccess fsa) {
 		
-		MESSAGE_COUNT=0;
 		CONTRACT_NAME_COUNT = 0
-		ASK_COUNT = 0
 		
 		for (e : resource.allContents.toIterable.filter(CO2System)) {
 			var outputFilename = e.systemDeclaration.fullyQualifiedName.toString("/") + ".java"
@@ -242,6 +240,13 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 	}
 	
+	def String getJavaType(Variable fn) {
+		if (fn.type instanceof IntType)			"Integer"
+		else if (fn.type instanceof StringType)	"String"
+		else if(fn.type instanceof BooleanType) "boolean" 
+		else if(fn.type instanceof SessionType) "Session2<TST>"
+	}
+	
 	
 	def String getFieldsAndConstructor(ProcessDefinition p) {
 		'''
@@ -258,16 +263,10 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 	}
 	
-	def String getJavaType(FreeName fn) {
-		if (fn.type instanceof IntType) "Integer"
-		else if (fn.type instanceof StringType) "String"
-		else if (fn.type instanceof BooleanType) "boolean"
-		else if (fn.type instanceof SessionType) "Session2<TST>"
-	}
-	
 	
 	def String getRunBody(ProcessDefinition p) {
-		MESSAGE_COUNT=0		//message count can be reset
+		clearFreeNames		// freenames can be reset
+		
 		'''
 		@Override
 		public void run() {
@@ -311,7 +310,10 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(TellRetract tell) {
 		
-		val publicName = '''pbl$«tell.session.name»$«tell.contractReference.name»'''
+		var freshName = getFreshName(tell.session.name)		// get a fresh name
+		tell.session.name = freshName						// update the name all its references
+		
+		val publicName = '''pbl_«tell.session.name»'''
 		
 		'''
 		Public<TST> «publicName» = tell(«tell.contractReference.name», «TELL_RETRACT_TIMEOUT»);
@@ -331,6 +333,9 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def dispatch String toJava(TellAndWait tell) {
+		var freshName = getFreshName(tell.session.name)		// get a fresh name
+		tell.session.name = freshName						// update the name all its references
+		
 		'''
 		Session2<TST> «tell.session.name» = tellAndWait(«tell.contractReference.name»);
 		
@@ -359,7 +364,7 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		val actionNames = inputActions.map[x|x.actionName]
 		
-		var messageName = '''msg$«MESSAGE_COUNT++»'''
+		var messageName = getFreshName("msg")
 		
 		'''		
 		«getLogString('''waiting on '«session»' for actions [«actionNames.join(",")»]''')»
@@ -367,14 +372,14 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		«IF inputActions.size==1»
 			logger.log("received [«inputActions.get(0).actionName»]");
-			«inputActions.get(0).getJavaDoInput(messageName)»
+			«inputActions.get(0).getJavaInput(messageName)»
 		«ELSE»				
 		switch («messageName».getLabel()) {			
 			«FOR a : inputActions»
 			
 			case "«a.actionName»":
 				logger.log("received [«a.actionName»]");
-				«a.getJavaDoInput(messageName)»
+				«a.getJavaInput(messageName)»
 				break;
 			«ENDFOR»
 			
@@ -391,10 +396,10 @@ class JavaGenerator extends AbstractIGenerator {
 	 */
 	def void fixVariableName(Input input) {
 		if (input.variable!=null) 
-			input.variable.name=input.variable.name+"$"+input.actionName+"$msg"+MESSAGE_COUNT
+			input.variable.name = getFreshName(input.variable.name)
 	}
 	
-	def String getJavaDoInput(Input input, String messageName) {
+	def String getJavaInput(Input input, String messageName) {
 		
 		// change variable name in order to be unique, i.e. like  do a? n:int + do b? n:int
 		input.fixVariableName
@@ -516,5 +521,28 @@ class JavaGenerator extends AbstractIGenerator {
 		exp.ref.name
 	}
 	
+	
+	
+	
+	
+	
+	Map<String,Integer> freeNames = new HashMap 
+	
+	def String getFreshName(String name) {
+		var count = freeNames.get(name)
+		
+		if (count==null) {
+			freeNames.put(name, 1);
+			return name;
+		}
+		else {
+			freeNames.put(name, count+1);
+			return name+"_"+count
+		}
+	}
+	
+	def void clearFreeNames() {
+		freeNames.clear
+	}
 	
 }

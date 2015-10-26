@@ -12,7 +12,6 @@ import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.Equals
 import it.unica.co2.co2.Expression
-import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.IntType
 import it.unica.co2.co2.Minus
@@ -35,10 +34,12 @@ import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Type
+import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.validation.AbstractCO2Validator
 import java.util.HashSet
 import org.eclipse.emf.ecore.EObject
+import it.unica.co2.co2.Referrable
 
 system it.unica.co2.xsemantics.CO2TypeSystem
 
@@ -50,7 +51,7 @@ judgments {
 		error "cannot type " + stringRep(expression)
 		source expression
 		
-	vartype ||- FreeName fn : output Type
+	vartype ||- Referrable fn : output Type
 		error "cannot type " + stringRep(fn)
 		source fn
 		
@@ -148,8 +149,8 @@ from {
 
 
 
-axiom FreeName
-	G ||- FreeName fn : fn.type
+axiom Variable
+	G ||- Variable fn : fn.type
 
 
 axiom Session
@@ -455,8 +456,8 @@ from {
     empty |- expr : var Type type
 }
 
-checkrule CheckFreeName for
-    FreeName fn
+checkrule CheckReferrable for
+    Referrable fn
 from {
     empty ||- fn : var Type type
 }

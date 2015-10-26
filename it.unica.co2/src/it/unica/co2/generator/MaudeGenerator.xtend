@@ -15,7 +15,6 @@ import it.unica.co2.co2.EmptyProcess
 import it.unica.co2.co2.Expression
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
-import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
@@ -37,6 +36,7 @@ import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
+import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.xsemantics.CO2TypeSystem
 import it.xsemantics.runtime.RuleApplicationTrace
@@ -346,16 +346,17 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String toMaude(Expression exp, String padLeft) {
-		if (
-			exp instanceof VariableReference && 
-			(
-				(exp as VariableReference).ref.type instanceof SessionType ||
-				(exp as VariableReference).ref instanceof Session
+		if (exp instanceof VariableReference) {
+			var ref = (exp as VariableReference).ref
+			
+			if (
+				ref instanceof Session ||
+				(ref instanceof Variable && (ref as Variable).type instanceof SessionType)
 			)
-		)
-			return '''"«(exp as VariableReference).ref.name»"'''
-		else
-			return "exp"
+				return '''"«ref.name»"'''
+		}
+
+		return "exp"
 	}
 	
 	
@@ -455,7 +456,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		//other types are not permitted by the semantic checker
 	}
 	
-	def String getFreeNameType(FreeName variable) {
+	def String getFreeNameType(Variable variable) {
 		if (variable==null) return "unit"
 		else if (variable.type instanceof IntType) return "int"
 		else if (variable.type instanceof StringType) return "string"

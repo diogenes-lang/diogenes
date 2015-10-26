@@ -13,7 +13,6 @@ import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.Expression
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
-import it.unica.co2.co2.FreeName
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
@@ -24,9 +23,10 @@ import it.unica.co2.co2.Sum
 import it.unica.co2.co2.SystemDeclaration
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellRetract
+import it.unica.co2.co2.Variable
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
-import it.unica.co2.co2.TellRetract
 
 /**
  * Provides labels for EObjects.
@@ -67,7 +67,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		'waves.png'
 	}
 		
-	def image(FreeName ele) {
+	def image(Variable ele) {
 		'variable.png'
 	}
 	
@@ -166,7 +166,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	
-	def text(FreeName elm) {
+	def text(Variable elm) {
 		elm.name+" : "+elm.type.value
 	}
 
