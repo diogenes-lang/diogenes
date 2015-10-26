@@ -30,27 +30,6 @@ import org.eclipse.xtext.validation.Check
 class CO2Validator extends CO2TypeSystemValidator {
 	
 	
-//	@Check
-//	def void checkLanguageVersion(CO2System sys){
-//		var versionWithMacros = if (sys.version!=null) sys.version.macro else true
-//		
-//		println('''versionWithMacros: «versionWithMacros»''');
-//		
-//		if (versionWithMacros) {
-//			/*
-//			 * the program cannot contain
-//			 * - prefixes
-//			 * - delimited processes with freeNames
-//			 */
-//			var children = sys.eAllContents.filter[x| x instanceof Prefix || x instanceof DelimitedProcess].toIterable
-//			for (node : children) {
-//				error("This code is not allowed with the given language version", 
-//					node.
-//				);
-//			}
-//		}
-//	}
-
 	@Check
 	def void checkContractNameIsUnique(ProcessDefinition procDef) {
 		var root = EcoreUtil2.getRootContainer(procDef);
@@ -73,34 +52,6 @@ class CO2Validator extends CO2TypeSystemValidator {
 					Co2Package.Literals.HONESTY_DECLARATION__PROCESS
 				);
 			}
-		
-//		/*
-//		 * each process must appear once and declared without params
-//		 */
-//		for (var i=0; i<honestyDecl.processes.size; i++) {
-//			var p = honestyDecl.processes.get(i)
-//			if (p.params.size > 0) {
-//				error("You can check only processes without args", 
-//					Co2Package.Literals.HONESTY_DECLARATION__PROCESSES,
-//					i
-//				);
-//			}
-//		}
-//		
-//		for (var i=0; i<honestyDecl.processes.size-1; i++) {
-//			
-//			for (var j=i+1; j<honestyDecl.processes.size; j++) {
-//				var p1 = honestyDecl.processes.get(i)
-//				var p2 = honestyDecl.processes.get(j)
-//				if (p1.name == p2.name) {
-//					error("Process already present", 
-//						Co2Package.Literals.HONESTY_DECLARATION__PROCESSES,
-//						j
-//					);
-//				}
-//			}
-//		}
-			
 	}
 
 	@Check
