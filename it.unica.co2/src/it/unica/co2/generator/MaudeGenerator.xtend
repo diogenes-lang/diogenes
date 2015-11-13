@@ -51,6 +51,7 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	@Inject CO2TypeSystem co2TypeSystem
 	@Inject extension IQualifiedNameProvider qNameProvider
+//	@Inject CO2Parser parser
 	
 	static final String TAB = "    "
 
@@ -78,8 +79,9 @@ class MaudeGenerator extends AbstractIGenerator{
 		var contracts = co2System.contractsAndProcessesDeclaration.contracts.toSet
 		
 		//fix anonymous tells
-		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("TELL-CONTR")].toSet )
-		contracts.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("TELLR-CONTR")].toSet )
+		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("T-CONTR")].toSet )
+		contracts.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("TR-CONTR")].toSet )
+		contracts.addAll( co2System.eAllContents.filter(TellAndWait).map[t| t.fixTell("TW-CONTR")].toSet )
 			
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet
@@ -434,6 +436,49 @@ class MaudeGenerator extends AbstractIGenerator{
 		return sb.toString
 		
 	}
+	
+//	def dispatch String toMaude(WaitForCompletion obj, String padLeft) {
+//		
+//		var freshNames = new ArrayList<String>
+//		
+//		var code = 
+//			'''
+//			system dummy
+//			
+//			specification DUMMY {
+//			«FOR p : obj.processes»
+//«««			
+//			«var freshName = getFreshName("_wcf_")»
+//			«var dev_null = freshNames.add(freshName)»
+//«««			
+//			tellAndWait s_«freshName» { c_«freshName»! } . send s_«freshName» c_«freshName»!
+//«««			
+//			|
+//			«ENDFOR»
+//			
+//			«FOR freshName : freshNames»
+//			tellAndWait s_«freshName» { c_«freshName»? } . receive s_«freshName» [ c_«freshName»? . 
+//			«ENDFOR»
+//			nil
+//			«FOR freshName : freshNames»]«ENDFOR»
+//			}
+//			'''
+//		
+//		println(code)
+//		
+//		var parseResult = parser.doParse(code);
+//		
+//		if (parseResult.hasSyntaxErrors)
+//			throw new RuntimeException(parseResult.syntaxErrors.toString)
+//		
+//		parseResult.rootASTElement.eAllContents
+//			.filter(TellAndWait).map[t| t.fixTell("TELLR-CONTR")]
+//					
+//		parseResult.rootASTElement.eAllContents
+//			.findFirst[x|x instanceof DelimitedProcess]
+//			.toMaude(padLeft)
+//	}
+	
 	
 	def String getActionType(ActionType type) {
 		if (type==null || type instanceof UnitActionType) return "unit"

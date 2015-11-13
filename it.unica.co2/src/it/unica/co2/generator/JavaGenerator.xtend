@@ -48,8 +48,6 @@ import it.unica.co2.co2.VariableReference
 import it.unica.co2.xsemantics.CO2TypeSystem
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.HashMap
-import java.util.Map
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
@@ -68,6 +66,8 @@ class JavaGenerator extends AbstractIGenerator {
 	int TELL_RETRACT_TIMEOUT = 10_000
 	
 	override doGenerate(Resource resource, IFileSystemAccess fsa) {
+		
+		clearFreeNames()
 		
 		CONTRACT_NAME_COUNT = 0
 		
@@ -519,30 +519,6 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String getJavaExpression(VariableReference exp) {
 		exp.ref.name
-	}
-	
-	
-	
-	
-	
-	
-	Map<String,Integer> freeNames = new HashMap 
-	
-	def String getFreshName(String name) {
-		var count = freeNames.get(name)
-		
-		if (count==null) {
-			freeNames.put(name, 1);
-			return name;
-		}
-		else {
-			freeNames.put(name, count+1);
-			return name+"_"+count
-		}
-	}
-	
-	def void clearFreeNames() {
-		freeNames.clear
 	}
 	
 }

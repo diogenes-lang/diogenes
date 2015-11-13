@@ -23,6 +23,7 @@ import it.unica.co2.co2.Prefix
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Receive
+import it.unica.co2.co2.Referrable
 import it.unica.co2.co2.Retract
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
@@ -39,7 +40,6 @@ import it.unica.co2.co2.VariableReference
 import it.unica.co2.validation.AbstractCO2Validator
 import java.util.HashSet
 import org.eclipse.emf.ecore.EObject
-import it.unica.co2.co2.Referrable
 
 system it.unica.co2.xsemantics.CO2TypeSystem
 
@@ -417,6 +417,7 @@ from {
 	
 }
 
+
 rule Send
 	G |= Send send
 from {
@@ -443,6 +444,7 @@ from {
 		}
 	}
 }
+
 
 
 /*
