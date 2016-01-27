@@ -122,6 +122,7 @@ class JavaGenerator extends AbstractIGenerator {
 		import it.unica.co2.api.contract.Sort;
 		import it.unica.co2.api.process.CO2Process;
 		import it.unica.co2.api.process.Participant;
+		import it.unica.co2.honesty.HonestyChecker;
 		import co2api.ContractException;
 		import co2api.ContractExpiredException;
 		import co2api.Message;
@@ -148,7 +149,7 @@ class JavaGenerator extends AbstractIGenerator {
 			
 			public static void main(String[] args) {
 				«IF honestyProcess!=null»
-				new «honestyProcess.name»().run();
+				HonestyChecker.isHonest(«honestyProcess.name».class);
 				«ENDIF»
 			}
 		}
@@ -441,7 +442,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(ProcessCall p) {
 		'''
-		new «p.reference.name»(«p.params.join(",", [x | x.javaExpression])»).run();
+		processCall(«p.reference.name».class, «p.params.join(",", [x | x.javaExpression])»);
 		'''
 	}
 	
