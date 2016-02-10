@@ -196,8 +196,4 @@ class JavaGeneratorUtils {
 		text.trim.replaceAll("\t", "").replaceAll("\n", " ")
 	}
 	
-	def static String getLogString(String str){
-		'''logger.log("«str»");'''
-	}
-	
 }

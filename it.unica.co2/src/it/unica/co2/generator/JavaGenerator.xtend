@@ -115,7 +115,6 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		
 		import static it.unica.co2.api.contract.utils.ContractFactory.*;
-		import it.unica.co2.api.Session2;
 		import it.unica.co2.api.contract.Contract;
 		import it.unica.co2.api.contract.ContractDefinition;
 		import it.unica.co2.api.contract.Recursion;
@@ -127,6 +126,7 @@ class JavaGenerator extends AbstractIGenerator {
 		import co2api.ContractExpiredException;
 		import co2api.Message;
 		import co2api.Public;
+		import co2api.Session;
 		import co2api.TST;
 		import co2api.TimeExpiredException;
 		
@@ -144,7 +144,7 @@ class JavaGenerator extends AbstractIGenerator {
 			«contractDefinitions.getJavaContractDeclarations»
 			«contractDefinitions.getJavaContractDefinitions»
 			«FOR p : processDefinitions»
-			«p.getJavaClass»
+			«p.getJavaClass(className)»
 			«ENDFOR»
 			
 			public static void main(String[] args) {
@@ -222,19 +222,19 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def String getJavaActionSort(ActionType type) {
-		if (type==null || type instanceof UnitActionType) "Sort.UNIT"
-		else if (type instanceof IntActionType) "Sort.INT"
-		else if (type instanceof StringActionType) "Sort.STRING"
+		if (type==null || type instanceof UnitActionType) "Sort.unit()"
+		else if (type instanceof IntActionType) "Sort.integer()"
+		else if (type instanceof StringActionType) "Sort.string()"
 	}
 	
-	def String getJavaClass(ProcessDefinition p) {
+	def String getJavaClass(ProcessDefinition p, String mainClass) {
 		var className = p.name
 		'''
 		
 		public static class «className» extends Participant {
 			
 			private static final long serialVersionUID = 1L;
-			«p.getFieldsAndConstructor»
+			«p.getFieldsAndConstructor(mainClass)»
 			
 			«p.runBody»
 		}
@@ -245,18 +245,18 @@ class JavaGenerator extends AbstractIGenerator {
 		if (fn.type instanceof IntType)			"Integer"
 		else if (fn.type instanceof StringType)	"String"
 		else if(fn.type instanceof BooleanType) "boolean" 
-		else if(fn.type instanceof SessionType) "Session2<TST>"
+		else if(fn.type instanceof SessionType) "Session<TST>"
 	}
 	
 	
-	def String getFieldsAndConstructor(ProcessDefinition p) {
+	def String getFieldsAndConstructor(ProcessDefinition p, String mainClass) {
 		'''
 		«FOR fn : p.params»
 		private «fn.javaType» «fn.name»;
 		«ENDFOR»
 		
-		public «p.name»(«p.params.join(",", [fn | fn.javaType+" "+fn.name])») {
-			super(username, password);
+		public «p.name»(«p.params.join(", ", [fn | fn.javaType+" "+fn.name])») {
+			super(«mainClass».username, «mainClass».password);
 			«FOR fn : p.params»
 			this.«fn.name»=«fn.name»;
 			«ENDFOR»
@@ -320,7 +320,7 @@ class JavaGenerator extends AbstractIGenerator {
 		Public<TST> «publicName» = tell(«tell.contractReference.name», «TELL_RETRACT_TIMEOUT»);
 		
 		try {
-			Session2<TST> «tell.session.name» = waitForSession(«publicName»);
+			Session<TST> «tell.session.name» = «publicName».waitForSession();
 			
 			«tell.process.toJava»
 		}
@@ -338,7 +338,7 @@ class JavaGenerator extends AbstractIGenerator {
 		tell.session.name = freshName						// update the name all its references
 		
 		'''
-		Session2<TST> «tell.session.name» = tellAndWait(«tell.contractReference.name»);
+		Session<TST> «tell.session.name» = tellAndWait(«tell.contractReference.name»);
 		
 		«tell.process.toJava»
 		'''
@@ -368,24 +368,22 @@ class JavaGenerator extends AbstractIGenerator {
 		var messageName = getFreshName("msg")
 		
 		'''		
-		«getLogString('''waiting on '«session»' for actions [«actionNames.join(",")»]''')»
-		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(",", [x|'''"«x»"'''])»);
+		System.out.println("waiting on '«session»' for actions [«actionNames.join(", ")»]");
+		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(", ", [x|'''"«x»"'''])»);
 		
 		«IF inputActions.size==1»
-			logger.log("received [«inputActions.get(0).actionName»]");
+			System.out.println("received [«inputActions.get(0).actionName»]");
 			«inputActions.get(0).getJavaInput(messageName)»
 		«ELSE»				
 		switch («messageName».getLabel()) {			
 			«FOR a : inputActions»
 			
 			case "«a.actionName»":
-				logger.log("received [«a.actionName»]");
+				System.out.println("received [«a.actionName»]");
 				«a.getJavaInput(messageName)»
 				break;
 			«ENDFOR»
 			
-			default:
-				throw new IllegalStateException("You should not be here");
 		}
 		«ENDIF»
 		'''
@@ -412,16 +410,11 @@ class JavaGenerator extends AbstractIGenerator {
 				try {
 					«input.variable.name» = Integer.parseInt(«messageName».getStringValue());
 				}
-				catch (NumberFormatException | ContractException e) {
+				catch (NumberFormatException e) {
 					throw new RuntimeException(e);
 				}
 				«ELSE»
-				try {
-					«input.variable.name» = «messageName».getStringValue();
-				}
-				catch (ContractException e) {
-					throw new RuntimeException(e);
-				}
+				«input.variable.name» = «messageName».getStringValue();
 			«ENDIF»
 		«ENDIF»
 		«IF input.next!=null»«input.next.toJava»«ENDIF»
@@ -442,13 +435,13 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(ProcessCall p) {
 		'''
-		processCall(«p.reference.name».class, «p.params.join(",", [x | x.javaExpression])»);
+		processCall(«p.reference.name».class, «p.params.join(", ", [x | x.javaExpression])»);
 		'''
 	}
 	
 	def dispatch String toJava(Send p) {
 		'''
-		«p.session.name».send("«p.actionName»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
+		«p.session.name».sendIfAllowed("«p.actionName»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
 		«IF p.next!=null»«p.next.toJava»«ENDIF»
 		'''
 	}
