@@ -103,6 +103,8 @@ process INS (x:session) {
 
 #Versions#
 
+2016-02-11: version **2.1.2** released!
+
 2015-10-07: version **2.1.1** released!
 
 2015-10-06: version **2.1.0** released!
@@ -122,6 +124,10 @@ process INS (x:session) {
 2015-04-03: version **0.0.1** released!
 
 #Changelog
+
+**2.1.2**
+
+* added support to new middleware APIs
 
 **2.1.1**
 
