@@ -368,18 +368,18 @@ class JavaGenerator extends AbstractIGenerator {
 		var messageName = getFreshName("msg")
 		
 		'''		
-		System.out.println("waiting on '«session»' for actions [«actionNames.join(", ")»]");
+		logger.info("waiting on '«session»' for actions [«actionNames.join(", ")»]");
 		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(", ", [x|'''"«x»"'''])»);
 		
 		«IF inputActions.size==1»
-			System.out.println("received [«inputActions.get(0).actionName»]");
+			logger.info("received [«inputActions.get(0).actionName»]");
 			«inputActions.get(0).getJavaInput(messageName)»
 		«ELSE»				
 		switch («messageName».getLabel()) {			
 			«FOR a : inputActions»
 			
 			case "«a.actionName»":
-				System.out.println("received [«a.actionName»]");
+				logger.info("received [«a.actionName»]");
 				«a.getJavaInput(messageName)»
 				break;
 			«ENDFOR»
@@ -441,6 +441,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(Send p) {
 		'''
+		logger.info("sending action '«p.actionName»'");
 		«p.session.name».sendIfAllowed("«p.actionName»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
 		«IF p.next!=null»«p.next.toJava»«ENDIF»
 		'''
