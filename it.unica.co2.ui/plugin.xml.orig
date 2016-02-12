@@ -430,11 +430,22 @@
            allPopups="false"
            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
         <command
-              commandId="it.unica.co2.ui.honesty-maude"
-              label="Honesty (maude)"
+              commandId="it.unica.co2.ui.honesty-java"
+              label="Honesty (java)"
               style="push">
            <visibleWhen
-                 checkEnabled="false">
+                 checkEnabled="true">
+              <with
+                    variable="activeMenuSelection">
+                 <iterate
+                       ifEmpty="false"
+                       operator="and">
+                    <test
+                          property="org.eclipse.core.resources.name"
+                          value="*.java">
+                    </test>
+                 </iterate>     <visibleWhen
+                 checkEnabled="true">
               <with
                     variable="activeMenuSelection">
                  <iterate
@@ -448,24 +459,6 @@
                           value="*.maude">
                     </test>
                  </iterate>
-                 <count
-                       value="1">
-                 </count>
-              </with>
-           </visibleWhen>
-        </command>
-        <command
-              commandId="it.unica.co2.ui.honesty-maude"
-              label="Honesty (java)"
-              style="push">
-           <visibleWhen
-                 checkEnabled="false">
-              <with
-                    variable="activeMenuSelection">
-                 <iterate>
-                    <instanceof
-                          value="org.eclipse.jdt.core.ICompilationUnit">
-                    </instanceof></iterate>
                  <count
                        value="1">
                  </count>

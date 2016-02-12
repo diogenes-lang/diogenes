@@ -9,6 +9,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -28,12 +29,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import it.unica.co2.honesty.HonestyResult;
 import it.unica.co2.honesty.MaudeConfiguration;
-import it.unica.co2.honesty.MaudeExecutor;
 import it.unica.co2.ui.internal.CO2Activator;
 import it.unica.co2.ui.preferences.MaudeHonestyPreferences;
 
 
-public class HonestyMaudeHandler extends AbstractHandler {
+public abstract class HonestyHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -46,9 +46,19 @@ public class HonestyMaudeHandler extends AbstractHandler {
 			
 			for (Object obj : tree.toList()) {
 				
+				System.out.println("[WARN] HonestyMaudeHandler: class "+obj.getClass());
+				
 				if (obj instanceof IResource) {
 					IResource resource = (IResource) obj;
 					checkHonesty(resource);
+				}
+				else if (obj instanceof ICompilationUnit) {
+					ICompilationUnit compilationUnit = (ICompilationUnit) obj;
+					
+					System.out.println(compilationUnit.getElementName());
+					
+					System.out.println(compilationUnit.findPrimaryType());
+					
 				}
 				else {
 					System.out.println("[WARN] HonestyMaudeHandler: unexpected class "+obj.getClass());
@@ -63,35 +73,10 @@ public class HonestyMaudeHandler extends AbstractHandler {
 	}
 
 	
-	private void checkHonesty(IResource resource) {
-		
-		String content = readResource(resource);
-		
-		MessageConsole console = findConsole("CO2 plug-in: maude honesty check");
-		console.clearConsole();
-		
-		showConsoleView(console);		//if the console view is close, open and focus on it
-		
-		try (
-				MessageConsoleStream output = console.newMessageStream()
-		){
-			
-			MaudeConfiguration conf = getMaudeConfiguration();
-			
-			MaudeExecutor maudeExecutor = new MaudeExecutor(conf);
-			maudeExecutor.redirectOutput(output);
-			
-			HonestyResult result = maudeExecutor.checkHonesty(content);
-			printHonestyResult(result, output);
-			
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	abstract public void checkHonesty(IResource resource);
 	
-	
-	private void printHonestyResult(HonestyResult result, MessageConsoleStream out) {
+	@SuppressWarnings("incomplete-switch")
+	protected void printHonestyResult(HonestyResult result, MessageConsoleStream out) {
 		out.println("-------------------------------------------------- result");
 		
 		switch(result){
@@ -117,7 +102,7 @@ public class HonestyMaudeHandler extends AbstractHandler {
 	 * @param resource
 	 * @return the content of the IResource
 	 */
-	private String readResource(IResource resource) {
+	protected String readResource(IResource resource) {
 		
 		File file = new File(resource.getLocationURI());
 		
@@ -144,7 +129,7 @@ public class HonestyMaudeHandler extends AbstractHandler {
 	
 	
 	
-	private void showConsoleView(MessageConsole console) {
+	protected void showConsoleView(MessageConsole console) {
 		
 		/*
 		 * get the active page
@@ -168,7 +153,7 @@ public class HonestyMaudeHandler extends AbstractHandler {
 	
 	
 	
-	private MessageConsole findConsole(String name) {
+	protected MessageConsole findConsole(String name) {
 		ConsolePlugin plugin = ConsolePlugin.getDefault();
 		IConsoleManager conMan = plugin.getConsoleManager();
 		IConsole[] existing = conMan.getConsoles();
@@ -185,7 +170,7 @@ public class HonestyMaudeHandler extends AbstractHandler {
 	
 	
 	
-	private MaudeConfiguration getMaudeConfiguration() {
+	protected MaudeConfiguration getMaudeConfiguration() {
 		
 		// get the properties
 		final IPreferenceStore preferences = CO2Activator.getInstance().getPreferenceStore();
