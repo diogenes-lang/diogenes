@@ -83,7 +83,7 @@ contract police {
 /*
  * Reference example
  */
-contract PIPPO {
+contract foo {
 	a!.nil (+) b!. police
 }
  

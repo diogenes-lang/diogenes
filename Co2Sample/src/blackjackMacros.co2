@@ -11,6 +11,7 @@ contract Cd {
 	next!. card? int .Cd (+) abort!
 }
 
+
 specification P {
 	tellAndWait xd Cd .	
 	tell? xp Cp . Pplay(xp, xd, 0) : send xd abort!

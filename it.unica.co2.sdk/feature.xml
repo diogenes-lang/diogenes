@@ -2,10 +2,10 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="2.1.2">
+      version="3.0.0">
 
    <description>
-      support to new middleware APIs
+      co2 grammar updated
    </description>
 
    <requires>
