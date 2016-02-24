@@ -153,7 +153,7 @@ TellAndWait:
 ;
 
 TellRetract:
-	"tellAndRetract" session=Session
+	"tellRetract" session=Session
 	("{" contract=Contract? "}" | contractReference=[ContractDefinition])
 	("." process=Next (":" rProcess=Next)?)?
 ;
