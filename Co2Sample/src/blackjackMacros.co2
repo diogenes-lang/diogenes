@@ -14,7 +14,7 @@ contract Cd {
 
 specification P {
 	tellAndWait xd Cd .	
-	tell? xp Cp . Pplay(xp, xd, 0) : send xd abort!
+	tellRetract xp Cp . Pplay(xp, xd, 0) : send xd abort!
 }
 
 specification Pplay(xp:session, xd:session, np:int) {

@@ -33,6 +33,7 @@ import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Variable
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
+import it.unica.co2.co2.Retract
 
 /**
  * Provides labels for EObjects.
@@ -134,9 +135,9 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	
 	def text(TellRetract ele) {
 		if (ele.contractReference!=null)
-			"tell? " + ele.session.name + " [" + ele.contractReference.name + "]"
+			"tellRetract " + ele.session.name + " [" + ele.contractReference.name + "]"
 		else
-			"tell? " + ele.session.name
+			"tellRetract " + ele.session.name
 	}
 	
 	def text(TellAndWait ele) {
@@ -172,6 +173,10 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	
 	def text(Ask ele) {
 		"ask "+ ele.session.name
+	}
+	
+	def text(Retract ele) {
+		"retract "+ ele.session.name
 	}
 	
 	def text(IfThenElse ele) {
