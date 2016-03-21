@@ -214,11 +214,11 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def String getJavaIntAction(IntAction a) {
-		'''.add("«a.actionName»", «a.type.javaActionSort»«IF a.next!=null», «a.next.javaContract»«ENDIF»)'''
+		'''.add("«a.name»", «a.type.javaActionSort»«IF a.next!=null», «a.next.javaContract»«ENDIF»)'''
 	}
 	
 	def String getJavaExtAction(ExtAction a) {
-		'''.add("«a.actionName»", «a.type.javaActionSort»«IF a.next!=null», «a.next.javaContract»«ENDIF»)'''
+		'''.add("«a.name»", «a.type.javaActionSort»«IF a.next!=null», «a.next.javaContract»«ENDIF»)'''
 	}
 	
 	def String getJavaActionSort(ActionType type) {
@@ -347,46 +347,46 @@ class JavaGenerator extends AbstractIGenerator {
 	def dispatch String toJava(Receive receive) {
 		
 		'''
-		«IF receive.isTimeout»
-		try {
-			«receive.actions.getSwitchOfReceives(receive.session.name, true)»
-		}
-		catch (TimeExpiredException e) {
-			«receive.TProcess.toJava»
-		}
-		
-		«ELSE»
-		«receive.actions.getSwitchOfReceives(receive.session.name, false)»
-		«ENDIF»
+«««		«IF receive.isTimeout»
+«««		try {
+«««			«receive.actions.getSwitchOfReceives(receive.session.name, true)»
+«««		}
+«««		catch (TimeExpiredException e) {
+«««			«receive.TProcess.toJava»
+«««		}
+«««		
+«««		«ELSE»
+«««		«receive.actions.getSwitchOfReceives(receive.session.name, false)»
+«««		«ENDIF»
 		'''
 	}
 	
 	def String getSwitchOfReceives(EList<Input> inputActions, String session, boolean timeout) {
 		
-		val actionNames = inputActions.map[x|x.actionName]
-		
-		var messageName = getFreshName("msg")
-		
-		'''		
-		logger.info("waiting on '«session»' for actions [«actionNames.join(", ")»]");
-		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(", ", [x|'''"«x»"'''])»);
-		
-		«IF inputActions.size==1»
-			logger.info("received [«inputActions.get(0).actionName»]");
-			«inputActions.get(0).getJavaInput(messageName)»
-		«ELSE»				
-		switch («messageName».getLabel()) {			
-			«FOR a : inputActions»
-			
-			case "«a.actionName»":
-				logger.info("received [«a.actionName»]");
-				«a.getJavaInput(messageName)»
-				break;
-			«ENDFOR»
-			
-		}
-		«ENDIF»
-		'''
+//		val actionNames = inputActions.map[x|x.action]
+//		
+//		var messageName = getFreshName("msg")
+//		
+//		'''		
+//		logger.info("waiting on '«session»' for actions [«actionNames.join(", ")»]");
+//		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(", ", [x|'''"«x»"'''])»);
+//		
+//		«IF inputActions.size==1»
+//			logger.info("received [«inputActions.get(0).action»]");
+//			«inputActions.get(0).getJavaInput(messageName)»
+//		«ELSE»				
+//		switch («messageName».getLabel()) {			
+//			«FOR a : inputActions»
+//			
+//			case "«a.action»":
+//				logger.info("received [«a.action»]");
+//				«a.getJavaInput(messageName)»
+//				break;
+//			«ENDFOR»
+//			
+//		}
+//		«ENDIF»
+//		'''
 	}
 	
 	/**
@@ -441,8 +441,8 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(Send p) {
 		'''
-		logger.info("sending action '«p.actionName»'");
-		«p.session.name».sendIfAllowed("«p.actionName»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
+		logger.info("sending action '«p.action»'");
+		«p.session.name».sendIfAllowed("«p.action»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
 		«IF p.next!=null»«p.next.toJava»«ENDIF»
 		'''
 	}

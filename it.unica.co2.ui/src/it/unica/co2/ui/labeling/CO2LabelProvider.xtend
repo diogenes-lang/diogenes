@@ -151,21 +151,21 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		"do "+ ele.session.name + " " + ele.actionName + "?"
 	}
 	
-	def text(Receive ele) {
-		"receive "+ ele.session.name
-	}
-	
-	def text(Input ele) {
-		ele.actionName + "?"
-	}
+//	def text(Receive ele) {
+//		"receive "+ ele.session.name
+//	}
+//	
+//	def text(Input ele) {
+//		ele.actionName + "?"
+//	}
 	
 	def text(DoOutput ele) {
 		"do "+ ele.session.name + " " + ele.actionName + "!"
 	}
 	
-	def text(Send ele) {
-		"send "+ ele.session.name + " " + ele.actionName + "!"
-	}
+//	def text(Send ele) {
+//		"send "+ ele.session.name + " " + ele.actionName + "!"
+//	}
 	
 	def text(Tau ele) {
 		"\u03c4"
@@ -204,18 +204,18 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		elm.name+" : session"
 	}
 
-	def text(IntAction ele) {
-		if (ele.type != null)
-			ele.actionName + "! : " + ele.type.value
-		else
-			ele.actionName + "! : unit"
-	}
-
-	def text(ExtAction ele) {
-		if (ele.type != null)
-			ele.actionName + "! : " + ele.type.value
-		else
-			ele.actionName + "! : unit"
-	}
+//	def text(IntAction ele) {
+//		if (ele.type != null)
+//			ele.actionName + "! : " + ele.type.value
+//		else
+//			ele.actionName + "! : unit"
+//	}
+//
+//	def text(ExtAction ele) {
+//		if (ele.type != null)
+//			ele.actionName + "! : " + ele.type.value
+//		else
+//			ele.actionName + "! : unit"
+//	}
 
 }

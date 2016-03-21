@@ -1,0 +1,54 @@
+system it.unica.co2.site.OnlineStore
+
+honesty Store
+
+/*
+ * contract
+ */
+contract C {
+	addToCart? int . Cadd
+}
+
+contract Cadd {
+	addToCart? int . Cadd 
+	+ checkout? . Cpay
+}
+
+contract Cpay {
+	pay? string . (
+		ok! 
+		(+) no!.Cpay 
+		(+) abort!
+	) 
+	+ cancel?
+}
+
+/*
+ * specification
+ */
+specification Store {
+	tellAndWait x C . 
+	receive x [ addToCart? n:int. Padd(x,n) ]
+}
+
+specification Padd (x:session, total:int) {
+	receive x [
+		addToCart? n:int . Padd(x, total+n)
+		+ checkout? . Ppay(x, total)
+	]
+}
+
+specification Ppay (x:session, amount:int) {
+	receive x [ 
+		pay? s:string . Pack(x,amount) 
+		+ cancel?
+	]
+}
+
+specification Pack (x:session, amount:int) {
+	if amount<100 
+	then send x ok! 
+	else send x no!.Ppay(x,amount)
+}
+
+

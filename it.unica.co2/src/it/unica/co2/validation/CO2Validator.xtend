@@ -86,9 +86,9 @@ class CO2Validator extends CO2TypeSystemValidator {
 		if (internalAction.eContainer instanceof IntSum)
 			for (other: (internalAction.eContainer() as IntSum).actions){
 				
-				if (internalAction!=other && internalAction.actionName.equals(other.actionName)) {
+				if (internalAction!=other && internalAction.name.equals(other.name)) {
 					error("Action names must be unique", 
-						Co2Package.Literals.INT_ACTION__ACTION_NAME
+						Co2Package.Literals.INT_ACTION__NAME
 					);
 					return;
 				}
@@ -101,9 +101,9 @@ class CO2Validator extends CO2TypeSystemValidator {
 		if (externalAction.eContainer instanceof ExtSum)
 			for (other: (externalAction.eContainer() as ExtSum).actions){
 				
-				if (externalAction!=other && externalAction.actionName.equals(other.actionName)) {
+				if (externalAction!=other && externalAction.name.equals(other.name)) {
 					error("Action names must be unique", 
-						Co2Package.Literals.EXT_ACTION__ACTION_NAME
+						Co2Package.Literals.EXT_ACTION__NAME
 					);
 					return;
 				}

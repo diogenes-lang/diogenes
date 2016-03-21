@@ -1,0 +1,47 @@
+
+system it.unica.co2.store.Store
+
+honesty Pdishonest
+
+contract C {
+	order? string . ( amount! int (+) abort! )
+}
+
+contract D {
+	req! string . ( ok? + no? )
+}
+
+specification Pdishonest {
+	tellAndWait x C .
+	receive x [
+		order? v:string . (			
+			tellRetract y D . (
+				send y req! v . 
+				receive y [
+					ok? . send x amount! 100
+					+ no? . send x abort!
+					+ t . send x abort! 
+				]
+			)
+			: send x abort!
+		)
+	]
+}
+
+specification Phonest {
+	tellAndWait x C .
+	receive x [
+		order? v:string . (
+			tellRetract y D . (
+				send y req! v . 
+				receive y [
+					ok? . send x amount! 100
+					+ no? . send x abort!
+					+ t . send x abort! . receive y [ok? + no?]
+				]
+			) 
+			: send x abort!
+		)
+	]
+}
+

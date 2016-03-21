@@ -83,6 +83,12 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/formula"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Tau"/>
+    <genClasses ecoreClass="CO2.ecore#//TellProcess">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellProcess/session"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellProcess/contract"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//TellProcess/contractReference"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellProcess/process"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//TellAndWait">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellAndWait/session"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellAndWait/contract"/>
@@ -98,18 +104,18 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Send">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/session"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Send/actionName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Send/action"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/value"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Receive">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/session"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/actions"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/inputs"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Receive/timeout"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/tProcess"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Input">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Input/actionName"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/session"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Input/actions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/variable"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/next"/>
     </genClasses>
@@ -137,12 +143,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtSum/actions"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//IntAction">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//IntAction/actionName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//IntAction/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntAction/type"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntAction/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ExtAction">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ExtAction/actionName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ExtAction/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtAction/type"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtAction/next"/>
     </genClasses>

@@ -4,12 +4,12 @@
 package it.unica.co2.scoping
 
 import it.unica.co2.co2.ContractDefinition
-import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
 import it.unica.co2.co2.Input
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
@@ -27,15 +27,6 @@ import static extension it.unica.co2.utils.CustomExtensions.*
  *
  */
 class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
-
-	/*
-	 * Contract reference:
-	 * refers to any contract definition except for this
-	 */
-	def IScope scope_ContractDefinition(EObject ctx, EReference ref) {
-		ctx.getIScopeForAllContentsOfClass(ContractDefinition);
-	}
-	
 	
 	/*
 	 * FreeName reference
@@ -88,6 +79,14 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 			getDeclaredVariables(proc.eContainer) // outer
 		);
 	}
+	
+	def dispatch IScope getDeclaredVariables(TellProcess proc) {
+		return Scopes.scopeFor(
+			newArrayList(proc.session)
+			,
+			getDeclaredVariables(proc.eContainer) // outer
+		);
+	}
 
 	def dispatch IScope getDeclaredVariables(TellAndWait proc) {
 		return Scopes.scopeFor(
@@ -102,72 +101,107 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	}
 	
 	
-	
-	
 	/*
-	 * Scope for Referrable, alias [Recursion] or [ContractDefinition]
+	 * Contract reference: refers to any contract
 	 */
-	def IScope scope_Referrable(ContractReference ctx, EReference ref) {
-		Scopes.scopeFor(
-			scope_ContractDefinition(ctx, ref).allElements.map[x|x.EObjectOrProxy]
-//			,
-//			scope_Recursion(ctx, ref)
-		)
-	}
-
-	/*
-	 * Recursion reference: 
-	 * refers only to recursions defined before ctx but into the same contract definition
-	 */
-//	def IScope scope_Recursion(ContractReference ctx, EReference ref) {
-//		return definedRecursions(ctx.eContainer);
-//	}
-//
-//	/*
-//	 * utils: recursively bind all rec definition until ContractDefinition is reached
-//	 */
-//	def dispatch IScope definedRecursions(EObject cont) {
-//		return definedRecursions(cont.eContainer);
-//	}
-//
-//	def dispatch IScope definedRecursions(Recursion rec) {
-//		return Scopes.scopeFor(
-//			newArrayList(rec)
-//			,
-//			definedRecursions(rec.eContainer) // outer
-//		);
-//	}
-//
-//	def dispatch IScope definedRecursions(ContractDefinition obj) {
-//		return IScope.NULLSCOPE; // stop recursion
-//	}
-
-
-
-	/*
-	 * Contract reference:
-	 * refers to any contract definition except for this
-	 */
-	def IScope scope_ContractDefinition(ContractReference ctx, EReference ref) {
-		var scope = ctx.getIScopeForAllContentsOfClass(ContractDefinition);
-//		val contractDef = ctx.getFirstUpOccurrenceOf(ContractDefinition)
-//
-//		new FilteringScope(scope, new Predicate<IEObjectDescription>() {
-//
-//			override apply(IEObjectDescription input) {
-//				return input.getEObjectOrProxy() != contractDef;
-//			}
-//
-//		});
-		
-		return scope;
+	def IScope scope_ContractDefinition(EObject ctx, EReference ref) {
+		ctx.getIScopeForAllContentsOfClass(ContractDefinition);
 	}
 	
 	/*
 	 * Process reference: refers to any process
 	 */
 	def IScope scope_ProcessDefinition(EObject ctx, EReference ref) {
-		return ctx.getIScopeForAllContentsOfClass(ProcessDefinition);
+		ctx.getIScopeForAllContentsOfClass(ProcessDefinition);
 	}
 
+//	/*
+//	 * Action references:
+//	 * resolve the references into advertised contracts
+//	 */
+//	def IScope scope_IntAction(EObject ctx, EReference ref) {
+//		ctx.actionsScope
+//	}
+//	
+//	def IScope scope_ExtAction(EObject ctx, EReference ref) {
+//		ctx.actionsScope
+//	}
+//	
+//	
+//	/*
+//	 * utils: recursively get all intAction within tell declarations until ProcessDefinition
+//	 */
+//	def dispatch IScope getActionsScope(EObject obj) {
+//		obj.eContainer.actionsScope
+//	}	 
+//	 
+//	
+//	def List<EObject> getActions(Contract obj) {
+//		val List<EObject> actions = new ArrayList();
+//		EcoreUtil2.getAllContentsOfType(obj, IntAction).forEach[x | actions.add(x)];		// get all contents of type IntAction
+//		EcoreUtil2.getAllContentsOfType(obj, ExtAction).forEach[x | actions.add(x)];
+//		return actions;
+//	}
+//	 
+//	def dispatch IScope getActionsScope(Tell obj) {
+//		if (obj.contract!=null) {
+//			Scopes.scopeFor(
+//				obj.contract.actions,
+//				obj.eContainer.actionsScope
+//			)
+//		}
+//		else if (obj.contractReference!=null) {
+//			Scopes.scopeFor(
+//				obj.contractReference.contract.actions,
+//				obj.eContainer.actionsScope
+//			)
+//		}
+//		else {
+//			throw new IllegalStateException();
+//		}
+//	}
+//	
+//	def dispatch IScope getActionsScope(TellRetract obj) {
+//		if (obj.contract!=null) {
+//			Scopes.scopeFor(
+//				obj.contract.actions,
+//				obj.eContainer.actionsScope
+//			)
+//		}
+//		else if (obj.contractReference!=null) {
+//			Scopes.scopeFor(
+//				obj.contractReference.contract.actions,
+//				obj.eContainer.actionsScope
+//			)
+//		}
+//		else {
+//			throw new IllegalStateException();
+//		}
+//	}
+//	
+//	def dispatch IScope getActionsScope(TellAndWait obj) {
+//		if (obj.contract!=null) {
+//			Scopes.scopeFor(
+//				obj.contract.actions,
+//				obj.eContainer.actionsScope
+//			)
+//		}
+//		else if (obj.contractReference!=null) {
+//			Scopes.scopeFor(
+//				obj.contractReference.contract.actions,
+//				obj.eContainer.actionsScope
+//			)
+//		}
+//		else {
+//			throw new IllegalStateException();
+//		}
+//	}
+//	
+//	def dispatch IScope getActionsScope(ProcessDefinition obj) {
+//		Scopes.scopeFor([]);
+//	}
+//	
+//	def dispatch IScope getActionsScope(SpecialAction obj) {
+//		Scopes.scopeFor([]);
+//	}
 }

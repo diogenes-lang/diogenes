@@ -33,12 +33,14 @@ import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Type
 import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.validation.AbstractCO2Validator
-import java.util.HashSet
+import java.util.ArrayList
+import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
 
 system it.unica.co2.xsemantics.CO2TypeSystem
@@ -361,6 +363,20 @@ from {
 
 
 
+rule TellProcess
+	G |= TellProcess tell
+from {
+	G ||- tell.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source tell
+			feature Co2Package::eINSTANCE.tellAndWait_Session
+	}
+}
+
+
 
 rule TellAndWait
 	G |= TellAndWait tell
@@ -393,26 +409,34 @@ from {
 rule Receive
 	G |= Receive receive
 from {
-	G ||- receive.session : var Type fnType		// get FreeName type
 	
-	if (!(fnType instanceof SessionType)) {		// check the type
-		fail
-			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
-			source receive
-			feature Co2Package::eINSTANCE.receive_Session
-	}
+	var actionNames = new HashMap
 	
-	var actionNames = new HashSet
-	
-	for (action: receive.actions){
+	for (input: receive.inputs){
 		
-		if (actionNames.contains(action.actionName)) {
-			fail 
-				error "Action names must be unique"
-				source receive
+		G ||- input.session : var Type fnType		// get FreeName type
+		
+		if (!(fnType instanceof SessionType)) {		// check the type
+			fail
+				error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+				source input
+				feature Co2Package::eINSTANCE.input_Session
 		}
+
+		if (!actionNames.containsKey(input.session.name))
+			actionNames.put(input.session.name, new ArrayList())
+
+		for (action: input.actions){
 			
-		actionNames.add(action.actionName)
+			if (actionNames.get(input.session.name).contains(action)) {
+				fail 
+					error "Action names must be unique within the same session"
+					source input
+					feature Co2Package::eINSTANCE.input_Actions
+			}
+				
+			actionNames.get(input.session.name).add(action)
+		}
 	}
 	
 }
@@ -500,6 +524,12 @@ from {
 
 checkrule CheckSend for
     Send proc
+from {
+    empty |= proc
+}
+
+checkrule CheckTellProcess for
+    TellProcess proc
 from {
     empty |= proc
 }

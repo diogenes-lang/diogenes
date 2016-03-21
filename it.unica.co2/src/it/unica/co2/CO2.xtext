@@ -55,9 +55,11 @@ Process:
 	EmptyProcess |
 	Sum |
 	IfThenElse |
+	TellProcess |
 	TellAndWait |
 	TellRetract |
 	Send |
+	SimpleReceive |
 	Receive |
 	"(" ParallelProcesses ")"|
 	ProcessCall
@@ -100,13 +102,14 @@ Next returns Process:
 	EmptyProcess |
 	SingleSum |
 	IfThenElse |
+	TellProcess |
 	TellAndWait |
 	TellRetract |
 	Send |
+	SimpleReceive |
 	Receive |
 	"(" ParallelProcesses ")"|
 	ProcessCall
-//	WaitForCompletion
 ;
 
 
@@ -146,6 +149,12 @@ Formula:
 
 /* MACROS */
 
+TellProcess:
+	"tellAndReturn" session=Session
+	("{" contract=Contract? "}" | contractReference=[ContractDefinition])
+	("." process=Next)?
+;
+
 TellAndWait:
 	"tellAndWait" session=Session  
 	("{" contract=Contract? "}" | contractReference=[ContractDefinition])
@@ -159,41 +168,31 @@ TellRetract:
 ;
 
 Send:
-	"send" session=[Referrable] actionName=ID "!" (value=Expression)? ("." next=Next)?
+	"send" session=[Referrable] action=ID "!" (value=Expression)? ("." next=Next)?
+;
+
+SimpleReceive returns Receive:
+	"receive" inputs+=SimpleInput ("+" timeout?="t" ("." tProcess=Next)?)?
 ;
 
 Receive:
-	"receive" session=[Referrable] 
-	"[" (actions+=Input ("+" actions+=Input)* ) ("+" timeout?="t" ("." tProcess=Next)?)? "]"
+	"receive" "[" 
+		(inputs+=Input)+
+	"]"
+	("+" timeout?="t" ("." tProcess=Next)?)?
+;
+
+SimpleInput returns Input:
+	session=[Referrable] actions+=ID "?" (variable=Variable)? ("." next=Next)?
 ;
 
 Input:
-	actionName=ID "?" (variable=Variable)? ("." next=Next)?
+	session=[Referrable] "<-" (actions+=ID "?")+ (variable=Variable)? ("." next=Next)?
 ;
 
 Session:
 	name=ID
 ;
-
-//WaitForCompletion:
-//	"waitFor" "(" processes+=WProcess ("|" processes+=WProcess )* ")" "." next=Next?
-//;
-//
-//WProcess returns Process:
-//	WSend | WReceive
-//;
-//
-//WSend returns Send:
-//	"send" session=[Referrable] actionName=ID "!" (value=Expression)? ("." next=WProcess)?
-//;
-//
-//WReceive returns Receive:
-//	"receive" session=[Referrable] "[" actions+=WInput "]"
-//;
-//
-//WInput returns Input:
-//	actionName=ID "?" (variable=Variable)? ("." next=WProcess)?
-//;
 
 
 // ======================================================================================
@@ -309,11 +308,11 @@ SingleExtSum returns ExtSum:
 ;
 
 IntAction:
-	actionName=ID "!" (type=ActionType)? ("." next=(NextContract))?
+	name=ID "!" (type=ActionType)? ("." next=(NextContract))?
 ;
 
 ExtAction:
-	actionName=ID "?" (type=ActionType)? ("." next=(NextContract))?
+	name=ID "?" (type=ActionType)? ("." next=(NextContract))?
 ;
 
 ActionType: 

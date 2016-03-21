@@ -34,6 +34,7 @@ import it.unica.co2.co2.Sum
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.Variable
@@ -190,11 +191,11 @@ class MaudeGenerator extends AbstractIGenerator{
 	}
 	
 	def dispatch String maudeCode(IntAction obj) {
-		'''"«obj.actionName»" ! «getActionType(obj.type)»«IF obj.next!=null» . «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.name»" ! «getActionType(obj.type)»«IF obj.next!=null» . «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(ExtAction obj) {
-		'''"«obj.actionName»" ? «getActionType(obj.type)»«IF obj.next!=null» . «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
+		'''"«obj.name»" ? «getActionType(obj.type)»«IF obj.next!=null» . «obj.next.maudeCode»«ELSE» . 0«ENDIF»'''
 	}
 	
 	def dispatch String maudeCode(ContractReference obj) {
@@ -306,8 +307,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		«pad»if «obj.^if.toMaude(pad)» 
 		«pad»then «obj.then.toMaude(pad)» 
 		«pad»else «obj.^else.toMaude(pad)» 
-		«pad.removePad»)
-		'''
+		«pad.removePad») '''
 	}
 	
 	/*
@@ -364,6 +364,15 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	
 	
+	def dispatch String toMaude(TellProcess obj, String padLeft) {
+		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
+		var pad = padLeft;
+		'''
+		«"\n"+pad»(
+		«pad=pad.addPad»
+		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.contractReference.name» . «obj.process.toMaude(pad)»
+		«pad.removePad»)'''
+	}
 	
 	def dispatch String toMaude(TellAndWait obj, String padLeft) {
 		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
@@ -394,7 +403,7 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	def dispatch String toMaude(Send obj, String padLeft) {
 		obj.next = obj.next ?: Co2Factory.eINSTANCE.createEmptyProcess
-		'''do "«obj.session.name»" "«obj.actionName»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
+		'''do "«obj.session.name»" "«obj.action»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
 	}
 	
 	def dispatch String toMaude(Receive obj, String padLeft) {
@@ -402,82 +411,56 @@ class MaudeGenerator extends AbstractIGenerator{
 		var pad = padLeft;
 		var sb = new StringBuilder()
 		
-		if (obj.actions.size>1 || obj.isTimeout) {
-			sb.append("\n").append(pad).append("(")
+		if (obj.inputs.size>1 || 
+			(obj.inputs.size==1 && obj.inputs.get(0).actions.size>1) 
+			|| obj.isTimeout
+		) {
+			sb.append("\n").append(pad).append("(")		// increase the pad
 			pad=pad.addPad
 		}
 		
 		var i=0;
-		for (a : obj.actions) {
-			
-			if (obj.actions.size()>1 || obj.isTimeout) {
-				sb.append("\n").append(pad)
-			}
 
-			if (i++>0) {
-				sb.append("+ ");
+		for (input : obj.inputs) {
+
+			for (action : input.actions) {
+					
+				if (obj.inputs.size>1 || 
+					(obj.inputs.size==1 && obj.inputs.get(0).actions.size>1) 
+					|| obj.isTimeout
+				) {
+					sb.append("\n").append(pad)			// add a \n
+				}
+	
+				if (i++>0) {
+					sb.append("+ ");
+				}
+				
+				input.next = input.next?: Co2Factory.eINSTANCE.createEmptyProcess
+				sb.append('''do "«input.session.name»" "«action»" ? «getFreeNameType(input.variable)» . «input.next.toMaude(pad)»''');
 			}
-			
-			a.next = a.next?: Co2Factory.eINSTANCE.createEmptyProcess
-			sb.append('''do "«obj.session.name»" "«a.actionName»" ? «getFreeNameType(a.variable)» . «a.next.toMaude(pad)»''');
 		}
-		
+
+		// timeout
 		if (obj.isTimeout) {
 			obj.TProcess = obj.TProcess ?: Co2Factory.eINSTANCE.createEmptyProcess
 			sb.append("\n").append(pad)
 			sb.append('''+ t . «obj.TProcess.toMaude(pad)»''')
 		}
 	
-		if (obj.actions.size>1|| obj.isTimeout) {
+
+		if (obj.inputs.size>1 || 
+			(obj.inputs.size==1 && obj.inputs.get(0).actions.size>1) 
+			|| obj.isTimeout
+		) {
 			pad=pad.removePad
-			sb.append("\n").append(pad).append(")")
+			sb.append("\n").append(pad).append(")")		// decrease the pad
 		}
 
 		return sb.toString
 		
 	}
 	
-//	def dispatch String toMaude(WaitForCompletion obj, String padLeft) {
-//		
-//		var freshNames = new ArrayList<String>
-//		
-//		var code = 
-//			'''
-//			system dummy
-//			
-//			specification DUMMY {
-//			«FOR p : obj.processes»
-//«««			
-//			«var freshName = getFreshName("_wcf_")»
-//			«var dev_null = freshNames.add(freshName)»
-//«««			
-//			tellAndWait s_«freshName» { c_«freshName»! } . send s_«freshName» c_«freshName»!
-//«««			
-//			|
-//			«ENDFOR»
-//			
-//			«FOR freshName : freshNames»
-//			tellAndWait s_«freshName» { c_«freshName»? } . receive s_«freshName» [ c_«freshName»? . 
-//			«ENDFOR»
-//			nil
-//			«FOR freshName : freshNames»]«ENDFOR»
-//			}
-//			'''
-//		
-//		println(code)
-//		
-//		var parseResult = parser.doParse(code);
-//		
-//		if (parseResult.hasSyntaxErrors)
-//			throw new RuntimeException(parseResult.syntaxErrors.toString)
-//		
-//		parseResult.rootASTElement.eAllContents
-//			.filter(TellAndWait).map[t| t.fixTell("TELLR-CONTR")]
-//					
-//		parseResult.rootASTElement.eAllContents
-//			.findFirst[x|x instanceof DelimitedProcess]
-//			.toMaude(padLeft)
-//	}
 	
 	
 	def String getActionType(ActionType type) {

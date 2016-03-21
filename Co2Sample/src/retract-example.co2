@@ -8,7 +8,7 @@ contract C {}
 process P {
 	
  	(x:session) 
- 	tell x {a? + b?} . do x b! . P1(x, x) 
+ 	tell x {a? + b?} . do x b! . P1(x, x)
  	+ retract x
 	
 }

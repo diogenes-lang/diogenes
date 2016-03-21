@@ -1,0 +1,39 @@
+system it.unica.co2.site.VoucherDistSystem
+
+honesty P
+
+contract CB {
+	clickPay? . pay? string
+	+ clickVoucher? . (
+		reject! . pay? string 
+		(+) accept! . voucher? string
+	)
+}
+contract CV {
+	ok? + no?
+}
+
+specification P {
+	tellAndWait x CB .
+	receive x [
+		clickPay? . receive x [pay? code : string]	
+		+ clickVoucher? . (
+			tellRetract y CV . 
+			Q(x,y) 
+			: send x reject! . receive x [pay? code:string]
+		)
+	]
+}
+
+specification Q ( x:session , y:session ) {
+	receive y [
+		ok? . send x accept! . receive x [voucher? v : string]
+		+ no? . send x reject! . receive x [pay? code : string]
+		+ t . R(x,y) 
+	]
+}
+
+specification R ( x:session , y:session ) {
+	send x reject! . receive x [pay? code : string]
+	| receive y [ok? + no?]
+}

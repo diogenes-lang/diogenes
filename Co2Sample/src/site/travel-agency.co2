@@ -1,0 +1,56 @@
+system it.unica.co2.site.TravelAgency
+
+honesty TA
+
+/*
+ * contract between the travel agency and the user (U)
+ */
+contract Cu {
+	tripDets? string . 
+	budget? int . ( 
+		quote! int . Cpay 
+		(+) abort!
+	)
+}
+
+contract Cpay {
+	pay? . (commit! (+) abort!)
+}
+
+/*
+ * contract between the travel agency and an airline ticket broker (F)
+ */
+contract Cf {
+	flightDets! string . Q
+}
+
+/*
+ * contract between the travel agency and the hotel reservation service (H)
+ */
+contract Ch {
+	hotelDets! string . Q	
+}
+
+contract Q {
+	quote? int . (
+		pay! . confirm? . (commit! (+) abort!)
+		(+) abort!
+	)
+}
+
+/*
+ * specification
+ */
+specification TA  {
+	tellAndWait xu Cu .
+	receive xu [
+		tripDets? dets:string . 
+		receive xu [budget? b:int . TA_(dets, b) ]
+	]
+}
+
+specification TA_ (dets:string, budget:int) {
+	tellAndWait xf Cf . send xf flightDets! dets
+	| tellAndWait xh Ch . send xh hotelDets! dets
+	
+}
