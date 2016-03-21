@@ -22,6 +22,7 @@ import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Receive
 import it.unica.co2.co2.Referrable
+import it.unica.co2.co2.Retract
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
 import it.unica.co2.co2.Sum
@@ -29,11 +30,11 @@ import it.unica.co2.co2.SystemDeclaration
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Variable
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
-import it.unica.co2.co2.Retract
 
 /**
  * Provides labels for EObjects.
@@ -133,6 +134,13 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 			"tell " + ele.session.name
 	}
 	
+	def text(TellProcess ele) {
+		if (ele.contractReference!=null)
+			"tellAndReturn " + ele.session.name + " [" + ele.contractReference.name + "]"
+		else
+			"tellAndReturn " + ele.session.name
+	}
+	
 	def text(TellRetract ele) {
 		if (ele.contractReference!=null)
 			"tellRetract " + ele.session.name + " [" + ele.contractReference.name + "]"
@@ -151,21 +159,21 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		"do "+ ele.session.name + " " + ele.actionName + "?"
 	}
 	
-//	def text(Receive ele) {
-//		"receive "+ ele.session.name
-//	}
-//	
-//	def text(Input ele) {
-//		ele.actionName + "?"
-//	}
+	def text(Receive ele) {
+		"receive"
+	}
+	
+	def text(Input ele) {
+		ele.session.name + " ← " + ele.actions.join(" ", [x|x+"?"])
+	}
 	
 	def text(DoOutput ele) {
 		"do "+ ele.session.name + " " + ele.actionName + "!"
 	}
 	
-//	def text(Send ele) {
-//		"send "+ ele.session.name + " " + ele.actionName + "!"
-//	}
+	def text(Send ele) {
+		"send "+ ele.session.name + " " + ele.session.name + "!"
+	}
 	
 	def text(Tau ele) {
 		"\u03c4"
@@ -204,18 +212,18 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		elm.name+" : session"
 	}
 
-//	def text(IntAction ele) {
-//		if (ele.type != null)
-//			ele.actionName + "! : " + ele.type.value
-//		else
-//			ele.actionName + "! : unit"
-//	}
-//
-//	def text(ExtAction ele) {
-//		if (ele.type != null)
-//			ele.actionName + "! : " + ele.type.value
-//		else
-//			ele.actionName + "! : unit"
-//	}
+	def text(IntAction ele) {
+		if (ele.type != null)
+			ele.name + "! : " + ele.type.value
+		else
+			ele.name + "! : unit"
+	}
+
+	def text(ExtAction ele) {
+		if (ele.type != null)
+			ele.name + "? : " + ele.type.value
+		else
+			ele.name + "? : unit"
+	}
 
 }
