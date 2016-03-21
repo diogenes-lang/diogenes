@@ -1,5 +1,5 @@
 
-system it.unica.co2.blackjack.BlackjackMacros
+system it.unica.co2.site.Blackjack
 
 honesty P
 
@@ -20,18 +20,16 @@ specification P {
 
 specification Pplay(xp:session, xd:session, np:int) {
 	
-	receive xp [
-		hit? . send xd next! . Pdeck(xp, xd, np)
-		+ stand? . Qstand(xp,xd,np,0)
-		+ t . send xd abort! . PabortP(xp)
+	receive [
+		xp <- hit? . send xd next! . Pdeck(xp, xd, np)
+		xp <- stand? . Qstand(xp,xd,np,0)
 	]
+	+ t . send xd abort! . PabortP(xp)
 }
 
 specification Pdeck(xp:session, xd:session, np:int) {
-	receive xd [
-		card? n:int . Pcard(xp,xd,np+n,n)
-		+ t . send xp abort! . PabortD(xd)
-	]
+	receive xd card? n:int . Pcard(xp,xd,np+n,n)
+	+ t . send xp abort! . PabortD(xd)
 }
 
 specification Pcard(xp:session, xd:session, np:int, n:int) {
@@ -47,10 +45,8 @@ specification Qstand(xp:session, xd:session, np:int, nd:int) {
 }
 
 specification Qdeck(xp:session, xd:session, np:int, nd:int) {
-	receive xd [
-		card? n:int. Qcard(xp,xd,np,nd)
-		+ t . send xp abort!. PabortD(xd)
-	]
+	receive xd card? n:int. Qcard(xp,xd,np,nd)
+	+ t . send xp abort!. PabortD(xd)
 }
 
 specification Qcard(xp:session, xd:session, np:int, nd:int) {
@@ -60,13 +56,13 @@ specification Qcard(xp:session, xd:session, np:int, nd:int) {
 }
 
 specification PabortP(xp:session) {
-	receive xp [
-		hit?. send xp abort!
-		+ stand?. send xp abort!
+	receive [
+		xp <- hit?. send xp abort!
+		xp <- stand?. send xp abort!
 	] 
 }
 
 specification PabortD(xd:session) {
 	send xd abort! 
-	| receive xd [ card? n:int. send xd abort! ]
+	| receive xd card? n:int. send xd abort!
 }

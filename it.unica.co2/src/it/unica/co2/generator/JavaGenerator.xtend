@@ -41,6 +41,7 @@ import it.unica.co2.co2.StringLiteral
 import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.Variable
@@ -127,6 +128,7 @@ class JavaGenerator extends AbstractIGenerator {
 		import co2api.Message;
 		import co2api.Public;
 		import co2api.Session;
+		import co2api.SessionI;
 		import co2api.TST;
 		import co2api.TimeExpiredException;
 		
@@ -245,7 +247,7 @@ class JavaGenerator extends AbstractIGenerator {
 		if (fn.type instanceof IntType)			"Integer"
 		else if (fn.type instanceof StringType)	"String"
 		else if(fn.type instanceof BooleanType) "boolean" 
-		else if(fn.type instanceof SessionType) "Session<TST>"
+		else if(fn.type instanceof SessionType) "SessionI<TST>"
 	}
 	
 	
@@ -333,6 +335,17 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 	}
 	
+	def dispatch String toJava(TellProcess tell) {
+		var freshName = getFreshName(tell.session.name)		// get a fresh name
+		tell.session.name = freshName						// update the name all its references
+		
+		'''
+		Public<TST> «tell.session.name» = tell(«tell.contractReference.name»);
+		
+		«tell.process.toJava»'''
+	}
+	
+	
 	def dispatch String toJava(TellAndWait tell) {
 		var freshName = getFreshName(tell.session.name)		// get a fresh name
 		tell.session.name = freshName						// update the name all its references
@@ -346,47 +359,89 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(Receive receive) {
 		
+		var sessions = receive.inputs.map[i|i.session.name].toSet
+		
+		if (sessions.size<=1) {
+			'''
+			«IF receive.isTimeout»
+			try {
+				«receive.inputs.singleSessionReceive(true)»
+			}
+			catch (TimeExpiredException e) {
+				«receive.TProcess.toJava»
+			}
+			
+			«ELSE»
+			«receive.inputs.singleSessionReceive(false)»
+			«ENDIF»
+			'''
+		}
+		else {
+			
+			'''
+			«IF receive.isTimeout»
+			try {
+				«receive.multipleSessionReceive(true)»
+			}
+			catch (TimeExpiredException e) {
+				«receive.TProcess.toJava»
+			}
+			
+			«ELSE»
+			«receive.multipleSessionReceive(false)»
+			«ENDIF»
+			'''
+		}
+	}
+	
+	def String multipleSessionReceive(Receive receive, boolean timeout) {
+		var messageName = getFreshName("msg")
+		
 		'''
-«««		«IF receive.isTimeout»
-«««		try {
-«««			«receive.actions.getSwitchOfReceives(receive.session.name, true)»
-«««		}
-«««		catch (TimeExpiredException e) {
-«««			«receive.TProcess.toJava»
-«««		}
-«««		
-«««		«ELSE»
-«««		«receive.actions.getSwitchOfReceives(receive.session.name, false)»
-«««		«ENDIF»
+		multipleSessionReceiver()
+			«FOR input : receive.inputs»
+			.add(
+				«input.session.name», 
+				(«messageName») -> {
+					«input.getJavaInput(messageName)»
+				}, 
+				«input.actions.join(", ", [a|'''"«a»"'''])»
+			)
+			«ENDFOR»
+			.waitForReceive(«IF timeout»«WAIT_TIMEOUT»«ENDIF»)
+		;
 		'''
 	}
 	
-	def String getSwitchOfReceives(EList<Input> inputActions, String session, boolean timeout) {
+	def String singleSessionReceive(EList<Input> inputs, boolean timeout) {
 		
-//		val actionNames = inputActions.map[x|x.action]
-//		
-//		var messageName = getFreshName("msg")
-//		
-//		'''		
-//		logger.info("waiting on '«session»' for actions [«actionNames.join(", ")»]");
-//		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«actionNames.join(", ", [x|'''"«x»"'''])»);
-//		
-//		«IF inputActions.size==1»
-//			logger.info("received [«inputActions.get(0).action»]");
-//			«inputActions.get(0).getJavaInput(messageName)»
-//		«ELSE»				
-//		switch («messageName».getLabel()) {			
-//			«FOR a : inputActions»
-//			
-//			case "«a.action»":
-//				logger.info("received [«a.action»]");
-//				«a.getJavaInput(messageName)»
-//				break;
-//			«ENDFOR»
-//			
-//		}
-//		«ENDIF»
-//		'''
+		val session = inputs.get(0).session.name;	// inputs are at least 1 and on the same session
+		val allActions = inputs.map[x|x.actions].flatten.toSet
+		
+		var messageName = getFreshName("msg")
+		
+		'''		
+		logger.info("waiting on '«session»' for actions [«allActions.join(", ")»]");
+		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«allActions.join(", ", [x|'''"«x»"'''])»);
+		
+		«IF allActions.size==1»
+			logger.info("received [«allActions.get(0)»]");
+			«getJavaInput(inputs.get(0), messageName)»
+		«ELSE»				
+		switch («messageName».getLabel()) {
+			«FOR input : inputs»
+				«FOR a : input.actions»
+				case "«a»":
+				«ENDFOR»
+				logger.info("received ["+«messageName».getLabel()+"]");
+				«input.getJavaInput(messageName)»
+				break;
+				
+			«ENDFOR»
+			
+		}
+		«ENDIF»
+		'''
 	}
 	
 	/**
