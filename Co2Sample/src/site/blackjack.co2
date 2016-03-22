@@ -3,16 +3,23 @@ system it.unica.co2.site.Blackjack
 
 honesty P
 
+/*
+ * contracts
+ */
+// between the dealer and the player
 contract Cp {
 	hit?. (card! int.Cp (+) lose! (+) abort!)   
 	+ stand? . (win! (+) lose! (+) abort!)
 }
 
+// between the dealer and the desk service
 contract Cd {
 	next!. card? int .Cd (+) abort!
 }
 
-
+/*
+ * specification
+ */
 specification P {
 	tellAndWait xd Cd .	
 	tellRetract xp Cp . Pplay(xp, xd, 0) : send xd abort!

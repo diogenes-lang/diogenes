@@ -2,6 +2,9 @@ system it.unica.co2.site.VoucherDistSystem
 
 honesty P
 
+/*
+ * contracts
+ */
 contract CB {
 	clickPay? . pay? string
 	+ clickVoucher? . (
@@ -13,6 +16,9 @@ contract CV {
 	ok? + no?
 }
 
+/*
+ * specification
+ */
 specification P {
 	tellAndWait x CB .
 	receive [

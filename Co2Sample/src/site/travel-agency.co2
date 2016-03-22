@@ -3,12 +3,22 @@ system it.unica.co2.site.TravelAgency
 
 honesty P
 
+/*
+ * contracts
+ */
+// between the travel agency and the customer
 contract Cu {
 	tripDets? string. budget? int . (quote! int. pay? . (commit! (+) abort!) (+) abort!)
 }
 
+// between the travel agency and the flying company
 contract Cf {
 	flightDets! string . d
+}
+
+// between the travel agency and the hotel reservation service
+contract Ch {
+	hotelDets! string . d
 }
 
 contract d {
@@ -18,10 +28,9 @@ contract d {
 	)
 }
 
-contract Ch {
-	hotelDets! string . d
-}
-
+/*
+ * specification
+ */
 specification P {
 	tellAndWait xu Cu . 
 	receive xu tripDets? yt:string . 
