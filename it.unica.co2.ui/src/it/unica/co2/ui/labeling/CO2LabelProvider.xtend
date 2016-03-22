@@ -5,6 +5,7 @@ package it.unica.co2.ui.labeling
 
 import com.google.inject.Inject
 import it.unica.co2.co2.Ask
+import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
@@ -26,7 +27,6 @@ import it.unica.co2.co2.Retract
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
 import it.unica.co2.co2.Sum
-import it.unica.co2.co2.SystemDeclaration
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
@@ -91,8 +91,10 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	/*
 	 * TEXT
 	 */
-	def Object text(SystemDeclaration elm) {
-		'''system «elm.name»'''
+	def Object text(CO2System elm) {
+		if (elm.name!=null)
+			return '''package «elm.name»'''	
+		return ""
 	}
 	
 	def text(IntSum ele) {
