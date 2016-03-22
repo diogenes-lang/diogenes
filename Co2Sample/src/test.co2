@@ -1,4 +1,3 @@
-system test
 
 contract C {
 	a!. ( a1? int + a2?) (+) b!

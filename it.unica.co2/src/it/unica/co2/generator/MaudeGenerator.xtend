@@ -41,6 +41,7 @@ import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.xsemantics.CO2TypeSystem
 import it.xsemantics.runtime.RuleApplicationTrace
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import org.eclipse.emf.ecore.resource.Resource
@@ -58,8 +59,13 @@ class MaudeGenerator extends AbstractIGenerator{
 
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		
+		var resourceName = resource.URI.lastSegment.replace(".co2","")
+		
 		for (e : resource.allContents.toIterable.filter(CO2System)) {
-			var outputFilename = e.systemDeclaration.fullyQualifiedName.toString("/") + ".maude"
+			
+			var basepath = if (e.name==null) "" else e.fullyQualifiedName.toString(File.separator) ;
+			var outputFilename = basepath+ File.separator+ resourceName+".maude"
+
 			println('''generating «outputFilename»''')
 			fsa.generateFile(outputFilename, e.maudeCode)
 		}
@@ -71,7 +77,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		var co2System = EcoreUtil.copy(_co2System)	//clone the AST (multiple generators use this)
 		
-		var moduleName = co2System.systemDeclaration.fullyQualifiedName.lastSegment.toUpperCase
+		var moduleName = "PROCESS-MODULE"
 		
 		var processToCheck = if (co2System.honesty!=null) co2System.honesty.process else null
 				

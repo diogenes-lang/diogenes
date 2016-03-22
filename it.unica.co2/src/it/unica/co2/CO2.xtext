@@ -5,7 +5,7 @@ generate co2 "http://www.unica.it/co2/CO2"
     
 CO2System:
 //	importDeclarations+=ImportDeclaration*
-	systemDeclaration=SystemDeclaration
+	((single?="single")? "package" name=QualifiedName)?
 	honesty=HonestyDeclaration?
 	contractsAndProcessesDeclaration=ContractsAndProcessesDeclaration
 ;
@@ -18,10 +18,6 @@ ImportDeclaration:
 QualifiedName:
   ID ('.' ID)*;
     
-SystemDeclaration:
-	"system" name=QualifiedName
-;
-
 HonestyDeclaration:
 	{HonestyDeclaration} "honesty" process=[ProcessDefinition]
 ;

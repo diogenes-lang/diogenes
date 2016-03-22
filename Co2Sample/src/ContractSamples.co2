@@ -2,8 +2,6 @@
  * empty contract
  */
  
-system contractSamples
- 
 contract c1{ }
 contract c2{(((nil)))}
 

@@ -3,6 +3,7 @@
  */
 package it.unica.co2.validation
 
+import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.Co2Package
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.DelimitedProcess
@@ -21,6 +22,7 @@ import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
+import java.io.File
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
@@ -32,6 +34,19 @@ import org.eclipse.xtext.validation.Check
  */
 class CO2Validator extends CO2TypeSystemValidator {
 	
+	@Check
+	def void checkPackage(CO2System system) {
+		var packageName = system.name
+		var realPath = system.eResource.URI.toPlatformString(false)
+		var expectedPath = packageName.replaceAll("\\.", File.separator)+File.separator+system.eResource.URI.lastSegment
+	
+		if (!realPath.endsWith( expectedPath )) {
+			error('''The declared package "«packageName»" does not match the path "«expectedPath»"''', 
+					Co2Package.Literals.CO2_SYSTEM__NAME
+				);
+				return;
+		}		
+	}
 	
 	@Check
 	def void checkContractNameIsUnique(ProcessDefinition procDef) {

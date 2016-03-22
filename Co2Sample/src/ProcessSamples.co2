@@ -2,8 +2,6 @@
  * empty process
  */
 
-system processSamples 
-
 process p1{ }
 process p2{nil}
 
