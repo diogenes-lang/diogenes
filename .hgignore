@@ -14,3 +14,9 @@ xsemantics-gen
 *.class
 
 local.properties
+
+it.unica.co2.update_site/features
+it.unica.co2.update_site/plugins
+it.unica.co2.update_site/artifacts.jar
+it.unica.co2.update_site/content.jar
+
