@@ -9,6 +9,7 @@ bin
 xtend-gen
 src-gen
 xsemantics-gen
+lib
 
 *.xtendbin
 *.class
