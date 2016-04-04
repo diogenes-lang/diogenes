@@ -63,10 +63,7 @@ specification Qcard(xp:session, xd:session, np:int, nd:int) {
 }
 
 specification PabortP(xp:session) {
-	receive [
-		xp <- hit?. send xp abort!
-		xp <- stand?. send xp abort!
-	] 
+	receive xp  hit? stand?. send xp abort!
 }
 
 specification PabortD(xd:session) {

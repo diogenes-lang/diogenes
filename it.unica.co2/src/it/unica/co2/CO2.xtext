@@ -179,7 +179,7 @@ Receive:
 ;
 
 SimpleInput returns Input:
-	session=[Referrable] actions+=ID "?" (variable=Variable)? ("." next=Next)?
+	session=[Referrable] (actions+=ID "?")+ (variable=Variable)? ("." next=Next)?
 ;
 
 Input:
