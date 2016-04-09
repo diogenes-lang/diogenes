@@ -93,10 +93,20 @@ from {
 }
 
 rule Plus
-	G |- Plus plus : IntType intType
+    G |- Plus plus : Type type
 from {
-	G |- plus.left : intType
-	G |- plus.right : intType
+    G |- plus.left : var Type leftType
+    G |- plus.right : var Type rightType
+    
+    {
+        (leftType instanceof StringType && rightType instanceof StringType)
+        type = Co2Factory::eINSTANCE.createStringType
+    }
+    or
+    {
+        (leftType instanceof IntType && rightType instanceof IntType)
+        type = leftType // i.e., IntType
+    }
 }
 
 rule Comparison

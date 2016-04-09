@@ -1,7 +1,7 @@
 
 package it.unica.co2.paper
 
-honesty Pdishonest
+honesty Phonest
 
 contract C {
 	order? string . ( amount! int (+) abort! )
@@ -31,7 +31,7 @@ specification Phonest {
 	tellAndWait x C .
 	receive x order? v:string . (
 		tellRetract y D . (
-			send y req! v . 
+			send y req! ("req:"+v) . 
 			receive [
 				y <- ok? . send x amount! 100
 				y <- no? . send x abort!
@@ -40,5 +40,22 @@ specification Phonest {
 		) 
 		: send x abort!
 	)
+}
+
+specification Buyer {
+	tellAndReturn x { order! string . ( amount? int + abort? ) } .
+	send x order! "AB01234" .
+	receive [ 
+		x <- amount? n:int
+		x <- abort?
+	] 
+}
+
+specification Distributor {
+	tellRetract x { req? string . ( ok! (+) no! ) } .
+	receive x req? msg:string .
+	if msg=="req:AB01234"
+	then send x ok!
+	else send x no!
 }
 

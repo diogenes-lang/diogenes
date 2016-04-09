@@ -89,6 +89,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("T-CONTR")].toSet )
 		contracts.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("TR-CONTR")].toSet )
 		contracts.addAll( co2System.eAllContents.filter(TellAndWait).map[t| t.fixTell("TW-CONTR")].toSet )
+		contracts.addAll( co2System.eAllContents.filter(TellProcess).map[t| t.fixTell("TW-CONTR")].toSet )
 			
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet

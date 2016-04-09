@@ -130,9 +130,12 @@ class JavaGenerator extends AbstractIGenerator {
 //		contractDefinitions.fixRecursions()
 		
 		//fix anonymous tells
-		contractDefinitions.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("_tell_contr_")].toSet )
-		contractDefinitions.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("_tell_contr_")].toSet )
-
+		contractDefinitions.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("TellContr")].toSet )
+		contractDefinitions.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("TellContr")].toSet )
+		contractDefinitions.addAll( co2System.eAllContents.filter(TellAndWait).map[t| t.fixTell("TellContr")].toSet )
+		contractDefinitions.addAll( co2System.eAllContents.filter(TellProcess).map[t| t.fixTell("TellContr")].toSet )
+		
+		
 		val isTranslatable = co2System.isJavaTranslatable;
 		
 		

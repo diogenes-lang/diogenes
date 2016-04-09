@@ -3,11 +3,12 @@ package it.unica.co2.generator
 import it.unica.co2.co2.Co2Factory
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndWait
+import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
 import java.util.HashMap
 import java.util.Map
 import org.eclipse.xtext.generator.IGenerator
-import it.unica.co2.co2.TellAndWait
 
 abstract class AbstractIGenerator implements IGenerator {
 	
@@ -22,7 +23,7 @@ abstract class AbstractIGenerator implements IGenerator {
 		}
 		else {
 			freeNames.put(name, count+1);
-			return name+"_"+count
+			return name+""+count
 		}
 	}
 	
@@ -67,6 +68,21 @@ abstract class AbstractIGenerator implements IGenerator {
 	}
 	
 	def ContractDefinition fixTell(TellAndWait tell, String prefix) {
+		
+		if (tell.contractReference==null) {
+			var contractDef = Co2Factory.eINSTANCE.createContractDefinition
+			contractDef.name = prefix+CONTRACT_NAME_COUNT++
+			contractDef.contract = tell.contract
+			tell.contract=null
+			tell.contractReference = contractDef
+			return contractDef;
+		}
+		else {
+			tell.contractReference
+		}
+	}
+	
+	def ContractDefinition fixTell(TellProcess tell, String prefix) {
 		
 		if (tell.contractReference==null) {
 			var contractDef = Co2Factory.eINSTANCE.createContractDefinition
