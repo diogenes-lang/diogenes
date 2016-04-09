@@ -2,10 +2,10 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="4.0.1">
+      version="4.0.2">
 
    <description>
-      co2 grammar extended
+      bugfix and improvements
    </description>
 
    <requires>
