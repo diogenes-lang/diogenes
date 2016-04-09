@@ -64,12 +64,17 @@ class CO2Validator extends CO2TypeSystemValidator {
 
 	@Check
 	def void checkHonestyDeclaration(HonestyDeclaration honestyDecl) {
-		var p = honestyDecl.process
-		if (p.params.size > 0) {
-				error("You can check only processes without args", 
-					Co2Package.Literals.HONESTY_DECLARATION__PROCESS
-				);
-			}
+		
+		for (var i=0; i<honestyDecl.processes.length; i++) {
+			var p = honestyDecl.processes.get(i)
+			if (p.params.size > 0) {
+					error("You can check only processes without args",
+						Co2Package.Literals.HONESTY_DECLARATION__PROCESSES,
+						i
+					);
+				}
+		}
+		
 	}
 
 	@Check

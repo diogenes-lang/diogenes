@@ -19,7 +19,7 @@ QualifiedName:
   ID ('.' ID)*;
     
 HonestyDeclaration:
-	{HonestyDeclaration} "honesty" process=[ProcessDefinition]
+	{HonestyDeclaration} "honesty" (processes+=[ProcessDefinition])+
 ;
 
 ContractsAndProcessesDeclaration:

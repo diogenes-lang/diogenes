@@ -79,7 +79,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		var moduleName = "PROCESS-MODULE"
 		
-		var processToCheck = if (co2System.honesty!=null) co2System.honesty.process else null
+		var processesToCheck = if (co2System.honesty!=null) co2System.honesty.processes else null
 				
 		var processes = co2System.contractsAndProcessesDeclaration.processes.filter[p| p.params.length==0].toSet
 		var envProcesses = co2System.contractsAndProcessesDeclaration.processes.filter[p| p.params.length!=0].toSet
@@ -163,8 +163,10 @@ class MaudeGenerator extends AbstractIGenerator{
 		endm
 		
 		*** honesty
-		«IF processToCheck!=null»
-		red honest(«processToCheck.name» , ['«moduleName»] , 50) .
+		«IF processesToCheck!=null»
+		«FOR processToCheck:processesToCheck»
+		red honest(«processToCheck.name» , ['«moduleName»] , unbounded) .
+		«ENDFOR»
 		«ENDIF»
 		
 		*** exit the program

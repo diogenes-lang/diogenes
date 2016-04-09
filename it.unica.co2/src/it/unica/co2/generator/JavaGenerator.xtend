@@ -124,7 +124,7 @@ class JavaGenerator extends AbstractIGenerator {
 		packageName = if (co2System.name==null) resourceName else co2System.fullyQualifiedName.append(resourceName).toString;
 		var processDefinitions = co2System.contractsAndProcessesDeclaration.processes
 		var contractDefinitions = co2System.contractsAndProcessesDeclaration.contracts
-		var honestyProcess = if (co2System.honesty!=null) co2System.honesty.process else null
+		var honestyProcesses = if (co2System.honesty!=null) co2System.honesty.processes else null
 		
 		//fix recursion name
 //		contractDefinitions.fixRecursions()
@@ -177,8 +177,10 @@ class JavaGenerator extends AbstractIGenerator {
 			«ENDIF»
 			
 			public static void main(String[] args) {
-				«IF honestyProcess!=null»
+				«IF honestyProcesses!=null»
+				«FOR honestyProcess : honestyProcesses»
 				HonestyChecker.isHonest(«honestyProcess.name».class, «mainClass».username, «mainClass».password);
+				«ENDFOR»
 				«ENDIF»
 			}
 		}

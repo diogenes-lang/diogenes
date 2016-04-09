@@ -13,7 +13,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="importedNamespace" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="HonestyDeclaration">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//ProcessDefinition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="processes" unique="false"
+        upperBound="-1" eType="#//ProcessDefinition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ContractsAndProcessesDeclaration">
     <eStructuralFeatures xsi:type="ecore:EReference" name="contracts" upperBound="-1"
