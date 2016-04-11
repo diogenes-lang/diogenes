@@ -46,7 +46,6 @@ Variable:
 ;
 
 
-
 Process:
 	EmptyProcess |
 	Sum |
@@ -164,7 +163,7 @@ TellRetract:
 ;
 
 Send:
-	"send" session=[Referrable] action=ID "!" (value=Expression)? ("." next=Next)?
+	"send" session=[Referrable] action=ID "!" (value=(Expression|Placeholder))? ("." next=Next)?
 ;
 
 SimpleReceive returns Receive:
@@ -239,10 +238,10 @@ Atomic returns Expression:
     {VariableReference} ref=[Referrable]
 ;
 
-
-Typable:
-	Variable | Expression
+Placeholder returns Expression:
+	{Placeholder} "*" ":" type=Type
 ;
+
 
 Referrable:
 	Variable | Session

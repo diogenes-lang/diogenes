@@ -30,6 +30,7 @@ import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
 import it.unica.co2.co2.OrExpression
 import it.unica.co2.co2.ParallelProcesses
+import it.unica.co2.co2.Placeholder
 import it.unica.co2.co2.Plus
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
@@ -135,6 +136,11 @@ class JavaGenerator extends AbstractIGenerator {
 		contractDefinitions.addAll( co2System.eAllContents.filter(TellAndWait).map[t| t.fixTell("TellContr")].toSet )
 		contractDefinitions.addAll( co2System.eAllContents.filter(TellProcess).map[t| t.fixTell("TellContr")].toSet )
 		
+		var placeholders = co2System.eAllContents.filter(Placeholder);
+		var hasIntPlaceholders = placeholders.filter[p| (p.type instanceof IntType)].toSet.size>0;
+		var hasBooleanPlaceholders = placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
+		var hasStringPlaceholders = placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
+		var hasSessionPlaceholders = placeholders.filter[p| (p.type instanceof SessionType)].toSet.size>0;
 		
 		val isTranslatable = co2System.isJavaTranslatable;
 		
@@ -164,9 +170,16 @@ class JavaGenerator extends AbstractIGenerator {
 		@SuppressWarnings("unused")
 		public class «mainClass» {
 			
-			private static String username = "test@co2-plugin.com";
-			private static String password = "test";
+			private static final String username = "test@co2-plugin.com";
+			private static final String password = "test";
 			
+			«IF hasIntPlaceholders»static final Integer intPlaceholder = 42;«ENDIF»
+			«IF hasStringPlaceholders»static final String stringPlaceholder = "42";«ENDIF»
+			«IF hasBooleanPlaceholders»static final Boolean booleanPlaceholder = false;«ENDIF»
+			«IF hasSessionPlaceholders»static final SessionI<TST> sessionPlaceholder = null;«ENDIF»
+			«IF hasIntPlaceholders||hasStringPlaceholders||hasBooleanPlaceholders||hasSessionPlaceholders»
+			
+			«ENDIF»
 			«contractDefinitions.getJavaContractDeclarations»
 			«contractDefinitions.getJavaContractDefinitions»
 			
@@ -240,7 +253,7 @@ class JavaGenerator extends AbstractIGenerator {
 	}
 	
 	def String getJavaContractDeclaration(ContractDefinition c) {
-		'''static ContractDefinition «c.name» = def("«c.name»");'''
+		'''static final ContractDefinition «c.name» = def("«c.name»");'''
 	}
 	
 	def String getJavaContractDefinition(ContractDefinition c) {
@@ -302,10 +315,9 @@ class JavaGenerator extends AbstractIGenerator {
 	def String getJavaType(Variable fn) {
 		if (fn.type instanceof IntType)			"Integer"
 		else if (fn.type instanceof StringType)	"String"
-		else if(fn.type instanceof BooleanType) "boolean" 
+		else if(fn.type instanceof BooleanType) "Boolean" 
 		else if(fn.type instanceof SessionType) "SessionI<TST>"
 	}
-	
 	
 	def String getFieldsAndConstructor(ProcessDefinition p) {
 		'''
@@ -625,6 +637,13 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String getJavaExpression(VariableReference exp) {
 		exp.ref.name
+	}
+	
+	def dispatch String getJavaExpression(Placeholder fn) {
+		if (fn.type instanceof IntType)			'''«mainClass».intPlaceholder'''
+		else if (fn.type instanceof StringType)	'''«mainClass».stringPlaceholder'''
+		else if(fn.type instanceof BooleanType) '''«mainClass».booleanPlaceholder'''
+		else if(fn.type instanceof SessionType) '''«mainClass».sessionPlaceholder'''
 	}
 	
 }

@@ -40,7 +40,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Variable" eSuperTypes="#//Typable #//Referrable">
+  <eClassifiers xsi:type="ecore:EClass" name="Variable" eSuperTypes="#//Referrable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Process"/>
@@ -148,8 +148,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Session" eSuperTypes="#//Referrable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Expression" eSuperTypes="#//Typable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Typable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Referrable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -254,6 +253,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//Referrable"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntType" eSuperTypes="#//Type"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringType" eSuperTypes="#//Type"/>

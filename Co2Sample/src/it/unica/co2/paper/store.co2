@@ -17,7 +17,7 @@ specification Pdishonest {
 		tellRetract y D . (
 			send y req! v . 
 			receive [
-				y <- ok? . send x amount! 100
+				y <- ok? . send x amount! *:int
 				y <- no? . send x abort!
 			]
 			+ t . send x abort! 
@@ -33,7 +33,7 @@ specification Phonest {
 		tellRetract y D . (
 			send y req! ("req:"+v) . 
 			receive [
-				y <- ok? . send x amount! 100
+				y <- ok? . send x amount! *:int
 				y <- no? . send x abort!
 			]
 			+ t . send x abort! . receive [y <- ok? no?]

@@ -18,6 +18,7 @@ import it.unica.co2.co2.Minus
 import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
 import it.unica.co2.co2.OrExpression
+import it.unica.co2.co2.Placeholder
 import it.unica.co2.co2.Plus
 import it.unica.co2.co2.Prefix
 import it.unica.co2.co2.ProcessCall
@@ -68,6 +69,9 @@ judgments {
 /*
  * expressions
  */
+axiom Placeholder
+	G |- Placeholder fn : fn.type
+ 
 axiom NumeralLiteral
 	G |- NumberLiteral num : Co2Factory::eINSTANCE.createIntType
 
@@ -163,6 +167,7 @@ from {
 
 axiom Variable
 	G ||- Variable fn : fn.type
+
 
 
 axiom Session
