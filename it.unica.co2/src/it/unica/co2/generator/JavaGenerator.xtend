@@ -136,11 +136,19 @@ class JavaGenerator extends AbstractIGenerator {
 		contractDefinitions.addAll( co2System.eAllContents.filter(TellAndWait).map[t| t.fixTell("TellContr")].toSet )
 		contractDefinitions.addAll( co2System.eAllContents.filter(TellProcess).map[t| t.fixTell("TellContr")].toSet )
 		
-		var placeholders = co2System.eAllContents.filter(Placeholder);
-		var hasIntPlaceholders = placeholders.filter[p| (p.type instanceof IntType)].toSet.size>0;
-		var hasBooleanPlaceholders = placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
-		var hasStringPlaceholders = placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
-		var hasSessionPlaceholders = placeholders.filter[p| (p.type instanceof SessionType)].toSet.size>0;
+		var placeholders = co2System.eAllContents.filter(Placeholder).toSet;
+		for (p:placeholders.toSet) {
+			println("-> "+p.type)
+		}
+		var hasIntPlaceholders = 		placeholders.filter[p| (p.type instanceof IntType)].toSet.size>0;
+		var hasBooleanPlaceholders = 	placeholders.filter[p| (p.type instanceof BooleanType)].toSet.size>0;
+		var hasStringPlaceholders = 	placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
+		var hasSessionPlaceholders = 	placeholders.filter[p| (p.type instanceof SessionType)].toSet.size>0;
+		
+		println(hasIntPlaceholders)
+		println(hasBooleanPlaceholders)
+		println(hasStringPlaceholders)
+		println(hasSessionPlaceholders)
 		
 		val isTranslatable = co2System.isJavaTranslatable;
 		

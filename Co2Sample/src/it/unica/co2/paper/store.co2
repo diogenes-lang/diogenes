@@ -31,7 +31,7 @@ specification Phonest {
 	tellAndWait x C .
 	receive x order? v:string . (
 		tellRetract y D . (
-			send y req! ("req:"+v) . 
+			send y req! *:string . 
 			receive [
 				y <- ok? . send x amount! *:int
 				y <- no? . send x abort!
@@ -44,7 +44,7 @@ specification Phonest {
 
 specification Buyer {
 	tellAndReturn x { order! string . ( amount? int + abort? ) } .
-	send x order! "AB01234" .
+	send x order! *:string .
 	receive [ 
 		x <- amount? n:int
 		x <- abort?
@@ -54,7 +54,7 @@ specification Buyer {
 specification Distributor {
 	tellRetract x { req? string . ( ok! (+) no! ) } .
 	receive x req? msg:string .
-	if msg=="req:AB01234"
+	if *:boolean
 	then send x ok!
 	else send x no!
 }

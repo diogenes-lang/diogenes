@@ -75,7 +75,7 @@ SingleSum returns Sum:
 
 IfThenElse:
 	{IfThenElse}
-	'if' if=Expression
+	'if' if=(Expression|Placeholder)
 	"then" then=Next
 	(=>'else' else=Next)?
 ;
@@ -241,7 +241,6 @@ Atomic returns Expression:
 Placeholder returns Expression:
 	{Placeholder} "*" ":" type=Type
 ;
-
 
 Referrable:
 	Variable | Session
