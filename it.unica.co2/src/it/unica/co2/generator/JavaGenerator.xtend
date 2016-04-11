@@ -145,13 +145,7 @@ class JavaGenerator extends AbstractIGenerator {
 		var hasStringPlaceholders = 	placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
 		var hasSessionPlaceholders = 	placeholders.filter[p| (p.type instanceof SessionType)].toSet.size>0;
 		
-		println(hasIntPlaceholders)
-		println(hasBooleanPlaceholders)
-		println(hasStringPlaceholders)
-		println(hasSessionPlaceholders)
-		
 		val isTranslatable = co2System.isJavaTranslatable;
-		
 		
 		'''
 		«IF !packageName.empty»
