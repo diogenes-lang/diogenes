@@ -79,13 +79,13 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DoOutput" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Variable"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actionName" eType="#//IntAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DoInput" eSuperTypes="#//Prefix">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Variable"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actionName" eType="#//ExtAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//Variable"
         containment="true"/>
   </eClassifiers>
@@ -125,7 +125,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Send" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Referrable"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//IntAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
@@ -140,8 +140,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Input">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Referrable"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actions" unique="false"
-        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" unique="false"
+        upperBound="-1" eType="#//ExtAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//Variable"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"

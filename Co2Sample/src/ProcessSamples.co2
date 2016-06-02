@@ -1,6 +1,8 @@
 /*
  * empty process
  */
+ 
+honesty P2
 
 process p1{ }
 process p2{nil}
@@ -41,3 +43,37 @@ process p6(x:session) {
 	ask x ( True )
 }
 
+specification P {
+        tellAndWait x {req? string} .
+        tellAndWait y {ok! (+) no!} .
+        receive x req? v:string .
+        if *:boolean 
+        then send y ok! 
+        else send y no!
+    }
+    
+specification P1 {
+      tellAndWait x {req? string} .
+      tellRetract y {ok! (+) no!} .
+          receive x req? v:string .
+          if *:boolean
+          then send y ok!
+          else send y no!
+      : receive x req? v:string
+  }
+  
+specification P2 {
+      tellAndWait x {req? string} .
+      tellRetract y {ok! (+) no!} .
+          receive [
+          	x <- req? v:string .
+	          if *:boolean
+     	      then send y ok!
+        	  else send y no!
+          ]
+          +t . (
+          	receive x req? v:string
+          	| send y no!
+          )
+      : receive x req? v:string
+  }

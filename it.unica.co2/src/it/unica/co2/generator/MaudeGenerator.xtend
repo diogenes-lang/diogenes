@@ -334,12 +334,12 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	def dispatch String toMaude(DoInput obj, String padLeft) {
 		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
-		'''do "«obj.session.name»" "«obj.actionName»" ? «getFreeNameType(obj.variable)» . «obj.next.toMaude(padLeft)»'''
+		'''do "«obj.session.name»" "«obj.actionName.name»" ? «getFreeNameType(obj.variable)» . «obj.next.toMaude(padLeft)»'''
 	}
 	
 	def dispatch String toMaude(DoOutput obj, String padLeft) {
 		if (obj.next==null) obj.next = Co2Factory.eINSTANCE.createEmptyProcess
-		'''do "«obj.session.name»" "«obj.actionName»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
+		'''do "«obj.session.name»" "«obj.actionName.name»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
 	}
 	
 	def dispatch String toMaude(Ask obj, String padLeft) {
@@ -412,7 +412,7 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	def dispatch String toMaude(Send obj, String padLeft) {
 		obj.next = obj.next ?: Co2Factory.eINSTANCE.createEmptyProcess
-		'''do "«obj.session.name»" "«obj.action»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
+		'''do "«obj.session.name»" "«obj.action.name»" ! «getExpressionType(obj.value)» . «obj.next.toMaude(padLeft)»'''
 	}
 	
 	def dispatch String toMaude(Receive obj, String padLeft) {
@@ -446,7 +446,7 @@ class MaudeGenerator extends AbstractIGenerator{
 				}
 				
 				input.next = input.next?: Co2Factory.eINSTANCE.createEmptyProcess
-				sb.append('''do "«input.session.name»" "«action»" ? «getFreeNameType(input.variable)» . «input.next.toMaude(pad)»''');
+				sb.append('''do "«input.session.name»" "«action.name»" ? «getFreeNameType(input.variable)» . «input.next.toMaude(pad)»''');
 			}
 		}
 

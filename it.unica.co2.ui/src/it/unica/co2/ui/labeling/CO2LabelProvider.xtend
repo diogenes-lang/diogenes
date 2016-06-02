@@ -158,7 +158,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	def text(DoInput ele) {
-		"do "+ ele.session.name + " " + ele.actionName + "?"
+		"do "+ ele.session.name + " " + ele.actionName.name + "?"
 	}
 	
 	def text(Receive ele) {
@@ -166,15 +166,15 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	def text(Input ele) {
-		ele.session.name + " ← " + ele.actions.join(" ", [x|x+"?"])
+		ele.session.name + " ← " + ele.actions.join(" ", [x|x.name+"?"])
 	}
 	
 	def text(DoOutput ele) {
-		"do "+ ele.session.name + " " + ele.actionName + "!"
+		"do "+ ele.session.name + " " + ele.actionName.name + "!"
 	}
 	
 	def text(Send ele) {
-		"send "+ ele.session.name + " " + ele.session.name + "!"
+		"send "+ ele.session.name + " " + ele.action.name + "!"
 	}
 	
 	def text(Tau ele) {

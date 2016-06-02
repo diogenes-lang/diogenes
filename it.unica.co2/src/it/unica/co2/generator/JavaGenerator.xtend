@@ -475,7 +475,7 @@ class JavaGenerator extends AbstractIGenerator {
 				(«messageName») -> {
 					«input.getJavaInput(messageName)»
 				}, 
-				«input.actions.join(", ", [a|'''"«a»"'''])»
+				«input.actions.join(", ", [a|'''"«a.name»"'''])»
 			)
 			«ENDFOR»
 			.waitForReceive(«IF timeout»«WAIT_TIMEOUT»«ENDIF»)
@@ -486,7 +486,7 @@ class JavaGenerator extends AbstractIGenerator {
 	def String singleSessionReceive(EList<Input> inputs, boolean timeout) {
 		
 		val session = inputs.get(0).session.name;	// inputs are at least 1 and on the same session
-		val allActions = inputs.map[x|x.actions].flatten.toSet
+		val allActions = inputs.map[x|x.actions].flatten.map[x|x.name].toSet
 		
 		var messageName = getFreshName("msg")
 		
@@ -501,7 +501,7 @@ class JavaGenerator extends AbstractIGenerator {
 		switch («messageName».getLabel()) {
 			«FOR input : inputs»
 				«FOR a : input.actions»
-				case "«a»":
+				case "«a.name»":
 				«ENDFOR»
 				logger.info("received ["+«messageName».getLabel()+"]");
 				«input.getJavaInput(messageName)»
@@ -566,8 +566,8 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(Send p) {
 		'''
-		logger.info("sending action '«p.action»'");
-		«p.session.name».sendIfAllowed("«p.action»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
+		logger.info("sending action '«p.action.name»'");
+		«p.session.name».sendIfAllowed("«p.action.name»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
 		«IF p.next!=null»«p.next.toJava»«ENDIF»
 		'''
 	}

@@ -119,11 +119,11 @@ Retract:
 ;
 
 DoOutput:
-	"do" session=[Variable] actionName=ID "!" (value=Expression)?
+	"do" session=[Variable] actionName=[IntAction] "!" (value=Expression)?
 ;
 
 DoInput:
-	"do" session=[Variable] actionName=ID "?" (variable=Variable)?
+	"do" session=[Variable] actionName=[ExtAction] "?" (variable=Variable)?
 ;
 
 Ask:
@@ -163,7 +163,7 @@ TellRetract:
 ;
 
 Send:
-	"send" session=[Referrable] action=ID "!" (value=(Expression|Placeholder))? ("." next=Next)?
+	"send" session=[Referrable] action=[IntAction] "!" (value=(Expression|Placeholder))? ("." next=Next)?
 ;
 
 SimpleReceive returns Receive:
@@ -178,11 +178,11 @@ Receive:
 ;
 
 SimpleInput returns Input:
-	session=[Referrable] (actions+=ID "?")+ (variable=Variable)? ("." next=Next)?
+	session=[Referrable] (actions+=[ExtAction] "?")+ (variable=Variable)? ("." next=Next)?
 ;
 
 Input:
-	session=[Referrable] "<-" (actions+=ID "?")+ (variable=Variable)? ("." next=Next)?
+	session=[Referrable] "<-" (actions+=[ExtAction] "?")+ (variable=Variable)? ("." next=Next)?
 ;
 
 Session:

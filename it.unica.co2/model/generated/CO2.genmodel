@@ -68,12 +68,12 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoOutput">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/session"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoOutput/actionName"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoOutput/value"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//DoInput">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/session"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//DoInput/actionName"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/actionName"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//DoInput/variable"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Ask">
@@ -102,7 +102,7 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Send">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/session"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Send/action"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/action"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/value"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/next"/>
     </genClasses>
@@ -113,7 +113,7 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Input">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/session"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Input/actions"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/actions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/variable"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/next"/>
     </genClasses>
