@@ -77,3 +77,9 @@ specification P2 {
           )
       : receive x req? v:string
   }
+  
+  
+specification A {
+	tellAndWait x {a? + b?} .
+	receive x a? b?
+}

@@ -1,7 +1,7 @@
 
 package it.unica.co2.paper
 
-honesty Phonest Buyer Distributor
+honesty Store Buyer Distributor
 
 contract C {
 	order? string . ( amount! int (+) abort! )
@@ -27,19 +27,17 @@ specification Pdishonest {
 	
 }
 
-specification Phonest {
+specification Store {
 	tellAndWait x C .
-	receive x order? v:string . (
-		tellRetract y D . (
-			send y req! *:string . 
-			receive [
-				y <- ok? . send x amount! *:int
-				y <- no? . send x abort!
-			]
-			+ t . send x abort! . receive [y <- ok? no?]
-		) 
-		: send x abort!
-	)
+	receive x order? v:string . 
+	tellRetract y D . 
+		send y req! *:string . 
+		receive [
+			y <- ok? . send x amount! *:int
+			y <- no? . send x abort!
+		] + t . send x abort! . receive [y <- ok? no?]	
+	: send x abort!
+	
 }
 
 specification Buyer {

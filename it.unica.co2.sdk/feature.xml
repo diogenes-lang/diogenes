@@ -2,11 +2,10 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="4.1.0">
+      version="4.1.1">
 
    <description>
-      Actions are now declared within contracts and referred by send/receive actions. Syntax is unchanged.
-Now it&apos;s impossible to perform a send/receive to an arbitrary action.
+      Minors
    </description>
 
    <requires>
