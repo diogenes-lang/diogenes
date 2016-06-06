@@ -3,18 +3,7 @@ contract C {
 	a!. ( a1? int + a2?) (+) b!
 }
 
-process P {
-	tellAndReturn x C .
-	tellAndWait y C .
-	send x a! .
-	send y b! .
-	receive [
-		x <- a1? a2? n:int . Q(n)
-		y <- a2?
-	]
-	+ t . send y a!
-}
 
-specification Q(n:int) {
+specification P(n:int) {
 	
 }

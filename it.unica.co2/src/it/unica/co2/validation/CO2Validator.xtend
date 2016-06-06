@@ -50,6 +50,19 @@ class CO2Validator extends CO2TypeSystemValidator {
 	
 	@Check
 	def void checkContractNameIsUnique(ProcessDefinition procDef) {
+		
+		if (!Character.isUpperCase(procDef.getName().charAt(0))) {
+            warning("Process name should start with a capital", 
+            		Co2Package.Literals.PROCESS_DEFINITION__NAME,
+            		procDef.getName());
+        }
+        
+        if (procDef.name.contains("_")) {
+            error("Process name must not contain underscores", 
+            		Co2Package.Literals.PROCESS_DEFINITION__NAME,
+            		procDef.getName());
+        }
+		
 		var root = EcoreUtil2.getRootContainer(procDef);
 		for (other: EcoreUtil2.getAllContentsOfType(root, ProcessDefinition)){
 			
@@ -87,6 +100,19 @@ class CO2Validator extends CO2TypeSystemValidator {
 	
 	@Check
 	def void checkContractNameIsUnique(ContractDefinition contractDef) {
+		
+		if (!Character.isUpperCase(contractDef.getName().charAt(0))) {
+            warning("Name should start with a capital", 
+            		Co2Package.Literals.CONTRACT_DEFINITION__NAME,
+            		contractDef.getName());
+        }
+		
+		if (contractDef.name.contains("_")) {
+            error("Process name must not contain underscores", 
+            		Co2Package.Literals.CONTRACT_DEFINITION__NAME,
+            		contractDef.getName());
+        }
+		
 		var root = EcoreUtil2.getRootContainer(contractDef);
 		for (other: EcoreUtil2.getAllContentsOfType(root, ContractDefinition)){
 			
