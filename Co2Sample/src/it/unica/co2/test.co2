@@ -3,8 +3,7 @@
 package it.unica.co2
 
 contract c {
-
-
+	A!
 	
 }
 

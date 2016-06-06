@@ -48,20 +48,53 @@ class CO2Validator extends CO2TypeSystemValidator {
 		}		
 	}
 	
+	
+	
 	@Check
-	def void checkContractNameIsUnique(ProcessDefinition procDef) {
+	def void checkProcessNameStartWithCapital(ProcessDefinition procDef) {
 		
 		if (!Character.isUpperCase(procDef.getName().charAt(0))) {
             warning("Process name should start with a capital", 
             		Co2Package.Literals.PROCESS_DEFINITION__NAME,
             		procDef.getName());
         }
-        
+    }
+    
+    @Check
+	def void checkContractNameStartWithCapital(ContractDefinition contractDef) {
+		
+		if (!Character.isUpperCase(contractDef.getName().charAt(0))) {
+            warning("Contract name should start with a capital", 
+            		Co2Package.Literals.CONTRACT_DEFINITION__NAME,
+            		contractDef.getName());
+        }
+    }
+	
+	
+	
+	@Check
+	def void checkProcessNameDoesNotContainUnderscores(ProcessDefinition procDef) {
+		
         if (procDef.name.contains("_")) {
             error("Process name must not contain underscores", 
             		Co2Package.Literals.PROCESS_DEFINITION__NAME,
             		procDef.getName());
         }
+	}
+	
+	@Check
+	def void checkContractNameDoesNotContainUnderscores(ContractDefinition contractDef) {
+		if (contractDef.name.contains("_")) {
+            error("Process name must not contain underscores", 
+            		Co2Package.Literals.CONTRACT_DEFINITION__NAME,
+            		contractDef.getName());
+        }
+	}	
+	
+	
+	
+	@Check
+	def void checkProcessNameIsUnique(ProcessDefinition procDef) {
 		
 		var root = EcoreUtil2.getRootContainer(procDef);
 		for (other: EcoreUtil2.getAllContentsOfType(root, ProcessDefinition)){
@@ -74,6 +107,24 @@ class CO2Validator extends CO2TypeSystemValidator {
 			}
 		}
 	}
+
+	@Check
+	def void checkContractNameIsUnique(ContractDefinition contractDef) {
+		
+		var root = EcoreUtil2.getRootContainer(contractDef);
+		for (other: EcoreUtil2.getAllContentsOfType(root, ContractDefinition)){
+			
+			if (contractDef!=other && contractDef.getName.equals(other.name)) {
+				error("Contract names must be unique",
+					contractDef,
+					Co2Package.Literals.CONTRACT_DEFINITION__NAME
+				);
+				return;
+			}
+		}
+	}
+
+
 
 	@Check
 	def void checkHonestyDeclaration(HonestyDeclaration honestyDecl) {
@@ -90,6 +141,8 @@ class CO2Validator extends CO2TypeSystemValidator {
 		
 	}
 
+
+
 	@Check
 	def void checkEmptyProcess(EmptyProcess empty) {
 		info("Empty process can be omitted", 
@@ -97,34 +150,14 @@ class CO2Validator extends CO2TypeSystemValidator {
 		);
 	}
 	
-	
 	@Check
-	def void checkContractNameIsUnique(ContractDefinition contractDef) {
-		
-		if (!Character.isUpperCase(contractDef.getName().charAt(0))) {
-            warning("Name should start with a capital", 
-            		Co2Package.Literals.CONTRACT_DEFINITION__NAME,
-            		contractDef.getName());
-        }
-		
-		if (contractDef.name.contains("_")) {
-            error("Process name must not contain underscores", 
-            		Co2Package.Literals.CONTRACT_DEFINITION__NAME,
-            		contractDef.getName());
-        }
-		
-		var root = EcoreUtil2.getRootContainer(contractDef);
-		for (other: EcoreUtil2.getAllContentsOfType(root, ContractDefinition)){
-			
-			if (contractDef!=other && contractDef.getName.equals(other.name)) {
-				error("Contract names must be unique",
-					contractDef,
-					Co2Package.Literals.CONTRACT_DEFINITION__NAME
-				);
-				return;
-			}
-		}
+	def void checkEmptyContract(EmptyContract empty) {
+		info("Empty contract can be omitted", 
+			Co2Package.Literals.EMPTY_CONTRACT__VALUE
+		);
 	}
+	
+	
 	
 	@Check
 	def void checkInternalActionsName(IntAction internalAction) {
@@ -156,6 +189,8 @@ class CO2Validator extends CO2TypeSystemValidator {
 			}
 	}
 	
+	
+	
 	@Check
 	def void checkExtActionType(ExtAction action) {
 		if (action.type!=null && action.type instanceof UnitActionType)
@@ -168,34 +203,26 @@ class CO2Validator extends CO2TypeSystemValidator {
 			info('Unit type can be omitted', Co2Package.Literals.INT_ACTION__TYPE)
 	}
 	
+	
+	
 	@Check
-	def void checkEmptyContract(EmptyContract empty) {
-		info("Empty contract can be omitted", 
-			Co2Package.Literals.EMPTY_CONTRACT__VALUE
-		);
+	def void checkExtActionName(ExtAction action) {
+		if (Character.isUpperCase(action.getName().charAt(0))) {
+            warning("Action name should start with a lowercase", 
+            		Co2Package.Literals.EXT_ACTION__NAME,
+            		action.getName());
+        }
 	}
 	
-//	@Check
-//	def void checkRecursionDefinition(Recursion recursion) {
-//		this.checkRecursionID(recursion.eContainer, recursion.name)
-//	}
-//	
-//	def dispatch void checkRecursionID(EObject obj, String name) {
-//    	checkRecursionID(obj.eContainer, name)
-//    }
-//    
-//    def dispatch void checkRecursionID(Recursion obj, String name) {
-//    	if (obj.name.equals(name)) {
-//    		warning("You are hiding an existing name",
-//    			Co2Package.Literals.REFERRABLE__NAME
-//    		)
-//    	}
-//    	checkRecursionID(obj.eContainer, name)
-//    }
-//    
-//    def dispatch void checkRecursionID(ContractDefinition obj, String name) {
-//    	// stop recursion
-//    }
+	@Check
+	def void checkIntActionName(IntAction action) {
+		if (Character.isUpperCase(action.getName().charAt(0))) {
+            warning("Action name should start with a lowercase", 
+            		Co2Package.Literals.INT_ACTION__NAME,
+            		action.getName());
+        }
+	}
+	
 	
 	
 	/*
@@ -295,7 +322,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 	
 	
 	/*
-	 * check contract cycle-reference
+	 * check contract cycle-reference: TODO
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	 
 	 

@@ -4,7 +4,7 @@ package it.unica.co2.paper
 honesty Store Buyer Distributor
 
 contract C {
-	order? string . ( amount! int (+) abort! )
+	order_item? string . ( amount! int (+) abort! )
 }
 
 contract D {
@@ -13,7 +13,7 @@ contract D {
 
 specification Pdishonest {
 	tellAndWait x C .
-	receive x order? v:string . (			
+	receive x order_item? v:string . (			
 		tellRetract y D . (
 			send y req! v . 
 			receive [
@@ -29,7 +29,7 @@ specification Pdishonest {
 
 specification Store {
 	tellAndWait x C .
-	receive x order? v:string . 
+	receive x order_item? v:string . 
 	tellRetract y D . 
 		send y req! *:string . 
 		receive [
