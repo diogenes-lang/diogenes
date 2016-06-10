@@ -477,12 +477,8 @@
   <extension
         point="org.eclipse.ui.handlers">
      <handler
-           class="it.unica.co2.ui.handlers.MaudeHonestyHandler"
+           class="it.unica.co2.ui.handlers.HonestyHandler"
            commandId="it.unica.co2.ui.honesty-maude">
-     </handler>
-     <handler
-           class="it.unica.co2.ui.handlers.JavaHonestyHandler"
-           commandId="it.unica.co2.ui.honesty-java">
      </handler>
   </extension>
   <extension

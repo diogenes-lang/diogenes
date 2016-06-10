@@ -23,9 +23,14 @@ import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
 import java.io.File
+import org.eclipse.core.resources.IFile
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
+import org.eclipse.core.resources.IProjectDescription
 
 /**
  * This class contains custom validation rules. 
@@ -36,6 +41,18 @@ class CO2Validator extends CO2TypeSystemValidator {
 	
 	@Check
 	def void checkPackage(CO2System system) {
+		
+//		var IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		
+		val String platformString = system.eResource.URI.toPlatformString(false);
+	    val IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+	    val IProject currentProject = myFile.getProject();
+		val IProjectDescription currentProjectDesc = currentProject.description;
+		
+//		println("** conf");
+//		println(currentProject.activeBuildConfig);
+//		println("**")
+		
 		var packageName = system.name
 		var realPath = system.eResource.URI.toPlatformString(false)
 		var expectedPath = packageName.replaceAll("\\.", File.separator)+File.separator+system.eResource.URI.lastSegment

@@ -3,17 +3,17 @@ grammar it.unica.co2.CO2 with org.eclipse.xtext.common.Terminals
 generate co2 "http://www.unica.it/co2/CO2"
 
     
-CO2System:
-//	importDeclarations+=ImportDeclaration*
+CO2System:	
 	((single?="single")? "package" name=QualifiedName)?
+//	imports+=Import*
 	honesty=HonestyDeclaration?
 	contractsAndProcessesDeclaration=ContractsAndProcessesDeclaration
 ;
 
 
 
-ImportDeclaration:
-    'import' importedNamespace=QualifiedName ('.*')?;
+Import:
+    'import' importedNamespace=QualifiedName ("." "*")?;
 
 QualifiedName:
   ID ('.' ID)*;
