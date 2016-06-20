@@ -172,8 +172,8 @@ class JavaGenerator extends AbstractIGenerator {
 		@SuppressWarnings("unused")
 		public class «mainClass» {
 			
-			private static final String username = "test@co2-plugin.com";
-			private static final String password = "test";
+			private static final String username = "eclipse@co2.unica.it";
+			private static final String password = "eclipse";
 			
 			«IF hasIntPlaceholders»static final Integer intPlaceholder = 42;«ENDIF»
 			«IF hasStringPlaceholders»static final String stringPlaceholder = "42";«ENDIF»
@@ -195,6 +195,9 @@ class JavaGenerator extends AbstractIGenerator {
 				«IF honestyProcesses!=null»
 				«FOR honestyProcess : honestyProcesses»
 				HonestyChecker.isHonest(«honestyProcess.name».class, «mainClass».username, «mainClass».password);
+				«ENDFOR»
+				«FOR honestyProcess : honestyProcesses»
+		//		new Thread(new «honestyProcess.name»(«mainClass».username, «mainClass».password)).start();
 				«ENDFOR»
 				«ENDIF»
 			}
