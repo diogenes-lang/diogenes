@@ -12,5 +12,8 @@
    <feature url="features/it.unica.co2.sdk_4.1.3.jar" id="it.unica.co2.sdk" version="4.1.3">
       <category name="CO2"/>
    </feature>
+   <feature url="features/it.unica.co2.sdk_4.1.4.jar" id="it.unica.co2.sdk" version="4.1.4">
+      <category name="CO2"/>
+   </feature>
    <category-def name="CO2" label="CO2"/>
 </site>
