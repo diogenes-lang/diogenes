@@ -399,7 +399,7 @@ class JavaGenerator extends AbstractIGenerator {
 			
 			«tell.process.toJava»
 		}
-		catch(ContractExpiredException e) {
+		catch(ContractExpiredException «getFreshName("e")») {
 			//retract «tell.session.name»
 			«IF tell.RProcess!=null»
 			«tell.RProcess.toJava»
@@ -440,7 +440,7 @@ class JavaGenerator extends AbstractIGenerator {
 			try {
 				«receive.inputs.singleSessionReceive(true)»
 			}
-			catch (TimeExpiredException e) {
+			catch (TimeExpiredException «getFreshName("e")») {
 				«receive.TProcess.toJava»
 			}
 			
@@ -456,7 +456,7 @@ class JavaGenerator extends AbstractIGenerator {
 			try {
 				«receive.multipleSessionReceive(true)»
 			}
-			catch (TimeExpiredException e) {
+			catch (TimeExpiredException «getFreshName("e")») {
 				«receive.TProcess.toJava»
 			}
 			
@@ -535,11 +535,12 @@ class JavaGenerator extends AbstractIGenerator {
 		«IF input.variable!=null»
 			«input.variable.javaType» «input.variable.name»;
 			«IF input.variable.type instanceof IntType»
+				«var exFreeName = getFreshName("e")»
 				try {
 					«input.variable.name» = Integer.parseInt(«messageName».getStringValue());
 				}
-				catch (NumberFormatException e) {
-					throw new RuntimeException(e);
+				catch (NumberFormatException «exFreeName») {
+					throw new RuntimeException(«exFreeName»);
 				}
 				«ELSE»
 				«input.variable.name» = «messageName».getStringValue();

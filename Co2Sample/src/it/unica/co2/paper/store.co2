@@ -13,7 +13,7 @@ contract D {
 
 specification Pdishonest {
 	tellAndWait x C .
-	receive x order? v:string . (			
+	receive x order? v:string . (  
 		tellRetract y D . (
 			send y req! v . 
 			receive [

@@ -28,9 +28,10 @@ import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.jdt.core.IJavaProject
+import org.eclipse.jdt.core.JavaCore
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
-import org.eclipse.core.resources.IProjectDescription
 
 /**
  * This class contains custom validation rules. 
@@ -44,13 +45,36 @@ class CO2Validator extends CO2TypeSystemValidator {
 		
 //		var IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		
-		val String platformString = system.eResource.URI.toPlatformString(false);
-	    val IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-	    val IProject currentProject = myFile.getProject();
-		val IProjectDescription currentProjectDesc = currentProject.description;
-		
-//		println("** conf");
-//		println(currentProject.activeBuildConfig);
+//		val IProject currentProject = myFile.getProject();
+//		val IJavaProject javaProject = JavaCore.create(currentProject);
+//
+//		val Path path = new Path(system.eResource.URI.device, system.eResource.URI.toPlatformString(false))
+//		
+//		println("**");
+//		println(system.eResource);
+//		println(system.eResource.URI);
+//		println(system.eResource.URI.path);
+//		println(system.eResource.URI.devicePath);
+//		println(system.eResource.URI.toPlatformString(true));
+//		println(path)
+//		println(javaProject.findPackageFragment(path))
+//		println(javaProject.findElement(path))
+//		println("**")val String platformString = system.eResource.URI.toPlatformString(false);
+//	    val IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+//	    val IProject currentProject = myFile.getProject();
+//		val IJavaProject javaProject = JavaCore.create(currentProject);
+//
+//		val Path path = new Path(system.eResource.URI.device, system.eResource.URI.toPlatformString(false))
+//		
+//		println("**");
+//		println(system.eResource);
+//		println(system.eResource.URI);
+//		println(system.eResource.URI.path);
+//		println(system.eResource.URI.devicePath);
+//		println(system.eResource.URI.toPlatformString(true));
+//		println(path)
+//		println(javaProject.findPackageFragment(path))
+//		println(javaProject.findElement(path))
 //		println("**")
 		
 		var packageName = system.name
