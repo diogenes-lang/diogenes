@@ -13,8 +13,8 @@ contract Cp {
 }
 
 // between the dealer and the desk service
-contract Cd {
-	next!. card? int .Cd (+) abort!
+contract Cd { 
+	next!. card? int .Cd (+) abort! 
 }
 
 /*
@@ -31,7 +31,7 @@ specification Pplay(xp:session, xd:session, np:int) {
 		xp <- hit? . send xd next! . Pdeck(xp, xd, np)
 		xp <- stand? . Qstand(xp,xd,np,0)
 	]
-	+ t . send xd abort! . PabortP(xp)
+	+ t . send xd abort! . PabortP(xp) 
 }
 
 specification Pdeck(xp:session, xd:session, np:int) {

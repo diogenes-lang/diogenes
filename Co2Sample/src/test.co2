@@ -4,6 +4,27 @@ contract C {
 }
 
 
-specification P(n:int) {
-	
+specification P(n:int, x:session) {
+	tellAndWait x { a?string . b! int} .
+	receive x a? n:string .  
+	send x b! n .
+	tellAndWait x { a?string . b! int} .
+	send x b! n
+}
+
+
+specification P100 {
+	tellAndReturn x {a!} . P1(x)
+}
+
+specification P0 {
+	tellAndReturn x {b!} . P1(x)
+}
+
+specification P1 (x:session) {
+	send x b! . P1(x)
+}
+
+specification P2 (x:session) {
+	P2(x)
 }

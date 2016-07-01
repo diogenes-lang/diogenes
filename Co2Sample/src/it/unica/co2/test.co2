@@ -2,11 +2,19 @@
 
 package it.unica.co2
 
-contract c {
-	A!
-	
+contract C {
+	a! string
+}
+
+contract D {
+	a! int (+) b! (+) c! . (q? + r?)
 }
 
 specification P {
-	 
+	 tellAndWait x C .
+	 send x a!
+}
+
+specification P1 (x:session) {
+	send x a! *:string
 }

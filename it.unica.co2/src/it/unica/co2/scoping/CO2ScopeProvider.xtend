@@ -6,15 +6,21 @@ package it.unica.co2.scoping
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.DoInput
+import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.Send
+import it.unica.co2.co2.Session
 import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
+import it.unica.co2.co2.Variable
+import java.util.List
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
@@ -34,7 +40,11 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * FreeName reference
 	 * 
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	def IScope scope_Referrable(EObject ctx, EReference ref) {
+	def IScope scope_VariableDeclaration(EObject ctx, EReference ref) {
+		return getDeclaredVariables(ctx.eContainer);
+	}
+	
+	def IScope scope_Session(EObject ctx, EReference ref) {
 		return getDeclaredVariables(ctx.eContainer);
 	}
 
@@ -123,12 +133,42 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	 * Action references: resolve the references into advertised contracts
 	 * 
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	def IScope scope_IntAction(EObject ctx, EReference ref) {
-		ctx.getIScopeForAllContentsOfClass(IntAction);
+	def IScope scope_IntAction(Send ctx, EReference ref) {
+		return getSessionScope(ctx.session, IntAction)
+//		return ctx.getIScopeForAllContentsOfClass(IntAction)
 	}
 	
-	def IScope scope_ExtAction(EObject ctx, EReference ref) {
-		ctx.getIScopeForAllContentsOfClass(ExtAction);
+	def IScope scope_ExtAction(Input ctx, EReference ref) {
+		return getSessionScope(ctx.session, ExtAction)
+//		return ctx.getIScopeForAllContentsOfClass(ExtAction)
 	}
 
+	def IScope scope_IntAction(DoOutput ctx, EReference ref) {
+		return getSessionScope(ctx.session, IntAction)
+//		return ctx.getIScopeForAllContentsOfClass(IntAction)
+	}
+	
+	def IScope scope_ExtAction(DoInput ctx, EReference ref) {
+		return getSessionScope(ctx.session, ExtAction)
+//		return ctx.getIScopeForAllContentsOfClass(ExtAction)
+	}
+	
+	
+	def dispatch IScope getSessionScope(Session session, Class<? extends EObject> clazz) {
+
+		var List<? extends EObject> candidates;
+		
+		if (session.contract!=null) {
+			candidates = EcoreUtil2.getAllContentsOfType(session.contract, clazz);
+		}
+		else {
+			candidates = EcoreUtil2.getAllContentsOfType(session.contractReference.contract, clazz);			
+		}
+		return Scopes.scopeFor(candidates);
+	}
+	
+	def dispatch IScope getSessionScope(Variable session, Class<? extends EObject> clazz) {
+		return session.getIScopeForAllContentsOfClass(clazz)
+	}
+	
 }

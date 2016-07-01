@@ -54,46 +54,46 @@ abstract class AbstractIGenerator implements IGenerator {
 	
 	def ContractDefinition fixTell(TellRetract tell, String prefix) {
 		
-		if (tell.contractReference==null) {
+		if (tell.session.contractReference==null) {
 			var contractDef = Co2Factory.eINSTANCE.createContractDefinition
 			contractDef.name = prefix+CONTRACT_NAME_COUNT++
-			contractDef.contract = tell.contract
-			tell.contract=null
-			tell.contractReference = contractDef
+			contractDef.contract = tell.session.contract
+			tell.session.contract=null
+			tell.session.contractReference = contractDef
 			return contractDef;
 		}
 		else {
-			tell.contractReference
+			tell.session.contractReference
 		}
 	}
 	
 	def ContractDefinition fixTell(TellAndWait tell, String prefix) {
 		
-		if (tell.contractReference==null) {
+		if (tell.session.contractReference==null) {
 			var contractDef = Co2Factory.eINSTANCE.createContractDefinition
 			contractDef.name = prefix+CONTRACT_NAME_COUNT++
-			contractDef.contract = tell.contract
-			tell.contract=null
-			tell.contractReference = contractDef
+			contractDef.contract = tell.session.contract
+			tell.session.contract=null
+			tell.session.contractReference = contractDef
 			return contractDef;
 		}
 		else {
-			tell.contractReference
+			tell.session.contractReference
 		}
 	}
 	
 	def ContractDefinition fixTell(TellProcess tell, String prefix) {
 		
-		if (tell.contractReference==null) {
+		if (tell.session.contractReference==null) {
 			var contractDef = Co2Factory.eINSTANCE.createContractDefinition
 			contractDef.name = prefix+CONTRACT_NAME_COUNT++
-			contractDef.contract = tell.contract
-			tell.contract=null
-			tell.contractReference = contractDef
+			contractDef.contract = tell.session.contract
+			tell.session.contract=null
+			tell.session.contractReference = contractDef
 			return contractDef;
 		}
 		else {
-			tell.contractReference
+			tell.session.contractReference
 		}
 	}
 	

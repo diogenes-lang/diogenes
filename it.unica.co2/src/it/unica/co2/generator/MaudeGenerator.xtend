@@ -379,7 +379,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		'''
 		«"\n"+pad»(
 		«pad=pad.addPad»
-		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.contractReference.name» . «obj.process.toMaude(pad)»
+		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.session.contractReference.name» . «obj.process.toMaude(pad)»
 		«pad.removePad»)'''
 	}
 	
@@ -389,7 +389,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		'''
 		«"\n"+pad»(
 		«pad=pad.addPad»
-		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.contractReference.name» . ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
+		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.session.contractReference.name» . ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
 		«pad.removePad»)'''
 	}
 	
@@ -401,7 +401,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		''' 
 		«"\n"+pad»(
 		«pad=pad.addPad»
-		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.contractReference.name» . (
+		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.session.contractReference.name» . (
 		«pad=pad.addPad»
 		«pad»ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
 		«pad»+ retract "«obj.session.name»" . «obj.RProcess.toMaude(pad)»

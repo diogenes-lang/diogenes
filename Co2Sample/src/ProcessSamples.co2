@@ -18,22 +18,11 @@ process p3{
  * delimited process
  */
 process p4{
-	(x:session) tell x {} . do x a!
+	(x:session) tell x {a!} . do x a!
 }
 
 contract C { 
 	a!
-}
-
-process p5(x:session) {
-	tell x C . do x a!
-}
-
-/*
- * with name
- */
-process PROCESS (x:session) {
-	tell x C . do x a!. PROCESS(x)
 }
 
 /*

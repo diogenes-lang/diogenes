@@ -24,7 +24,6 @@ import it.unica.co2.co2.Prefix
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Receive
-import it.unica.co2.co2.Referrable
 import it.unica.co2.co2.Retract
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
@@ -38,6 +37,7 @@ import it.unica.co2.co2.TellProcess
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Type
 import it.unica.co2.co2.Variable
+import it.unica.co2.co2.VariableDeclaration
 import it.unica.co2.co2.VariableReference
 import it.unica.co2.validation.AbstractCO2Validator
 import java.util.ArrayList
@@ -54,7 +54,7 @@ judgments {
 		error "cannot type " + stringRep(expression)
 		source expression
 		
-	vartype ||- Referrable fn : output Type
+	vartype ||- VariableDeclaration fn : output Type
 		error "cannot type " + stringRep(fn)
 		source fn
 		
@@ -496,7 +496,7 @@ from {
 }
 
 checkrule CheckReferrable for
-    Referrable fn
+    VariableDeclaration fn
 from {
     empty ||- fn : var Type type
 }

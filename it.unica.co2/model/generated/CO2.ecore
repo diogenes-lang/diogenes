@@ -4,8 +4,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="CO2System">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="single" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
-        eType="#//Import" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="honesty" eType="#//HonestyDeclaration"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contractsAndProcessesDeclaration"
@@ -42,9 +40,6 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Variable" eSuperTypes="#//Referrable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Process"/>
   <eClassifiers xsi:type="ecore:EClass" name="EmptyProcess" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -71,62 +66,53 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Tell" eSuperTypes="#//Prefix">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Variable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//VariableDeclaration"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Retract" eSuperTypes="#//Prefix">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Variable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//VariableDeclaration"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DoOutput" eSuperTypes="#//Prefix">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Variable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//VariableDeclaration"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actionName" eType="#//IntAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DoInput" eSuperTypes="#//Prefix">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Variable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//VariableDeclaration"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actionName" eType="#//ExtAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//Variable"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Ask" eSuperTypes="#//Prefix">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Variable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//VariableDeclaration"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="formula" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Tau" eSuperTypes="#//Prefix"/>
   <eClassifiers xsi:type="ecore:EClass" name="TellProcess" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Session"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TellAndWait" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Session"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TellRetract" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Session"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="rProcess" eType="#//Process"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Send" eSuperTypes="#//Process">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Referrable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//VariableDeclaration"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//IntAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
         containment="true"/>
@@ -141,7 +127,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Input">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Referrable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//VariableDeclaration"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" unique="false"
         upperBound="-1" eType="#//ExtAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//Variable"
@@ -149,10 +135,17 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Session" eSuperTypes="#//Referrable"/>
   <eClassifiers xsi:type="ecore:EClass" name="Expression"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Referrable">
+  <eClassifiers xsi:type="ecore:EClass" name="VariableDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Variable" eSuperTypes="#//VariableDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Session" eSuperTypes="#//VariableDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contract" eType="#//Contract"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contractReference" eType="#//ContractDefinition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Type">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -254,7 +247,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//Referrable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//VariableDeclaration"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>

@@ -13,8 +13,8 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1
 
 class CustomExtensions {
 	
-	/*
-	 * utils: get a scope for the given clazz type
+	/**
+	 * utils: get a scope for the given clazz type within the whole document
 	 */
 	def static IScope getIScopeForAllContentsOfClass(EObject ctx, Class<? extends EObject> clazz){
 		var root = EcoreUtil2.getRootContainer(ctx);						// get the root

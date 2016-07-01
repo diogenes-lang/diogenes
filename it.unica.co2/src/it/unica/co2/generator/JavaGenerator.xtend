@@ -392,7 +392,7 @@ class JavaGenerator extends AbstractIGenerator {
 		val publicName = '''pbl_«tell.session.name»'''
 		
 		'''
-		Public<TST> «publicName» = tell(«mainClass».«tell.contractReference.name», «TELL_RETRACT_TIMEOUT»);
+		Public<TST> «publicName» = tell(«mainClass».«tell.session.contractReference.name», «TELL_RETRACT_TIMEOUT»);
 		
 		try {
 			Session<TST> «tell.session.name» = «publicName».waitForSession();
@@ -413,7 +413,7 @@ class JavaGenerator extends AbstractIGenerator {
 		tell.session.name = freshName						// update the name all its references
 		
 		'''
-		Public<TST> «tell.session.name» = tell(«mainClass».«tell.contractReference.name»);
+		Public<TST> «tell.session.name» = tell(«mainClass».«tell.session.contractReference.name»);
 		
 		«tell.process.toJava»'''
 	}
@@ -424,9 +424,11 @@ class JavaGenerator extends AbstractIGenerator {
 		tell.session.name = freshName						// update the name all its references
 		
 		'''
-		Session<TST> «tell.session.name» = tellAndWait(«mainClass».«tell.contractReference.name»);
+		Session<TST> «tell.session.name» = tellAndWait(«mainClass».«tell.session.contractReference.name»);
 		
-		«tell.process.toJava»
+		«IF tell.process!=null»
+			«tell.process.toJava»
+		«ENDIF»
 		'''
 	}
 	

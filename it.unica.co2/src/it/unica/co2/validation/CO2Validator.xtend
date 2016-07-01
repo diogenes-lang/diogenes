@@ -17,19 +17,13 @@ import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ProcessDefinition
-import it.unica.co2.co2.Referrable
 import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
+import it.unica.co2.co2.VariableDeclaration
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
 import java.io.File
-import org.eclipse.core.resources.IFile
-import org.eclipse.core.resources.IProject
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.jdt.core.IJavaProject
-import org.eclipse.jdt.core.JavaCore
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 
@@ -301,11 +295,11 @@ class CO2Validator extends CO2TypeSystemValidator {
 		this.checkFreeName(proc.eContainer, proc.variable, 0)
 	}
 	
-	def dispatch void checkFreeName(EObject obj, Referrable fn, int i) {
+	def dispatch void checkFreeName(EObject obj, VariableDeclaration fn, int i) {
     	checkFreeName(obj.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(DoInput obj, Referrable fn, int i) {
+    def dispatch void checkFreeName(DoInput obj, VariableDeclaration fn, int i) {
     	if (obj.variable.name == fn.name) {
     		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
 	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
@@ -313,7 +307,7 @@ class CO2Validator extends CO2TypeSystemValidator {
     	checkFreeName(obj.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(Input obj, Referrable fn, int i) {
+    def dispatch void checkFreeName(Input obj, VariableDeclaration fn, int i) {
     	if (obj.variable.name == fn.name) {
     		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
 	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
@@ -321,7 +315,7 @@ class CO2Validator extends CO2TypeSystemValidator {
     	checkFreeName(obj.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(TellRetract obj, Referrable fn, int i) {
+    def dispatch void checkFreeName(TellRetract obj, VariableDeclaration fn, int i) {
     	if (obj.session.name == fn.name) {
     		warning("Shadowed free-name", obj.session.eContainer, obj.session.eContainingFeature)
 	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
@@ -329,7 +323,7 @@ class CO2Validator extends CO2TypeSystemValidator {
     	checkFreeName(obj.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(TellAndWait obj, Referrable fn, int i) {
+    def dispatch void checkFreeName(TellAndWait obj, VariableDeclaration fn, int i) {
     	if (obj.session.name == fn.name) {
     		warning("Shadowed free-name", obj.session.eContainer, obj.session.eContainingFeature)
 	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
@@ -337,7 +331,7 @@ class CO2Validator extends CO2TypeSystemValidator {
     	checkFreeName(obj.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(DelimitedProcess proc, Referrable fn, int i) {
+    def dispatch void checkFreeName(DelimitedProcess proc, VariableDeclaration fn, int i) {
     	var j=0
     	for (fn1 : proc.freeNames) {
 			if (fn1.name == fn.name) {
@@ -349,7 +343,7 @@ class CO2Validator extends CO2TypeSystemValidator {
     	checkFreeName(proc.eContainer, fn, i)
     }
     
-    def dispatch void checkFreeName(ProcessDefinition proc, Referrable fn, int i) {
+    def dispatch void checkFreeName(ProcessDefinition proc, VariableDeclaration fn, int i) {
     	var j=0
     	for (fn1 : proc.params) {
 			if (fn1.name == fn.name) {
