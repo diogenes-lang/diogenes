@@ -136,16 +136,13 @@
     <genClasses ecoreClass="CO2.ecore#//ExtSum">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtSum/actions"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//IntAction">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//IntAction/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntAction/type"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//IntAction/next"/>
+    <genClasses ecoreClass="CO2.ecore#//Action">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Action/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Action/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Action/next"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//ExtAction">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ExtAction/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtAction/type"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ExtAction/next"/>
-    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//IntAction"/>
+    <genClasses ecoreClass="CO2.ecore#//ExtAction"/>
     <genClasses ecoreClass="CO2.ecore#//ActionType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ActionType/value"/>
     </genClasses>

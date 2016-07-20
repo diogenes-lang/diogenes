@@ -61,7 +61,7 @@ judgments {
 	validate |= EObject obj
 		error "cannot type " + stringRep(obj)
 		source obj
-		
+	
 //	interpret |- Expression expression ~> output Object
 }
 

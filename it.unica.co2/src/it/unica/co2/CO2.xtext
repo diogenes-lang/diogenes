@@ -300,6 +300,10 @@ SingleExtSum returns ExtSum:
 	actions+=ExtAction
 ;
 
+Action:
+	IntAction | ExtAction
+;
+
 IntAction:
 	name=ID "!" (type=ActionType)? ("." next=(NextContract))?
 ;

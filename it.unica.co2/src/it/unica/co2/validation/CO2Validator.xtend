@@ -202,7 +202,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 				
 				if (internalAction!=other && internalAction.name.equals(other.name)) {
 					error("Action names must be unique", 
-						Co2Package.Literals.INT_ACTION__NAME
+						Co2Package.Literals.ACTION__NAME
 					);
 					return;
 				}
@@ -217,7 +217,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 				
 				if (externalAction!=other && externalAction.name.equals(other.name)) {
 					error("Action names must be unique", 
-						Co2Package.Literals.EXT_ACTION__NAME
+						Co2Package.Literals.ACTION__NAME
 					);
 					return;
 				}
@@ -229,13 +229,13 @@ class CO2Validator extends CO2TypeSystemValidator {
 	@Check
 	def void checkExtActionType(ExtAction action) {
 		if (action.type!=null && action.type instanceof UnitActionType)
-			info('Unit type can be omitted', Co2Package.Literals.EXT_ACTION__TYPE)
+			info('Unit type can be omitted', Co2Package.Literals.ACTION__TYPE)
 	}
 	
 	@Check
 	def void checkIntActionType(IntAction action) {
 		if (action.type!=null && action.type instanceof UnitActionType)
-			info('Unit type can be omitted', Co2Package.Literals.INT_ACTION__TYPE)
+			info('Unit type can be omitted', Co2Package.Literals.ACTION__TYPE)
 	}
 	
 	
@@ -244,7 +244,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 	def void checkExtActionName(ExtAction action) {
 		if (Character.isUpperCase(action.getName().charAt(0))) {
             warning("Action name should start with a lowercase", 
-            		Co2Package.Literals.EXT_ACTION__NAME,
+            		Co2Package.Literals.ACTION__NAME,
             		action.getName());
         }
 	}
@@ -253,7 +253,7 @@ class CO2Validator extends CO2TypeSystemValidator {
 	def void checkIntActionName(IntAction action) {
 		if (Character.isUpperCase(action.getName().charAt(0))) {
             warning("Action name should start with a lowercase", 
-            		Co2Package.Literals.INT_ACTION__NAME,
+            		Co2Package.Literals.ACTION__NAME,
             		action.getName());
         }
 	}

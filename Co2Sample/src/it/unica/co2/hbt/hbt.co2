@@ -1,0 +1,77 @@
+
+
+package it.unica.co2.hbt
+
+honesty P
+
+contract Cb {
+	buyA? . pay1E? . shipA! +
+	buyB? . (
+		quote1E! . pay1E? . shipB! 
+		(+) quote3E! . (
+			pay3E? . (shipB! (+) refund!)
+			+ quit?
+		)
+		(+) abort!
+	)
+}
+
+contract Cd {
+	buyB! . (pay2E! . shipB? (+) quit!)
+}
+
+specification P {
+	
+	tellAndWait x Cb .
+	receive [
+		x <- buyA? . receive x pay1E? . send x shipA!
+		x <- buyB? . Phonest(x) // or Phonest(x)
+	]
+}
+
+specification Pdishonest (x:session) {
+	if *:boolean
+	then
+		send x quote1E! . receive x pay1E? . send x shipB!
+	else
+		tellAndWait y Cd .
+		send y buyB! . 
+		send x quote3E! . 
+		receive x pay3E? . 
+		send y pay2E! . 
+		receive y shipB? .
+		send x shipB!
+}
+
+process Phonest (x:session) {
+	if *:boolean
+	then
+		send x quote1E! . receive x pay1E? . send x shipB!
+	else
+		tellRetract y Cd .
+			send y buyB! . 
+			send x quote3E! . 
+			receive [
+				x <- pay3E? . (
+					do y pay2E! . 
+						receive y shipB? . send x shipB!
+						+ t . (
+							send x refund!
+							| receive y shipB?
+						)
+					+ t .  (
+				        send x refund!
+				        | send y quit!
+				    )
+				)
+				x <- quit? . send y quit! 
+			]
+			+ t . (
+				receive [
+					x <- pay3E? . send x refund! 
+					x <- quit?
+				]
+				| send y quit!
+			)
+		: send x abort!
+}
