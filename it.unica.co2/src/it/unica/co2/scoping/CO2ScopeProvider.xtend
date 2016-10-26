@@ -26,6 +26,7 @@ import org.eclipse.xtext.scoping.Scopes
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
 
 import static extension it.unica.co2.utils.CustomExtensions.*
+import it.unica.co2.co2.RetractedProcess
 
 /**
  * This class contains custom scoping description.
@@ -89,6 +90,10 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 			,
 			getDeclaredVariables(proc.eContainer) // outer
 		);
+	}
+	
+	def dispatch IScope getDeclaredVariables(RetractedProcess proc) {
+		return getDeclaredVariables(proc.eContainer.eContainer); 	// skip the TellRetract object
 	}
 	
 	def dispatch IScope getDeclaredVariables(TellProcess proc) {

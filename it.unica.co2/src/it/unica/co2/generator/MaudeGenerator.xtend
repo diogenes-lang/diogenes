@@ -396,7 +396,8 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	def dispatch String toMaude(TellRetract obj, String padLeft) {
 		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
-		obj.RProcess = obj.RProcess ?: Co2Factory.eINSTANCE.createEmptyProcess
+		obj.RProcess = obj.RProcess ?: Co2Factory.eINSTANCE.createRetractedProcess
+		obj.RProcess.process = obj.RProcess.process ?: Co2Factory.eINSTANCE.createEmptyProcess
 		
 		var pad=padLeft
 		''' 
@@ -405,7 +406,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.session.contractReference.name» . (
 		«pad=pad.addPad»
 		«pad»ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
-		«pad»+ retract "«obj.session.name»" . «obj.RProcess.toMaude(pad)»
+		«pad»+ retract "«obj.session.name»" . «obj.RProcess.process.toMaude(pad)»
 		«pad=pad.removePad»)
 		«pad.removePad»)
 		'''

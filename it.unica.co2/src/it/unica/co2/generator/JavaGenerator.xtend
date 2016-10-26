@@ -402,8 +402,8 @@ class JavaGenerator extends AbstractIGenerator {
 		}
 		catch(ContractExpiredException «getFreshName("e")») {
 			//retract «tell.session.name»
-			«IF tell.RProcess!=null»
-			«tell.RProcess.toJava»
+			«IF tell.RProcess!=null && tell.RProcess.process!=null»
+			«tell.RProcess.process.toJava»
 			«ENDIF»
 		}
 		'''

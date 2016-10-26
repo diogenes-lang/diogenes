@@ -153,7 +153,11 @@ TellAndWait:
 
 TellRetract:
 	"tellRetract" session=Session
-	("." process=Next (-> ":" rProcess=Next)?)?
+	("." process=Next rProcess=RetractedProcess?)?
+;
+
+RetractedProcess:
+	-> ":" process=Next
 ;
 
 Send:

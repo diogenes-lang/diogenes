@@ -46,3 +46,11 @@ specification Foo {
 			}
 	}	
 }
+
+contract A { a! }
+contract B { b! }
+specification Poo {
+	tellAndWait x A .
+	tellRetract y B . send a! to x
+	: send a! to x
+}
