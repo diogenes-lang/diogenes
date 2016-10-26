@@ -1,0 +1,136 @@
+
+package it.unica.co2.betty
+
+honesty StoreDishonest3
+
+
+/*
+ * Store, BuyerA, BuyerB
+ */
+contract C {
+	order? string . ( price! int (+) unavailable! )
+}
+
+specification Store {
+    tellAndReturn x C .
+    receive x order? v:string . (
+        if *:boolean
+        then send x price! *:int
+        else send x unavailable! 
+    ) 
+}
+
+specification BuyerA {
+    tellAndWait x { order! string . price? int } .
+    send x order! *:string .
+    receive x price? n:int }
+
+specification BuyerB {
+    tellAndWait x { order! string . ( price? int + unavailable? + availablefrom? string) } .
+    send x order! *:string .
+    receive [
+          x <- price? n:int
+          x <- unavailable?
+          x <- availablefrom? date:string ]}
+
+
+/*
+ * Store2 (recursive)
+ */
+contract C2 {  
+	checkout? 
+    + order? string . ( 
+   		price! int . (accept? . C2 + reject? . C2)
+   		(+) unavailable! . C2
+   	) 
+}
+
+specification Store2 {
+    tellAndWait x C2 . StoreLoop(x)
+}
+
+specification StoreLoop(x:session) {
+    receive [
+	 x <- checkout ?
+	 x <- 
+	 	order? v : string .
+		if *: boolean
+		then 
+			send x price ! *: int . 
+			receive [
+				x <- accept? . StoreLoop(x)
+				x <- reject? . StoreLoop(x)
+			]
+		else 
+			send x unavailable ! . StoreLoop(x)
+			
+	]
+}
+
+/********************************** Honesty *************************************/
+
+/*
+ * StoreDishonest
+ */
+specification StoreDishonest1 {
+    tellAndReturn x C .
+    receive x order? v:string . (
+        if *:boolean
+        then send x price! *:int
+    ) 
+}
+
+/*
+ * StoreDishonest2
+ */
+contract D {
+	req! string . ( ok? + no? )
+}
+
+specification StoreDishonest2 {
+	tellAndWait x C .
+	receive x order? v:string . (  
+		tellAndWait y D . (
+			send y req! v . 
+			receive [
+				y <- ok? . send x price! *:int
+				y <- no? . send x unavailable!
+			]
+		)
+	)
+}
+
+specification StoreDishonest3 {
+    tellAndWait x C .
+    receive x order? v:string .
+        tellRetract y D .
+        send y req! *:string .
+        receive [
+            y <- ok? . send x price! *:int
+            y <- no? . send x unavailable!
+        ]
+	    : send x unavailable!
+}
+
+/*
+ * StoreHonest
+ */
+specification StoreHonest {
+    tellAndWait x C .
+    receive x order? v:string . (
+        tellRetract y D . (
+            send y req! *:string .
+            receive [
+                y <- ok? . send x price! *:int
+                y <- no? . send x unavailable!
+            ] + t . (
+            	send x unavailable! | receive [
+            		y <- ok?
+            		y <- no?
+            	]
+            )
+        )
+        : send x unavailable!
+   )
+}
+ 
