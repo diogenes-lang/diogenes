@@ -14,6 +14,7 @@ import it.unica.co2.co2.Equals
 import it.unica.co2.co2.Expression
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.IntType
+import it.unica.co2.co2.InternalChoice
 import it.unica.co2.co2.Minus
 import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
@@ -300,7 +301,7 @@ from {
 	}
 }
 
-rule Restract
+rule Retract
 	G |= Retract restract
 from {
 	G ||- restract.session : var Type fnType		// get FreeName type
@@ -485,6 +486,30 @@ from {
 }
 
 
+rule InternalChoice
+	G |= InternalChoice intChoice
+from {
+	
+	G |- intChoice.exp : var Type fnType
+	
+	if (!(fnType instanceof IntType) && !(fnType instanceof StringType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'int' or 'string' expected"			
+			source intChoice
+			feature Co2Package::eINSTANCE.internalChoice_Exp
+	}
+	
+	for (c: intChoice.cases){
+		G |- c.match : var Type matchType
+		
+		if (matchType.class != fnType.class) {		// check the type
+			fail
+				error "invalid type '"+stringRep(matchType)+"', '"+stringRep(fnType)+"' expected"			
+				source c
+				feature Co2Package::eINSTANCE.case_Match
+		}
+	}
+}
 
 /*
  * rule invocations
@@ -559,4 +584,10 @@ checkrule CheckTellRetract for
     TellRetract proc
 from {
     empty |= proc
+}
+
+checkrule CheckInternalChoice for
+	InternalChoice proc
+from {
+	empty |= proc
 }

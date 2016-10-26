@@ -20,6 +20,7 @@ import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.IntType
+import it.unica.co2.co2.InternalChoice
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
@@ -469,6 +470,47 @@ class MaudeGenerator extends AbstractIGenerator{
 		return sb.toString
 		
 	}
+	
+	def dispatch String toMaude(InternalChoice obj, String padLeft) {
+		
+		var pad = padLeft;
+		var sb = new StringBuilder()
+		
+		if (obj.cases.size>1 || obj.^default) {
+			sb.append("\n").append(pad).append("(")		// increase the pad
+			pad=pad.addPad
+		}
+		
+		var i=0;
+
+		for (_case : obj.cases) {
+			
+			if (obj.cases.size>1 || obj.^default) {
+				sb.append("\n").append(pad)			// add a \n
+			}
+
+			if (i++>0) {
+				sb.append("+ ");
+			}
+								
+			sb.append(_case.send.toMaude(pad))
+		}
+
+		// default
+		if (obj.^default) {
+			sb.append("\n").append(pad)
+			sb.append('''+ «obj.defaultSend.toMaude(pad)»''')
+		}
+
+		if (obj.cases.size>1 || obj.^default) {
+			pad=pad.removePad
+			sb.append("\n").append(pad).append(")")		// decrease the pad
+		}
+
+		return sb.toString
+
+
+	}	
 	
 	
 	

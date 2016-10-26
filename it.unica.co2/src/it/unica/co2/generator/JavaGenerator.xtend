@@ -25,6 +25,7 @@ import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.IntType
+import it.unica.co2.co2.InternalChoice
 import it.unica.co2.co2.Minus
 import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
@@ -508,12 +509,10 @@ class JavaGenerator extends AbstractIGenerator {
 				«FOR a : input.actions»
 				case "«a.name»":
 				«ENDFOR»
-				logger.info("received ["+«messageName».getLabel()+"]");
-				«input.getJavaInput(messageName)»
-				break;
-				
+					logger.info("received ["+«messageName».getLabel()+"]");
+					«input.getJavaInput(messageName)»
+					break;
 			«ENDFOR»
-			
 		}
 		«ENDIF»
 		'''
@@ -574,11 +573,29 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 		logger.info("sending action '«p.action.name»'");
 		«p.session.name».sendIfAllowed("«p.action.name»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
-		«IF p.next!=null»«p.next.toJava»«ENDIF»
+		«IF p.next!=null»
+		
+		«p.next.toJava»
+		«ENDIF»
 		'''
 	}
 	
-	
+	def dispatch String toJava(InternalChoice p) {
+		'''
+		switch («p.exp.getJavaExpression») {
+			«FOR c : p.cases»
+			case «c.match.getJavaExpression»: 
+				«c.send.toJava»
+				break;
+				
+			«ENDFOR»
+			«IF p.^default»
+			default: 
+				«p.defaultSend.toJava»
+			«ENDIF»	
+		}
+		'''
+	}
 	
 	
 	

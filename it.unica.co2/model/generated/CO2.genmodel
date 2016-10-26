@@ -108,7 +108,23 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/variable"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/next"/>
     </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//InternalChoice">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//InternalChoice/exp"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//InternalChoice/cases"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//InternalChoice/default"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//InternalChoice/defaultSend"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Case">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Case/match"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Case/send"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Expression"/>
+    <genClasses ecoreClass="CO2.ecore#//NumberLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//NumberLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//StringLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//StringLiteral/value"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//VariableDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//VariableDeclaration/name"/>
     </genClasses>
@@ -182,12 +198,6 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ArithmeticSigned">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ArithmeticSigned/expression"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//NumberLiteral">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//NumberLiteral/value"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//StringLiteral">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//StringLiteral/value"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//BooleanLiteral">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//BooleanLiteral/value"/>

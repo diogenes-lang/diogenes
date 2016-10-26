@@ -28,3 +28,13 @@ specification P1 (x:session) {
 specification P2 (x:session) {
 	P2(x)
 }
+
+specification Foo {
+	tellAndWait x {a! . (a? + b?) (+) b!} .
+	switch *:int {
+		case 0: send x a! . receive x a? b?
+		case 1: send x b!
+		case 2: send x b!
+		default: send x a!
+	}	
+}

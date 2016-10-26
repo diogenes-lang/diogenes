@@ -52,6 +52,7 @@ Process:
 	Send |
 	SimpleReceive |
 	Receive |
+	InternalChoice |
 	"(" ParallelProcesses ")"|
 	ProcessCall
 ;
@@ -98,6 +99,7 @@ Next returns Process:
 	Send |
 	SimpleReceive |
 	Receive |
+	InternalChoice |
 	"(" ParallelProcesses ")"|
 	ProcessCall
 ;
@@ -177,6 +179,16 @@ Input:
 	session=[VariableDeclaration] "<-" (actions+=[ExtAction] "?")+ (variable=Variable)? ("." next=Next)?
 ;
 
+InternalChoice:
+	"switch" exp=(Expression|Placeholder) "{"
+		cases+=Case+
+		(default?="default" ":" defaultSend=Send)?
+	"}"
+;
+
+Case: 
+	"case" match=(NumberLiteral|StringLiteral) ":" send=Send
+;
 
 
 // ======================================================================================
@@ -221,10 +233,18 @@ Prefixed returns Expression:
 
 Atomic returns Expression:
     '(' Expression ')' |
-    {NumberLiteral} value=INT |
-    {StringLiteral} value=STRING |
+    NumberLiteral |
+    StringLiteral |
     {BooleanLiteral} value=('true'|'false') |
     {VariableReference} ref=[VariableDeclaration]
+;
+
+NumberLiteral:
+	value=INT
+;
+
+StringLiteral:
+	value=STRING
 ;
 
 Placeholder returns Expression:
