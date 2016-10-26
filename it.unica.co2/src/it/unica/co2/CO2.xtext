@@ -157,37 +157,34 @@ TellRetract:
 ;
 
 Send:
-	"send" session=[VariableDeclaration] action=[IntAction] "!" (value=(Expression|Placeholder))? ("." next=Next)?
+	"send" action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")? "to" session=[VariableDeclaration] ("." next=Next)?
 ;
 
 SimpleReceive returns Receive:
-	"receive" inputs+=SimpleInput ("+" timeout?="t" ("." tProcess=Next)?)?
+	"receive" inputs+=Input //("+" timeout?="t" ("." tProcess=Next)?)?
 ;
 
 Receive:
-	"receive" "[" 
+	"receive" "{" 
 		(inputs+=Input)+
-	"]"
-	("+" timeout?="t" ("." tProcess=Next)?)?
+		("+" timeout?="t" ("." tProcess=Next)?)?		
+	"}"	
 ;
 
-SimpleInput returns Input:
-	session=[VariableDeclaration] (actions+=[ExtAction] "?")+ (variable=Variable)? ("." next=Next)?
-;
 
 Input:
-	session=[VariableDeclaration] "<-" (actions+=[ExtAction] "?")+ (variable=Variable)? ("." next=Next)?
+	(actions+=[ExtAction] "?")+ ("["variable=Variable"]")? "from" session=[VariableDeclaration] ("." next=Next)?
 ;
 
 InternalChoice:
 	"switch" exp=(Expression|Placeholder) "{"
 		cases+=Case+
-		(default?="default" ":" defaultSend=Send)?
+		(default?="default" ":" defaultProc=Next)?
 	"}"
 ;
 
 Case: 
-	"case" match=(NumberLiteral|StringLiteral) ":" send=Send
+	"case" match=(NumberLiteral|StringLiteral) "=>" caseProc=Next
 ;
 
 

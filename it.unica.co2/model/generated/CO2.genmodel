@@ -92,9 +92,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellRetract/rProcess"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Send">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/session"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/action"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/value"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/session"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Receive">
@@ -103,20 +103,20 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/tProcess"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Input">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/session"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/actions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/variable"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/session"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//InternalChoice">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//InternalChoice/exp"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//InternalChoice/cases"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//InternalChoice/default"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//InternalChoice/defaultSend"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//InternalChoice/defaultProc"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Case">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Case/match"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Case/send"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Case/caseProc"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Expression"/>
     <genClasses ecoreClass="CO2.ecore#//NumberLiteral">

@@ -138,9 +138,9 @@ class JavaGenerator extends AbstractIGenerator {
 		contractDefinitions.addAll( co2System.eAllContents.filter(TellProcess).map[t| t.fixTell("TellContr")].toSet )
 		
 		var placeholders = co2System.eAllContents.filter(Placeholder).toSet;
-		for (p:placeholders.toSet) {
-			println("-> "+p.type)
-		}
+//		for (p:placeholders.toSet) {
+//			println("-> "+p.type)
+//		}
 		var hasIntPlaceholders = 		placeholders.filter[p| (p.type instanceof IntType)].toSet.size>0;
 		var hasBooleanPlaceholders = 	placeholders.filter[p| (p.type instanceof BooleanType)].toSet.size>0;
 		var hasStringPlaceholders = 	placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
@@ -585,13 +585,13 @@ class JavaGenerator extends AbstractIGenerator {
 		switch («p.exp.getJavaExpression») { «IF p.exp instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
 			«FOR c : p.cases»
 			case «c.match.getJavaExpression»: 
-				«c.send.toJava»
+				«c.caseProc.toJava»
 				break;
 				
 			«ENDFOR»
 			«IF p.^default»
 			default: 
-				«p.defaultSend.toJava»
+				«p.defaultProc.toJava»
 			«ENDIF»	
 		}
 		'''

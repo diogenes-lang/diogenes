@@ -6,10 +6,10 @@ contract C {
 
 specification P(n:int, x:session) {
 	tellAndWait x { a?string . b! int} .
-	receive x a? n:string .  
-	send x b! n .
+	receive a?[n:string] from x .  
+	send b![n] to x .
 	tellAndWait x { a?string . b! int} .
-	send x b! n
+	send b![n] to x
 }
 
 
@@ -22,19 +22,27 @@ specification P0 {
 }
 
 specification P1 (x:session) {
-	send x b! . P1(x)
+	send b! to x . P1(x)
 }
 
 specification P2 (x:session) {
 	P2(x)
 }
 
+contract D {
+	a! . (a? + b?) (+) b!
+}
+
 specification Foo {
-	tellAndWait x {a! . (a? + b?) (+) b!} .
+	tellAndWait x D .
 	switch *:int {
-		case 0: send x a! . receive x a? b?
-		case 1: send x b!
-		case 2: send x b! . if *:boolean then send x b!
-		default: send x a!
+		case 0 => send a! to x . receive a?b? from x
+		case 1 => send b![42] to x
+		case 2 => if *:boolean then send b! to x
+		default:
+			receive {
+				a? from x
+				b? from x
+			}
 	}	
 }

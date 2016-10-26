@@ -9,6 +9,7 @@ honesty StoreDishonest3
  */
 contract C {
 	order? string . ( price! int (+) unavailable! )
+	+ no?
 }
 
 specification Store {
@@ -120,9 +121,11 @@ specification StoreHonest {
     receive x order? v:string . (
         tellRetract y D . (
             send y req! *:string .
+            receive x no? .
             receive [
                 y <- ok? . send x price! *:int
                 y <- no? . send x unavailable!
+                x <- no?
             ] + t . (
             	send x unavailable! | receive [
             		y <- ok?

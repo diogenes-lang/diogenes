@@ -493,13 +493,13 @@ class MaudeGenerator extends AbstractIGenerator{
 				sb.append("+ ");
 			}
 								
-			sb.append(_case.send.toMaude(pad))
+			sb.append(_case.caseProc.toMaude(pad))
 		}
 
 		// default
 		if (obj.^default) {
 			sb.append("\n").append(pad)
-			sb.append('''+ «obj.defaultSend.toMaude(pad)»''')
+			sb.append('''+ «obj.defaultProc.toMaude(pad)»''')
 		}
 
 		if (obj.cases.size>1 || obj.^default) {
