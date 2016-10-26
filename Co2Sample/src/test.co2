@@ -34,7 +34,7 @@ specification Foo {
 	switch *:int {
 		case 0: send x a! . receive x a? b?
 		case 1: send x b!
-		case 2: send x b!
+		case 2: send x b! . if *:boolean then send x b!
 		default: send x a!
 	}	
 }

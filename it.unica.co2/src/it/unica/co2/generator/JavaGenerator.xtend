@@ -554,7 +554,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(IfThenElse p) {
 		'''
-		if («p.^if.javaExpression») {
+		if («p.^if.javaExpression») { «IF p.^if instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
 			«p.^then.toJava»
 		}
 		else {
@@ -565,14 +565,14 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(ProcessCall p) {
 		'''
-		processCall(«p.reference.name».class, username, password«p.params.join(" ,", ", ", "", [x | x.javaExpression])»);
+		processCall(«p.reference.name».class, username, password«p.params.join(" ,", ", ", "", [x | x.javaExpression])»); 
 		'''
 	}
 	
 	def dispatch String toJava(Send p) {
 		'''
 		logger.info("sending action '«p.action.name»'");
-		«p.session.name».sendIfAllowed("«p.action.name»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»);
+		«p.session.name».sendIfAllowed("«p.action.name»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»); «IF p.value instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
 		«IF p.next!=null»
 		
 		«p.next.toJava»
@@ -582,7 +582,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(InternalChoice p) {
 		'''
-		switch («p.exp.getJavaExpression») {
+		switch («p.exp.getJavaExpression») { «IF p.exp instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
 			«FOR c : p.cases»
 			case «c.match.getJavaExpression»: 
 				«c.send.toJava»
