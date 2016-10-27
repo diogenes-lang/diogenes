@@ -49,9 +49,8 @@ Process:
 	TellProcess |
 	TellAndWait |
 	TellRetract |
-	Send |
-	SimpleReceive |
-	Receive |
+	SendGroup |
+	ReceiveGroup |
 	SwitchCase |
 	ProcessCall
 ;
@@ -95,9 +94,8 @@ Next returns Process:
 	TellProcess |
 	TellAndWait |
 	TellRetract |
-	Send |
-	SimpleReceive |
-	Receive |
+	SendGroup |
+	ReceiveGroup |
 	SwitchCase |
 	"(" ParallelProcesses ")"|
 	ProcessCall
@@ -159,24 +157,43 @@ RetractedProcess:
 	-> ":" process=Next
 ;
 
+SendGroup:
+	Send | SendAlt
+;
+
 Send:
 	"send" action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")? "to" session=[VariableDeclaration] ("." next=Next)?
 ;
 
+SendAlt returns Send:
+	"send" "@" session=[VariableDeclaration] action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")? ("." next=Next)?
+;
+
+ReceiveGroup:
+	SimpleReceive | SimpleReceiveAlt | Receive
+;
+
 SimpleReceive returns Receive:
-	"receive" inputs+=Input //("+" timeout?="t" ("." tProcess=Next)?)?
+	"receive" inputs+=Input
+;
+
+SimpleReceiveAlt returns Receive:
+	"receive" inputs+=InputAlt
 ;
 
 Receive:
 	"receive" "{" 
-		(inputs+=Input)+
+		(inputs+=(Input|InputAlt))+
 		(timeout?="t" ("." tProcess=Next)?)?		
 	"}"	
 ;
 
-
 Input:
 	(actions+=[ExtAction] "?")+ ("["variable=Variable"]")? "from" session=[VariableDeclaration] ("." next=Next)?
+;
+
+InputAlt returns Input:
+	"@" session=[VariableDeclaration] (actions+=[ExtAction] "?")+ ("["variable=Variable"]")? ("." next=Next)?
 ;
 
 SwitchCase:

@@ -115,7 +115,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Send" eSuperTypes="#//Process">
+  <eClassifiers xsi:type="ecore:EClass" name="SendGroup" eSuperTypes="#//Process"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Send" eSuperTypes="#//SendGroup">
     <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//IntAction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
         containment="true"/>
@@ -123,7 +124,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Receive" eSuperTypes="#//Process">
+  <eClassifiers xsi:type="ecore:EClass" name="ReceiveGroup" eSuperTypes="#//Process"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Receive" eSuperTypes="#//ReceiveGroup">
     <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" upperBound="-1"
         eType="#//Input" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

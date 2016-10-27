@@ -7,77 +7,77 @@ specification P100 {
 }
 
 specification P ( n:int, x:session ) {
-	tellAndWait x { a?string . b!int } . receive a? [n:string] from x . send b!
-	[n] to x . tellAndWait x { a?string . b!int } . send b! to x
+	tellAndWait x { a?string . b!int } . receive a?[n:string] from x . send b![n]
+	to x . tellAndWait x { a?string . b!int } . send b! to x
 
 }
 
 specification Bo2 ( x:session ) {
 	if *:boolean
-	then
-		send b! to x
-	else
-		send b! to x
+	then send b! to x
+	else send b! to x
 }
 
 specification Bo ( x:session ) {
 	if *:boolean
-	then
-		send b! to x . send b! to x . send b! to x
-		else
-			send b! to x . send b! to x
+	then send b! to x . send b! to x . send b! to x
+	else send b! to x . send b! to x
 
-		}
+}
 
-		specification P0 {
-			tellAndReturn x { b! } . P1 ( x )
-		}
+specification P0 {
+	tellAndReturn x { b! } . P1 ( x )
+}
 
-		specification P1 ( x:session ) {
-			send b! to x . P1 ( x )
-		}
+specification P1 ( x:session ) {
+	send b! to x . P1 ( x )
+}
 
-		specification P2 ( x:session ) {
-			P2 ( x )
-		}
+specification P2 ( x:session ) {
+	P2 ( x )
+}
 
-		contract D {
-			a! . ( a? + b? ) (+) b!
-		}
+contract D {
+	a! . ( a? + b? ) (+) b! (+) fooo!
+}
 
-		specification Foo {
-			tellAndWait x D .
-			switch *:int {
-				case 0 => send a! to x . receive a? b? from x
-				case 1 =>
-					receive {
-						a? from x
-						b? from x
-					}
-				case 2 =>
-					if *:boolean
-					then
-						send b! to x
-				default => send b! [42] to x
+specification Foo {
+	tellAndWait x D .
+	switch *:int {
+		case 0 => send a! to x . receive a? b? from x
+		case 1 =>
+			receive {
+				a? from x
+				b? from x
 			}
-		}
+		case 2 =>
+			if *:boolean
+			then send b! to x
+		default => send b![42] to x
+	}
+}
 
-		contract A {
-			a!
-		}
+contract A {
+	a!
+}
 
-		specification Poo {
-			tellAndWait x A .
-			tellRetract y B .
-				send a! to x
-			: send a! to x
-		}
+specification Poo {
+	tellAndWait x A .
+	tellRetract y B .
+		send a! to x
+	: send a! to x
+}
 
-		contract B {
-			b!
-		}
+contract B {
+	b!
+}
 
-		specification Parall ( x:session ) {
-			send a! to x |
-			send b! to x
-		}
+specification Parall ( x:session, y:session ) {
+	send a! to x |
+	send b! to x |
+	send@x a! |
+	receive {
+		@x a?
+	} |
+	receive@y a2? a1?[n:int]
+}

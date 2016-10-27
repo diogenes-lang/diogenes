@@ -48,7 +48,7 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
 		findKeywords("!").forEach[k | c.setNoSpace().before(k);]	// set no space before all !
 		findKeywords("?").forEach[k | c.setNoSpace().before(k);]	// set no space before all ?
 		findKeywordPairs("[","]").forEach[p | 						// set no space within []
-			c.setNoSpace().after(p.first);
+			c.setNoSpace().around(p.first);
         	c.setNoSpace().before(p.second);
         ]
 		
@@ -119,8 +119,13 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap().after(parallelProcessesAccess.verticalLineKeyword_1_0);
 		
 		// parenthesis
-		c.setLinewrap().after(nextAccess.leftParenthesisKeyword_10_0);
-		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_10_2);
-		c.setIndentation(nextAccess.leftParenthesisKeyword_10_0, nextAccess.rightParenthesisKeyword_10_2);
+		c.setLinewrap().after(nextAccess.leftParenthesisKeyword_9_0);
+		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_9_2);
+		c.setIndentation(nextAccess.leftParenthesisKeyword_9_0, nextAccess.rightParenthesisKeyword_9_2);
+	
+		// alternative send/receive
+		c.setNoSpace().after(sendAltAccess.sendKeyword_0);
+		c.setNoSpace().after(simpleReceiveAltAccess.receiveKeyword_0);
+		findKeywords("@").forEach[k | c.setNoSpace().after(k);]	// set no space before all ?
 	}
 }
