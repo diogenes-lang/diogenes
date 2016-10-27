@@ -14,7 +14,7 @@ import it.unica.co2.co2.Equals
 import it.unica.co2.co2.Expression
 import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.IntType
-import it.unica.co2.co2.InternalChoice
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Minus
 import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
@@ -486,8 +486,8 @@ from {
 }
 
 
-rule InternalChoice
-	G |= InternalChoice intChoice
+rule SwitchCase
+	G |= SwitchCase intChoice
 from {
 	
 	G |- intChoice.exp : var Type fnType
@@ -496,7 +496,7 @@ from {
 		fail
 			error "invalid type '"+stringRep(fnType)+"', 'int' or 'string' expected"			
 			source intChoice
-			feature Co2Package::eINSTANCE.internalChoice_Exp
+			feature Co2Package::eINSTANCE.switchCase_Exp
 	}
 	
 	for (c: intChoice.cases){
@@ -586,8 +586,8 @@ from {
     empty |= proc
 }
 
-checkrule CheckInternalChoice for
-	InternalChoice proc
+checkrule CheckSwitchCase for
+	SwitchCase proc
 from {
 	empty |= proc
 }

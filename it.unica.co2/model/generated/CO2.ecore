@@ -139,7 +139,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="next" eType="#//Process"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="InternalChoice" eSuperTypes="#//Process">
+  <eClassifiers xsi:type="ecore:EClass" name="SwitchCase" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="exp" eType="#//Expression"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="cases" upperBound="-1"

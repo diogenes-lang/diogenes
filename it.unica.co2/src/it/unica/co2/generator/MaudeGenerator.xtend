@@ -20,7 +20,7 @@ import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.IntType
-import it.unica.co2.co2.InternalChoice
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
@@ -472,7 +472,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 	}
 	
-	def dispatch String toMaude(InternalChoice obj, String padLeft) {
+	def dispatch String toMaude(SwitchCase obj, String padLeft) {
 		
 		var pad = padLeft;
 		var sb = new StringBuilder()

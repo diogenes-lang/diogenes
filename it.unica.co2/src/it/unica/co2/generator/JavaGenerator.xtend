@@ -25,7 +25,7 @@ import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.IntType
-import it.unica.co2.co2.InternalChoice
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Minus
 import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
@@ -580,7 +580,7 @@ class JavaGenerator extends AbstractIGenerator {
 		'''
 	}
 	
-	def dispatch String toJava(InternalChoice p) {
+	def dispatch String toJava(SwitchCase p) {
 		'''
 		switch («p.exp.getJavaExpression») { «IF p.exp instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
 			«FOR c : p.cases»

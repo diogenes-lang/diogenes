@@ -52,8 +52,7 @@ Process:
 	Send |
 	SimpleReceive |
 	Receive |
-	InternalChoice |
-	"(" ParallelProcesses ")"|
+	SwitchCase |
 	ProcessCall
 ;
 
@@ -99,7 +98,7 @@ Next returns Process:
 	Send |
 	SimpleReceive |
 	Receive |
-	InternalChoice |
+	SwitchCase |
 	"(" ParallelProcesses ")"|
 	ProcessCall
 ;
@@ -171,7 +170,7 @@ SimpleReceive returns Receive:
 Receive:
 	"receive" "{" 
 		(inputs+=Input)+
-		("+" timeout?="t" ("." tProcess=Next)?)?		
+		(timeout?="t" ("." tProcess=Next)?)?		
 	"}"	
 ;
 
@@ -180,10 +179,10 @@ Input:
 	(actions+=[ExtAction] "?")+ ("["variable=Variable"]")? "from" session=[VariableDeclaration] ("." next=Next)?
 ;
 
-InternalChoice:
+SwitchCase:
 	"switch" exp=(Expression|Placeholder) "{"
 		cases+=Case+
-		(default?="default" ":" defaultProc=Next)?
+		(default?="default" "=>" defaultProc=Next)?
 	"}"
 ;
 
