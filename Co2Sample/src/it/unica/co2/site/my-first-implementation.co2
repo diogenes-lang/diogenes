@@ -1,0 +1,18 @@
+package it.unica.co2.site
+
+honesty P
+
+contract C { 
+	req? string . ( 
+		ok!  
+		(+) no! 
+	) 
+}
+	
+specification P {
+	tellAndWait x C .
+	receive@x req?[msg:string] .
+	if (msg=="valid message")
+	then send@x ok!
+	else send@x no!
+}
