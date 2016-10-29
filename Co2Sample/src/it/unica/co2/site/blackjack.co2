@@ -22,51 +22,55 @@ contract Cd {
  */
 specification P {
 	tellAndWait xd Cd .	
-	tellRetract xp Cp . Pplay(xp, xd, 0) : send xd abort!
+	tellRetract xp Cp . Pplay(xp, xd, 0) : send@xd abort!
 }
 
 specification Pplay(xp:session, xd:session, np:int) {
 	
-	receive [
-		xp <- hit? . send xd next! . Pdeck(xp, xd, np)
-		xp <- stand? . Qstand(xp,xd,np,0)
-	]
-	+ t . send xd abort! . PabortP(xp) 
+	receive {
+		@xp  hit? . send@xd next! . Pdeck(xp, xd, np)
+		@xp  stand? . Qstand(xp,xd,np,0)
+		t . send@xd abort! . PabortP(xp) 
+	}
 }
 
 specification Pdeck(xp:session, xd:session, np:int) {
-	receive xd card? n:int . Pcard(xp,xd,np+n,n)
-	+ t . send xp abort! . PabortD(xd)
+	receive {
+		@xd card?[n:int] . Pcard(xp,xd,np+n,n)
+		t . send@xp abort! . PabortD(xd)
+	}
 }
 
 specification Pcard(xp:session, xd:session, np:int, n:int) {
 	if np<21
-	then send xp card! n . Pplay(xp,xd,np)
-	else send xp lose! . PabortD(xd)
+	then send@xp card![n] . Pplay(xp,xd,np)
+	else send@xp lose! . PabortD(xd)
 }
 
 specification Qstand(xp:session, xd:session, np:int, nd:int) {
 	if nd<21
-	then send xd next! . Qdeck(xp,xd,np,nd)
-	else send xp win! . send xd abort!
+	then send@xd next! . Qdeck(xp,xd,np,nd)
+	else send@xp win! . send@xd abort!
 }
 
 specification Qdeck(xp:session, xd:session, np:int, nd:int) {
-	receive xd card? n:int. Qcard(xp,xd,np,nd)
-	+ t . send xp abort!. PabortD(xd)
+	receive {
+		@xd card?[n:int]. Qcard(xp,xd,np,nd)
+		t . send@xp abort!. PabortD(xd)
+	}
 }
 
 specification Qcard(xp:session, xd:session, np:int, nd:int) {
 	if nd<np
 	then Qstand(xp,xd,np,nd)
-	else send xp lose! . PabortD(xd)
+	else send@xp lose! . PabortD(xd)
 }
 
 specification PabortP(xp:session) {
-	receive xp  hit? stand?. send xp abort!
+	receive@xp  hit? stand?. send@xp abort!
 }
 
 specification PabortD(xd:session) {
-	send xd abort! 
-	| receive xd card? n:int. send xd abort!
+	send@xd abort! 
+	| receive@xd card?[n:int] . send@xd abort!
 }

@@ -13,47 +13,48 @@ contract D {
 
 specification Pdishonest {
 	tellAndWait x C .
-	receive x order? v:string . (  
+	receive@x order?[v:string] . (  
 		tellRetract y D . (
-			send y req! v . 
-			receive [
-				y <- ok? . send x amount! *:int
-				y <- no? . send x abort!
-			]
-			+ t . send x abort! 
+			send@y req![v] . 
+			receive {
+				@y ok? . send@x amount![*:int]
+				@y no? . send@x abort!
+				t . send@x abort! 
+			}
 		)
-		: send x abort!
+		: send@x abort!
 	)
 	
 }
 
 specification Store {
 	tellAndWait x C .
-	receive x order? v:string . 
+	receive@x order?[v:string] . 
 	tellRetract y D . 
-		send y req! *:string . 
-		receive [
-			y <- ok? . send x amount! *:int
-			y <- no? . send x abort!
-		] + t . send x abort! . receive [y <- ok? no?]	
-	: send x abort!
+		send@y req![*:string] . 
+		receive {
+			@y ok? . send@x amount![*:int]
+			@y no? . send@x abort!
+			t . send@x abort! . receive@y ok? no?	
+		}
+	: send@x abort!
 	
 }
 
 specification Buyer {
 	tellAndReturn x { order! string . ( amount? int + abort? ) } .
-	send x order! *:string .
-	receive [ 
-		x <- amount? n:int
-		x <- abort?
-	] 
+	send@x order![*:string] .
+	receive {
+		@x amount?[n:int]
+		@x abort?
+	}
 }
 
 specification Distributor {
 	tellRetract x { req? string . ( ok! (+) no! ) } .
-	receive x req? msg:string .
+	receive@x req?[msg:string] .
 	if *:boolean
-	then send x ok!
-	else send x no!
+	then send@x ok!
+	else send@x no!
 }
 

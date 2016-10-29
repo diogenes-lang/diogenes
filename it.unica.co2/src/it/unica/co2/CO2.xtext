@@ -52,7 +52,8 @@ Process:
 	SendGroup |
 	ReceiveGroup |
 	SwitchCase |
-	ProcessCall
+	ProcessCall |
+	"(" ParallelProcesses ")"
 ;
 
 EmptyProcess:
@@ -97,8 +98,8 @@ Next returns Process:
 	SendGroup |
 	ReceiveGroup |
 	SwitchCase |
-	"(" ParallelProcesses ")"|
-	ProcessCall
+	ProcessCall |
+	"(" ParallelProcesses ")"
 ;
 
 

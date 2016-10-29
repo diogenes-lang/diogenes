@@ -21,25 +21,25 @@ contract CV {
  */
 specification P {
 	tellAndWait x CB .
-	receive [
-		x <- clickPay? . (receive x pay? code : string)	
-		x <- clickVoucher? . (
+	receive {
+		@x  clickPay? . (receive@x pay?[code:string])	
+		@x  clickVoucher? . (
 			tellRetract y CV . 
 			Q(x,y) 
-			: send x reject! . receive x pay? code:string
+			: send@x reject! . receive@x pay?[code:string]
 		)
-	]
+	}
 }
 
 specification Q ( x:session , y:session ) {
-	receive [
-		y <- ok? . send x accept! . receive x voucher? v : string
-		y <-  no? . send x reject! . receive x pay? code : string
-		+ t . R(x,y) 
-	]
+	receive {
+		@y ok? . send@x accept! . receive@x voucher?[v:string]
+		@y no? . send@x reject! . receive@x pay?[code:string]
+		t . R(x,y) 
+	}
 }
 
 specification R ( x:session , y:session ) {
-	send x reject! . receive x pay? code : string
-	| receive [y <- ok? no?]
+	send@x reject! . receive@x pay?[code:string]
+	| receive@y ok? no?
 }

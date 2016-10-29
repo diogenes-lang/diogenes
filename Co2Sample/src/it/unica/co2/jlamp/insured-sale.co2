@@ -1,7 +1,7 @@
 /*
  *  Insured-sale
  */
-package it.unica.co2.insuredsale
+package it.unica.co2.jlamp
 
 // list of processes will be checked for honesty
 honesty PA
@@ -18,28 +18,29 @@ contract CI {
 
 process PA {
 	(x:session) (
-		tell x CA . ask x . (
+		tell x CA . (
 			do x order ? n:int . (if n>50 then PAY(x) else INS(x))
 		) 
 	)
 }
 
 process PAY (x:session) {
-	if (3==0) then do x amount ! . do x pay ? else do x abort !
+	(n:int)  do x amount ! n . do x pay ? + do x abort !
 }
    
 process INS (x:session) {
-	
 	(y:session) tell y CI . (
-		
-		ask y . do y reqI ! . ( 
+        do y reqI ! . ( 
               do y okI ? . PAY(x)
             + do y abortI ? . do x abort !
-            + t . do x abort ! . ( do y okI ? + do y abortI ? ) 
+            + t . ( do x abort ! | do y okI ? + do y abortI ? ) 
         )
-		+ t . do x abort ! . ask y . do y reqI ! . (
-			do y okI ? + do y abortI ?
-		)
-	)
+        + t . (
+        	do x abort ! | 
+			do y reqI ! . (
+				do y okI ? + do y abortI ?
+			)
+        ) 
+    )
 }
 

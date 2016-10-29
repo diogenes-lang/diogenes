@@ -6,6 +6,7 @@ package it.unica.co2.ui.labeling
 import com.google.inject.Inject
 import it.unica.co2.co2.Ask
 import it.unica.co2.co2.CO2System
+import it.unica.co2.co2.Case
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.ContractReference
 import it.unica.co2.co2.DelimitedProcess
@@ -26,6 +27,7 @@ import it.unica.co2.co2.Retract
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
 import it.unica.co2.co2.Sum
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
 import it.unica.co2.co2.TellAndWait
@@ -166,7 +168,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	def text(Input ele) {
-		ele.session.name + " ← " + ele.actions.join(" ", [x|x.name+"?"])
+		"@"+ ele.session.name + " " + ele.actions.join(" ", [x|x.name+"?"])
 	}
 	
 	def text(DoOutput ele) {
@@ -174,7 +176,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	def text(Send ele) {
-		"send "+ ele.session.name + " " + ele.action.name + "!"
+		"send@"+ ele.session.name + " " + ele.action.name + "!"
 	}
 	
 	def text(Tau ele) {
@@ -190,7 +192,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	def text(IfThenElse ele) {
-		"ifThenElse"
+		"if"
 	}
 		
 	def String text(ProcessCall ele) {
@@ -207,7 +209,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 
 	
 	def text(Variable elm) {
-		elm.name+" : "+elm.type.value
+		elm.name+":"+elm.type.value
 	}
 	
 	def text(Session elm) {
@@ -216,16 +218,24 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 
 	def text(IntAction ele) {
 		if (ele.type != null)
-			ele.name + "! : " + ele.type.value
+			ele.name + "!" + ele.type.value
 		else
-			ele.name + "! : unit"
+			ele.name + "!unit"
 	}
 
 	def text(ExtAction ele) {
 		if (ele.type != null)
-			ele.name + "? : " + ele.type.value
+			ele.name + "?" + ele.type.value
 		else
-			ele.name + "? : unit"
+			ele.name + "?unit"
+	}
+	
+	def text(SwitchCase elm) {
+		"switch"
+	}
+	
+	def text(Case elm) {
+		"case"
 	}
 
 }

@@ -3,16 +3,19 @@
  */
 package it.unica.co2.ui.outline
 
+import it.unica.co2.co2.Case
 import it.unica.co2.co2.ContractsAndProcessesDeclaration
 import it.unica.co2.co2.DelimitedProcess
 import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.ExtSum
+import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Sum
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Variable
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
@@ -126,5 +129,24 @@ class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 			createNode(parentNode, sum.actions.get(0)) // cut
 		else
 			createChildren(createEObjectNode(parentNode, sum), sum) // normal behavior
+	}
+	
+	// cut off node of exps
+	def void _createChildren(IOutlineNode parentNode, SwitchCase elm) {
+		for (c : elm.cases)
+			createNode(parentNode, c);
+		
+		createNode(parentNode, elm.defaultProc);
+	}
+	
+	// cut off node of exps
+	def void _createChildren(IOutlineNode parentNode, IfThenElse elm) {
+		createNode(parentNode, elm.then);
+		createNode(parentNode, elm.^else);
+	}
+	
+	// cut off node of exps
+	def void _createChildren(IOutlineNode parentNode, Case elm) {
+		createNode(parentNode, elm.caseProc);
 	}
 }

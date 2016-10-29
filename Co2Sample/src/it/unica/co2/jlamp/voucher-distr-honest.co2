@@ -1,4 +1,4 @@
-package it.unica.co2.voucher
+package it.unica.co2.jlamp
 honesty P
 
 /*
@@ -29,7 +29,7 @@ process Q (x:session) {
 	(y:session) tell y CV . (
 		ask y . Q1(x,y)
 		+ t . (
-			abortX(x) | ask y . abortY(y)
+			AbortX(x) | ask y . AbortY(y)
 		)
 	)
 }
@@ -41,13 +41,13 @@ process Q1 (x:session, y:session) {
 }
 
 process R1 (x:session, y:session){
-	abortX(x) | abortY(y)
+	AbortX(x) | AbortY(y)
 }
 
-process abortX (x:session){
+process AbortX (x:session){
 	do x reject! . do x pay? code:string
 }
 
-process abortY (y:session){
+process AbortY (y:session){
 	do y ok? + do y no?
 }
