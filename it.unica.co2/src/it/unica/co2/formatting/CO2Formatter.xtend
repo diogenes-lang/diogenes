@@ -119,9 +119,9 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap().after(parallelProcessesAccess.verticalLineKeyword_1_0);
 		
 		// parenthesis
-		c.setLinewrap().after(nextAccess.leftParenthesisKeyword_9_0);
-		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_9_2);
-		c.setIndentation(nextAccess.leftParenthesisKeyword_9_0, nextAccess.rightParenthesisKeyword_9_2);
+		c.setLinewrap().after(nextAccess.leftParenthesisKeyword_10_0);
+		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_10_2);
+		c.setIndentation(nextAccess.leftParenthesisKeyword_10_0, nextAccess.rightParenthesisKeyword_10_2);
 	
 		// alternative send/receive
 		c.setNoSpace().after(sendAltAccess.sendKeyword_0);

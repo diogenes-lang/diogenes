@@ -3,7 +3,6 @@
  */
 package it.unica.co2.validation
 
-import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.Co2Package
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.DelimitedProcess
@@ -16,6 +15,7 @@ import it.unica.co2.co2.HonestyDeclaration
 import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntSum
+import it.unica.co2.co2.PackageDeclaration
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.TellAndWait
 import it.unica.co2.co2.TellRetract
@@ -23,9 +23,17 @@ import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.VariableDeclaration
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
 import java.io.File
+import org.eclipse.core.resources.IFile
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.IPath
+import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.jdt.core.IJavaProject
+import org.eclipse.jdt.core.JavaCore
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
+import it.unica.co2.co2.CO2System
 
 /**
  * This class contains custom validation rules. 
@@ -35,52 +43,45 @@ import org.eclipse.xtext.validation.Check
 class CO2Validator extends CO2TypeSystemValidator {
 	
 	@Check
-	def void checkPackage(CO2System system) {
+	def void checkPackage(CO2System sys) {
 		
-//		var IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		val PackageDeclaration packageDeclaration = sys.package
 		
-//		val IProject currentProject = myFile.getProject();
-//		val IJavaProject javaProject = JavaCore.create(currentProject);
-//
-//		val Path path = new Path(system.eResource.URI.device, system.eResource.URI.toPlatformString(false))
-//		
-//		println("**");
-//		println(system.eResource);
-//		println(system.eResource.URI);
-//		println(system.eResource.URI.path);
-//		println(system.eResource.URI.devicePath);
-//		println(system.eResource.URI.toPlatformString(true));
-//		println(path)
-//		println(javaProject.findPackageFragment(path))
-//		println(javaProject.findElement(path))
-//		println("**")val String platformString = system.eResource.URI.toPlatformString(false);
-//	    val IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-//	    val IProject currentProject = myFile.getProject();
-//		val IJavaProject javaProject = JavaCore.create(currentProject);
-//
-//		val Path path = new Path(system.eResource.URI.device, system.eResource.URI.toPlatformString(false))
-//		
-//		println("**");
-//		println(system.eResource);
-//		println(system.eResource.URI);
-//		println(system.eResource.URI.path);
-//		println(system.eResource.URI.devicePath);
-//		println(system.eResource.URI.toPlatformString(true));
-//		println(path)
-//		println(javaProject.findPackageFragment(path))
-//		println(javaProject.findElement(path))
-//		println("**")
+		// some stuff to retrieve the IJavaProject class
+		val String platformString = sys.eResource.URI.toPlatformString(false);
+	    val IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+	    val IProject currentProject = myFile.getProject();
+		val IJavaProject javaProject = JavaCore.create(currentProject);
 		
-		var packageName = system.name
-		var realPath = system.eResource.URI.toPlatformString(false)
-		var expectedPath = packageName.replaceAll("\\.", File.separator)+File.separator+system.eResource.URI.lastSegment
-	
-		if (!realPath.endsWith( expectedPath )) {
-			error('''The declared package "«packageName»" does not match the path "«expectedPath»"''', 
-					Co2Package.Literals.CO2_SYSTEM__NAME
-				);
+		// path of the file and the source directory which contains it
+		val IPath file = javaProject.getPackageFragmentRoot(myFile).path
+		val IPath src = javaProject.rawClasspath.map[x|x.path].filter[x|x.isPrefixOf(file)].get(0)
+		
+		// make the file relative to src
+		val relativeFile = file.makeRelativeTo(src)
+
+		// the expected package declaration within the file
+		val expectedPackage = relativeFile.removeLastSegments(1).toString.replace("/",".")
+
+		if (expectedPackage.isEmpty) {
+						
+			if (packageDeclaration.name!=null) {
+				error('''Unexpected package declaration.''', Co2Package.Literals.CO2_SYSTEM__PACKAGE);
 				return;
-		}		
+			}
+		}
+		else {
+				
+			if (packageDeclaration==null) {
+				error('''Package declaration not found. Expecting "«expectedPackage»".''', Co2Package.Literals.CO2_SYSTEM__PACKAGE);
+				return;	
+			}
+			
+			if (!expectedPackage.equals(packageDeclaration.name)) {
+				error('''Expected package is "«expectedPackage»", found "«packageDeclaration.name»".''', Co2Package.Literals.CO2_SYSTEM__PACKAGE);
+				return;
+			}			
+		}
 	}
 	
 	

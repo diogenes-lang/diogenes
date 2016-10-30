@@ -64,7 +64,7 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		for (e : resource.allContents.toIterable.filter(CO2System)) {
 			
-			var basepath = if (e.name==null) "" else e.fullyQualifiedName.toString(File.separator) ;
+			var basepath = if (e.^package==null) "" else e.^package.fullyQualifiedName.toString(File.separator) ;
 			var outputFilename = basepath+ File.separator+ resourceName+".maude"
 
 			println('''generating «outputFilename»''')

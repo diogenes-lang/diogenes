@@ -2,7 +2,9 @@
  * empty contract
  */
  
-contract c1{ }
+contract c1{
+	a! . b? (+) c! 
+}
 contract c2{(((nil)))}
 
 /*

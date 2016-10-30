@@ -83,11 +83,14 @@ class JavaGenerator extends AbstractIGenerator {
 		resourceName = resource.URI.lastSegment.replace(".co2","")
 		resourceName = resourceName.replaceAll("[^A-Za-z]","")
 		
-		allInOneClass = resource.allContents.toIterable.filter(CO2System).get(0).single
+		val l = resource.allContents.toIterable.filter(CO2System).get(0)
+		
+		allInOneClass = l.^package!=null && l.^package.single
 		
 		if (allInOneClass) {
 			for (e : resource.allContents.toIterable.filter(CO2System)) {
-				var basepath = if (e.name==null) resourceName else e.fullyQualifiedName.append(resourceName).toString(File.separator) ;
+				
+				var basepath = if (e.^package==null) resourceName else e.^package.fullyQualifiedName.append(resourceName).toString(File.separator) ;
 				var outputFilename = basepath+ File.separator+ mainClass+".java"
 	
 				println('''generating «outputFilename»''')
@@ -96,26 +99,26 @@ class JavaGenerator extends AbstractIGenerator {
 		}
 		else {
 			
-			for (system : resource.allContents.toIterable.filter(CO2System)) {
-				var basepath = if (system.name==null) resourceName else system.fullyQualifiedName.append(resourceName).toString(File.separator) ;
+			for (s : resource.allContents.toIterable.filter(CO2System)) {
+				var basepath = if (s.package==null) resourceName else s.package.fullyQualifiedName.append(resourceName).toString(File.separator) ;
 				var outputFilename = basepath+ File.separator+ mainClass+".java"
 				
 				println('''generating main class: «outputFilename»''')
-				fsa.generateFile(outputFilename, system.generateJava)
+				fsa.generateFile(outputFilename, s.generateJava)
 				
-				val isTranslatable = system.isJavaTranslatable;
-				
+				val isTranslatable = s.isJavaTranslatable;
+                                
 				if (isTranslatable.value) {
-					for (e : system.eAllContents.toIterable.filter(ProcessDefinition)) {
+				
+					for (e : s.eAllContents.toIterable.filter(ProcessDefinition)) {
 			
-						basepath = if (system.name==null) resourceName else system.fullyQualifiedName.append(resourceName).toString(File.separator) ;
+						basepath = if (s.package==null) resourceName else s.package.fullyQualifiedName.append(resourceName).toString(File.separator) ;
 						outputFilename = basepath+ File.separator+ e.name+".java"
 	
 						println('''generating process class: «outputFilename»''')
 						fsa.generateFile(outputFilename, e.javaClass)
 					}
-				}
-				
+				}				
 			}
 		}
 	}
@@ -123,7 +126,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	
 	def String generateJava(CO2System co2System) {
-		packageName = if (co2System.name==null) resourceName else co2System.fullyQualifiedName.append(resourceName).toString;
+		packageName = if (co2System.package==null) resourceName else co2System.package.fullyQualifiedName.append(resourceName).toString;
 		var processDefinitions = co2System.contractsAndProcessesDeclaration.processes
 		var contractDefinitions = co2System.contractsAndProcessesDeclaration.contracts
 		var honestyProcesses = if (co2System.honesty!=null) co2System.honesty.processes else null

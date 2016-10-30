@@ -4,13 +4,16 @@ generate co2 "http://www.unica.it/co2/CO2"
 
     
 CO2System:	
-	((single?="single")? "package" name=QualifiedName)?
+	package=PackageDeclaration?
 //	imports+=Import*
 	honesty=HonestyDeclaration?
 	contractsAndProcessesDeclaration=ContractsAndProcessesDeclaration
 ;
 
 
+PackageDeclaration:
+	(single?="single")? "package" name=QualifiedName
+;
 
 Import:
     'import' importedNamespace=QualifiedName ("." "*")?;

@@ -39,8 +39,7 @@ specification P {
 
 specification P1 (xu: session, yt:string, bud:int) {
 	tellAndReturn xf Cf.
-	tellAndReturn xh Ch .
-	(
+	tellAndReturn xh Ch . (
 		send@xf flightDets![yt]
 		| send@xh hotelDets![yt]
 		| Pquote(xu,xf,xh,bud)	

@@ -8,10 +8,13 @@
   <genPackages prefix="Co2" basePackage="it.unica.co2" disposableProviderFactory="true"
       fileExtensions="co2" ecorePackage="CO2.ecore#/">
     <genClasses ecoreClass="CO2.ecore#//CO2System">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//CO2System/single"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//CO2System/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/package"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/honesty"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//CO2System/contractsAndProcessesDeclaration"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//PackageDeclaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//PackageDeclaration/single"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//PackageDeclaration/name"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Import">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Import/importedNamespace"/>

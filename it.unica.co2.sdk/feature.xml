@@ -2,7 +2,7 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="4.1.6">
+      version="5.0.0">
 
    <description>
       bugfix
