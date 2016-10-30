@@ -2,11 +2,7 @@
 <feature
       id="it.unica.co2.sdk"
       label="CO2 SDK Feature "
-      version="5.0.0">
-
-   <description>
-      bugfix
-   </description>
+      version="5.0.1">
 
    <requires>
       <import plugin="org.eclipse.xtext" version="2.8.0" match="greaterOrEqual"/>
