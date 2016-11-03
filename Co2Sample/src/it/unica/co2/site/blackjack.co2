@@ -14,7 +14,7 @@ contract Cp {
 
 // between the dealer and the desk service
 contract Cd { 
-	next!. card? int .Cd (+) abort! 
+	next!. card?int .Cd (+) abort! 
 }
 
 /*
@@ -22,7 +22,8 @@ contract Cd {
  */
 specification P {
 	tellAndWait xd Cd .	
-	tellRetract xp Cp . Pplay(xp, xd, 0) : send@xd abort!
+	tellAndWait xp Cp . Pplay(xp, xd, 0) 
+	after * . send@xd abort!
 }
 
 specification Pplay(xp:session, xd:session, np:int) {
@@ -30,14 +31,14 @@ specification Pplay(xp:session, xd:session, np:int) {
 	receive {
 		@xp  hit? . send@xd next! . Pdeck(xp, xd, np)
 		@xp  stand? . Qstand(xp,xd,np,0)
-		t . send@xd abort! . PabortP(xp) 
+		after * . send@xd abort! . PabortP(xp) 
 	}
 }
 
 specification Pdeck(xp:session, xd:session, np:int) {
 	receive {
 		@xd card?[n:int] . Pcard(xp,xd,np+n,n)
-		t . send@xp abort! . PabortD(xd)
+		after * . send@xp abort! . PabortD(xd)
 	}
 }
 
@@ -56,7 +57,7 @@ specification Qstand(xp:session, xd:session, np:int, nd:int) {
 specification Qdeck(xp:session, xd:session, np:int, nd:int) {
 	receive {
 		@xd card?[n:int]. Qcard(xp,xd,np,nd)
-		t . send@xp abort!. PabortD(xd)
+		after * . send@xp abort!. PabortD(xd)
 	}
 }
 

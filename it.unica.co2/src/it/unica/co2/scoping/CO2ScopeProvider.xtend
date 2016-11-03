@@ -11,11 +11,11 @@ import it.unica.co2.co2.ExtAction
 import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.ProcessDefinition
+import it.unica.co2.co2.RetractedProcess
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
+import it.unica.co2.co2.TellAndReturn
 import it.unica.co2.co2.TellAndWait
-import it.unica.co2.co2.TellProcess
-import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Variable
 import java.util.List
 import org.eclipse.emf.ecore.EObject
@@ -26,7 +26,6 @@ import org.eclipse.xtext.scoping.Scopes
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
 
 import static extension it.unica.co2.utils.CustomExtensions.*
-import it.unica.co2.co2.RetractedProcess
 
 /**
  * This class contains custom scoping description.
@@ -84,19 +83,11 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 			);
 	}
 	
-	def dispatch IScope getDeclaredVariables(TellRetract proc) {
-		return Scopes.scopeFor(
-			newArrayList(proc.session)
-			,
-			getDeclaredVariables(proc.eContainer) // outer
-		);
-	}
-	
 	def dispatch IScope getDeclaredVariables(RetractedProcess proc) {
-		return getDeclaredVariables(proc.eContainer.eContainer); 	// skip the TellRetract object
+		return getDeclaredVariables(proc.eContainer.eContainer.eContainer); 	// skip the session declared by the tell
 	}
 	
-	def dispatch IScope getDeclaredVariables(TellProcess proc) {
+	def dispatch IScope getDeclaredVariables(TellAndReturn proc) {
 		return Scopes.scopeFor(
 			newArrayList(proc.session)
 			,

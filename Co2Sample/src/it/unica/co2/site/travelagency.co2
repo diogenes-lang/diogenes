@@ -50,7 +50,7 @@ specification Pquote (xu:session, xf:session, xh:session, bud:int) {
 	receive {
 		@xf quote?[n:int] . Pquote1(xu,xf,xh,n,bud)
 		@xh quote?[n:int] . Pquote1(xu,xh,xf,n,bud) 
-		t . Pabort(xu,xh,xf)
+		after * . Pabort(xu,xh,xf)
 	}
 }
 
@@ -66,7 +66,7 @@ specification Pquote2 (x:session, x1:session, x2:session, quote:int, budget:int)
 			if quote+quote2<budget
 			then Ppay(x,x1,x2,quote+quote2)
 			else Pabort(x,x1,x2)
-		t . Pabort(x,x1,x2)
+		after * . Pabort(x,x1,x2)
 	}
 }
 
@@ -81,7 +81,7 @@ specification Ppay (x:session, x1:session, x2:session, amount:int) {
 	send@x quote![amount] . (
 		receive {
 			@x pay?. Pconfirm1(x,x1,x2)
-			t . Pabort(x,x1,x2)
+			after * . Pabort(x,x1,x2)
 		}
 	)
 }
@@ -90,7 +90,7 @@ specification Pconfirm1 (x:session, x1:session, x2:session) {
 	send@x1 pay!. send@x2 pay! . (
 		receive { 
 			@x1 confirm?. Pconfirm2(x,x1,x2)
-			t . Pabort(x,x1,x2)
+			after * . Pabort(x,x1,x2)
 		}
 	)
 }
@@ -98,7 +98,7 @@ specification Pconfirm1 (x:session, x1:session, x2:session) {
 specification Pconfirm2 (x:session, x1:session, x2:session) {
 	receive {
 		@x2 confirm?. Pcommit(x,x1,x2)
-		t . Pabort(x,x1,x2)
+		after * . Pabort(x,x1,x2)
 	}
 }
 

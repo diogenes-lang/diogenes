@@ -1,7 +1,7 @@
 
 package it.unica.co2.betty
 
-honesty StoreDishonest3
+honesty StoreDishonest1
 
 
 /*
@@ -9,7 +9,6 @@ honesty StoreDishonest3
  */
 contract C {
 	order? string . ( price! int (+) unavailable! )
-	+ no?
 }
 
 specification Store {
@@ -102,13 +101,13 @@ specification StoreDishonest2 {
 specification StoreDishonest3 {
     tellAndWait x C .
     receive@ x order?[v:string] .
-        tellRetract y D .
+        tellAndWait y D .
         send@ y req![*:string] .
         receive {
             @y ok? . send@x price![*:int]
             @y no? . send@x unavailable!
         }
-	    : send @x unavailable!
+	    after * . send @x unavailable!
 }
 
 /*
@@ -117,14 +116,13 @@ specification StoreDishonest3 {
 specification StoreHonest {
     tellAndWait x C .
     receive@ x order?[v:string] . (
-        tellRetract y D . (
+        tellAndWait y D . (
             send@y req![*:string] .
-            receive@x no? .
+            receive@x order? .
             receive {
                 @y ok? . send@x price![*:int]
                 @y no? . send@x unavailable!
-                @x no?
-	            t . (
+	            after * . (
 	            	send@x unavailable! | receive {
 	            		@y ok?
 	            		@y no?
@@ -132,7 +130,7 @@ specification StoreHonest {
 	            )
             }
         )
-        : send@x unavailable!
+        after * . send@x unavailable!
    )
 }
  

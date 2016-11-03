@@ -112,13 +112,13 @@ specification P ( n:int, x:session ) {
 }
 
 specification Bo2 ( x:session ) {
-	if *:boolean
+	if *
 	then send b! to x
 	else send b! to x
 }
 
 specification Bo ( x:session ) {
-	if *:boolean
+	if * 
 	then send b! to x . send b! to x . send b! to x
 	else send b! to x . send b! to x
 
@@ -142,29 +142,29 @@ contract D {
 
 specification Foo {
 	tellAndWait x D .
-	switch *:int {
-		case 0 => send a! to x . receive a? b? from x
-		case 1 =>
+	switch * {
+		case "0" => send a! to x . receive a? b? from x
+		case "1" => 
 			receive {
 				a? from x
 				b? from x
 			}
-		case 2 =>
-			if *:boolean
+		case "2" =>
+			if *
 			then send b! to x
 		default => send b![42] to x
 	}
 }
 
-contract A {
+contract A { 
 	a!
 }
 
 specification Poo {
 	tellAndWait x A .
-	tellRetract y B .
+	tellAndWait y B . 
 		send a! to x
-	: send a! to x
+	after * . send a! to x 
 }
 
 contract B {

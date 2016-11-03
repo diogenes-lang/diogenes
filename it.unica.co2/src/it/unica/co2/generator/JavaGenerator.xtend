@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import it.unica.co2.co2.ActionType
 import it.unica.co2.co2.AndExpression
 import it.unica.co2.co2.ArithmeticSigned
+import it.unica.co2.co2.BoolPlaceholder
 import it.unica.co2.co2.BooleanLiteral
 import it.unica.co2.co2.BooleanNegation
 import it.unica.co2.co2.BooleanType
@@ -23,9 +24,9 @@ import it.unica.co2.co2.IfThenElse
 import it.unica.co2.co2.Input
 import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
+import it.unica.co2.co2.IntPlaceholder
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.IntType
-import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Minus
 import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
@@ -40,11 +41,13 @@ import it.unica.co2.co2.Send
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringLiteral
+import it.unica.co2.co2.StringPlaceholder
 import it.unica.co2.co2.StringType
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndReturn
 import it.unica.co2.co2.TellAndWait
-import it.unica.co2.co2.TellProcess
-import it.unica.co2.co2.TellRetract
+import it.unica.co2.co2.TimeoutProcess
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableReference
@@ -60,14 +63,12 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 
 import static extension it.unica.co2.generator.JavaGeneratorUtils.*
+import it.unica.co2.co2.RetractedProcess
 
 class JavaGenerator extends AbstractIGenerator {
 	
 	@Inject extension IQualifiedNameProvider qNameProvider
 	@Inject CO2TypeSystem typeSystem
-	
-	int WAIT_TIMEOUT = 10_000
-	int TELL_RETRACT_TIMEOUT = 10_000
 	
 	String packageName
 	String mainClass = "Main"
@@ -136,17 +137,16 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		//fix anonymous tells
 		contractDefinitions.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("TellContr")].toSet )
-		contractDefinitions.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("TellContr")].toSet )
 		contractDefinitions.addAll( co2System.eAllContents.filter(TellAndWait).map[t| t.fixTell("TellContr")].toSet )
-		contractDefinitions.addAll( co2System.eAllContents.filter(TellProcess).map[t| t.fixTell("TellContr")].toSet )
+		contractDefinitions.addAll( co2System.eAllContents.filter(TellAndReturn).map[t| t.fixTell("TellContr")].toSet )
 		
 		var placeholders = co2System.eAllContents.filter(Placeholder).toSet;
 //		for (p:placeholders.toSet) {
 //			println("-> "+p.type)
 //		}
-		var hasIntPlaceholders = 		placeholders.filter[p| (p.type instanceof IntType)].toSet.size>0;
-		var hasBooleanPlaceholders = 	placeholders.filter[p| (p.type instanceof BooleanType)].toSet.size>0;
-		var hasStringPlaceholders = 	placeholders.filter[p| (p.type instanceof StringType)].toSet.size>0;
+		var hasIntPlaceholders = 		placeholders.filter[p| (p.type instanceof IntType) || (p instanceof IntPlaceholder)].toSet.size>0;
+		var hasBooleanPlaceholders = 	placeholders.filter[p| (p.type instanceof BooleanType) || (p instanceof BoolPlaceholder)].toSet.size>0;
+		var hasStringPlaceholders = 	placeholders.filter[p| (p.type instanceof StringType) || (p instanceof StringPlaceholder)].toSet.size>0;
 		var hasSessionPlaceholders = 	placeholders.filter[p| (p.type instanceof SessionType)].toSet.size>0;
 		
 		val isTranslatable = co2System.isJavaTranslatable;
@@ -201,7 +201,7 @@ class JavaGenerator extends AbstractIGenerator {
 				HonestyChecker.isHonest(«honestyProcess.name».class, «mainClass».username, «mainClass».password);
 				«ENDFOR»
 				«FOR honestyProcess : honestyProcesses»
-		//		new Thread(new «honestyProcess.name»(«mainClass».username, «mainClass».password)).start();
+				//new Thread(new «honestyProcess.name»(«mainClass».username, «mainClass».password)).start();
 				«ENDFOR»
 				«ENDIF»
 			}
@@ -388,31 +388,8 @@ class JavaGenerator extends AbstractIGenerator {
 		""
 	}
 	
-	def dispatch String toJava(TellRetract tell) {
-		
-		var freshName = getFreshName(tell.session.name)		// get a fresh name
-		tell.session.name = freshName						// update the name all its references
-		
-		val publicName = '''pbl_«tell.session.name»'''
-		
-		'''
-		Public<TST> «publicName» = tell(«mainClass».«tell.session.contractReference.name», «TELL_RETRACT_TIMEOUT»);
-		
-		try {
-			Session<TST> «tell.session.name» = «publicName».waitForSession();
-			
-			«tell.process.toJava»
-		}
-		catch(ContractExpiredException «getFreshName("e")») {
-			//retract «tell.session.name»
-			«IF tell.RProcess!=null && tell.RProcess.process!=null»
-			«tell.RProcess.process.toJava»
-			«ENDIF»
-		}
-		'''
-	}
 	
-	def dispatch String toJava(TellProcess tell) {
+	def dispatch String toJava(TellAndReturn tell) {
 		var freshName = getFreshName(tell.session.name)		// get a fresh name
 		tell.session.name = freshName						// update the name all its references
 		
@@ -422,18 +399,42 @@ class JavaGenerator extends AbstractIGenerator {
 		«tell.process.toJava»'''
 	}
 	
-	
 	def dispatch String toJava(TellAndWait tell) {
 		var freshName = getFreshName(tell.session.name)		// get a fresh name
 		tell.session.name = freshName						// update the name all its references
+		val publicName = '''pbl_«tell.session.name»'''
 		
 		'''
-		Session<TST> «tell.session.name» = tellAndWait(«mainClass».«tell.session.contractReference.name»);
-		
-		«IF tell.process!=null»
-			«tell.process.toJava»
+		«IF tell.isTimeout»
+			Public<TST> «publicName» = tell(«mainClass».«tell.session.contractReference.name», «tell.timeoutValue.value.javaExpression»*1000); «IF tell.timeoutValue instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
+			
+			try {
+				Session<TST> «tell.session.name» = «publicName».waitForSession();
+				
+				«tell.process.toJava»
+			}
+			catch(ContractExpiredException «getFreshName("e")») {
+				//retract «tell.session.name»
+				«IF tell.timeoutValue.TProcess!=null»
+				«tell.timeoutValue.TProcess.toJava»
+				«ENDIF»
+			}
+		«ELSE»
+			Session<TST> «tell.session.name» = tellAndWait(«mainClass».«tell.session.contractReference.name»);
+			
+			«IF tell.process!=null»
+				«tell.process.toJava»
+			«ENDIF»
 		«ENDIF»
 		'''
+	}
+	
+	def dispatch String toJava(TimeoutProcess p) {
+		p.TProcess.toJava
+	}
+	
+	def dispatch String toJava(RetractedProcess p) {
+		p.process.toJava
 	}
 	
 	def dispatch String toJava(Receive receive) {
@@ -444,14 +445,14 @@ class JavaGenerator extends AbstractIGenerator {
 			'''
 			«IF receive.isTimeout»
 			try {
-				«receive.inputs.singleSessionReceive(true)»
+				«receive.inputs.singleSessionReceive(true, receive.timeoutValue.value)»
 			}
 			catch (TimeExpiredException «getFreshName("e")») {
-				«receive.TProcess.toJava»
+				«receive.timeoutValue.TProcess.toJava»
 			}
 			
 			«ELSE»
-			«receive.inputs.singleSessionReceive(false)»
+			«receive.inputs.singleSessionReceive(false, null)»
 			«ENDIF»
 			'''
 		}
@@ -463,7 +464,7 @@ class JavaGenerator extends AbstractIGenerator {
 				«receive.multipleSessionReceive(true)»
 			}
 			catch (TimeExpiredException «getFreshName("e")») {
-				«receive.TProcess.toJava»
+				«receive.timeoutValue.TProcess.toJava»
 			}
 			
 			«ELSE»
@@ -487,12 +488,12 @@ class JavaGenerator extends AbstractIGenerator {
 				«input.actions.join(", ", [a|'''"«a.name»"'''])»
 			)
 			«ENDFOR»
-			.waitForReceive(«IF timeout»«WAIT_TIMEOUT»«ENDIF»)
+			.waitForReceive(«IF timeout»«receive.timeoutValue.value.javaExpression»*1000«ENDIF») «IF receive.timeoutValue instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
 		;
 		'''
 	}
 	
-	def String singleSessionReceive(EList<Input> inputs, boolean timeout) {
+	def String singleSessionReceive(EList<Input> inputs, boolean timeout, Expression timeoutValue) {
 		
 		val session = inputs.get(0).session.name;	// inputs are at least 1 and on the same session
 		val allActions = inputs.map[x|x.actions].flatten.map[x|x.name].toSet
@@ -501,7 +502,7 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		'''		
 		logger.info("waiting on '«session»' for actions [«allActions.join(", ")»]");
-		Message «messageName» = «session».waitForReceive(«IF timeout»«WAIT_TIMEOUT», «ENDIF»«allActions.join(", ", [x|'''"«x»"'''])»);
+		Message «messageName» = «session».waitForReceive(«IF timeout»«timeoutValue.javaExpression»*1000, «ENDIF»«allActions.join(", ", [x|'''"«x»"'''])»); «IF timeoutValue instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
 		
 		«IF allActions.size==1»
 			logger.info("received [«allActions.get(0)»]");
@@ -557,7 +558,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(IfThenElse p) {
 		'''
-		if («p.^if.javaExpression») { «IF p.^if instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
+		if («p.^if.javaExpression») { «IF p.^if instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
 			«p.^then.toJava»
 		}
 		else {
@@ -568,14 +569,14 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(ProcessCall p) {
 		'''
-		processCall(«p.reference.name».class, username, password«p.params.join(" ,", ", ", "", [x | x.javaExpression])»); 
+		processCall(«p.reference.name».class, username, password«p.params.join(" ,", ", ", "", [x | x.javaExpression])»); «IF p.params.exists[x|x instanceof Placeholder]»//TODO: remove the placeholder/s«ENDIF»
 		'''
 	}
 	
 	def dispatch String toJava(Send p) {
 		'''
 		logger.info("sending action '«p.action.name»'");
-		«p.session.name».sendIfAllowed("«p.action.name»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»); «IF p.value instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
+		«p.session.name».sendIfAllowed("«p.action.name»"«IF p.value!=null», «p.value.javaExpression»«ENDIF»); «IF p.value instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
 		«IF p.next!=null»
 		
 		«p.next.toJava»
@@ -585,7 +586,7 @@ class JavaGenerator extends AbstractIGenerator {
 	
 	def dispatch String toJava(SwitchCase p) {
 		'''
-		switch («p.exp.getJavaExpression») { «IF p.exp instanceof Placeholder»//TODO: remove this placeholder«ENDIF»
+		switch («p.exp.getJavaExpression») { «IF p.exp instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
 			«FOR c : p.cases»
 			case «c.match.getJavaExpression»: 
 				«c.caseProc.toJava»
@@ -667,11 +668,12 @@ class JavaGenerator extends AbstractIGenerator {
 		exp.ref.name
 	}
 	
-	def dispatch String getJavaExpression(Placeholder fn) {
-		if (fn.type instanceof IntType)			'''«mainClass».intPlaceholder'''
-		else if (fn.type instanceof StringType)	'''«mainClass».stringPlaceholder'''
-		else if(fn.type instanceof BooleanType) '''«mainClass».booleanPlaceholder'''
-		else if(fn.type instanceof SessionType) '''«mainClass».sessionPlaceholder'''
+	def dispatch String getJavaExpression(Placeholder p) {
+		var type = typeSystem.type(p).value
+		if (type instanceof IntType)         '''«mainClass».intPlaceholder'''
+		else if (type instanceof StringType) '''«mainClass».stringPlaceholder'''
+		else if(type instanceof BooleanType) '''«mainClass».booleanPlaceholder'''
+		else if(type instanceof SessionType) '''«mainClass».sessionPlaceholder'''
 	}
 	
 }

@@ -20,23 +20,24 @@ import it.unica.co2.co2.IntAction
 import it.unica.co2.co2.IntActionType
 import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.IntType
-import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.ParallelProcesses
 import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Receive
 import it.unica.co2.co2.Retract
+import it.unica.co2.co2.RetractedProcess
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringActionType
 import it.unica.co2.co2.StringType
 import it.unica.co2.co2.Sum
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndReturn
 import it.unica.co2.co2.TellAndWait
-import it.unica.co2.co2.TellProcess
-import it.unica.co2.co2.TellRetract
+import it.unica.co2.co2.TimeoutProcess
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableReference
@@ -88,9 +89,8 @@ class MaudeGenerator extends AbstractIGenerator{
 		
 		//fix anonymous tells
 		contracts.addAll( co2System.eAllContents.filter(Tell).map[t| t.fixTell("T-CONTR")].toSet )
-		contracts.addAll( co2System.eAllContents.filter(TellRetract).map[t| t.fixTell("TR-CONTR")].toSet )
 		contracts.addAll( co2System.eAllContents.filter(TellAndWait).map[t| t.fixTell("TW-CONTR")].toSet )
-		contracts.addAll( co2System.eAllContents.filter(TellProcess).map[t| t.fixTell("TW-CONTR")].toSet )
+		contracts.addAll( co2System.eAllContents.filter(TellAndReturn).map[t| t.fixTell("TW-CONTR")].toSet )
 			
 		var processNames = processes.map[p | p.name].toSet
 		var envProcessNames = envProcesses.map[p | p.name].toSet
@@ -374,7 +374,7 @@ class MaudeGenerator extends AbstractIGenerator{
 	
 	
 	
-	def dispatch String toMaude(TellProcess obj, String padLeft) {
+	def dispatch String toMaude(TellAndReturn obj, String padLeft) {
 		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
 		var pad = padLeft;
 		'''
@@ -388,27 +388,21 @@ class MaudeGenerator extends AbstractIGenerator{
 		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
 		var pad = padLeft;
 		'''
-		«"\n"+pad»(
-		«pad=pad.addPad»
-		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.session.contractReference.name» . ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
-		«pad.removePad»)'''
-	}
-	
-	def dispatch String toMaude(TellRetract obj, String padLeft) {
-		obj.process = obj.process ?: Co2Factory.eINSTANCE.createEmptyProcess
-		obj.RProcess = obj.RProcess ?: Co2Factory.eINSTANCE.createRetractedProcess
-		obj.RProcess.process = obj.RProcess.process ?: Co2Factory.eINSTANCE.createEmptyProcess
-		
-		var pad=padLeft
-		''' 
+		«IF obj.isTimeout»
 		«"\n"+pad»(
 		«pad=pad.addPad»
 		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.session.contractReference.name» . (
 		«pad=pad.addPad»
 		«pad»ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
-		«pad»+ retract "«obj.session.name»" . «obj.RProcess.process.toMaude(pad)»
+		«pad»+ retract "«obj.session.name»" . «obj.timeoutValue.TProcess.toMaude(pad)»
 		«pad=pad.removePad»)
 		«pad.removePad»)
+		«ELSE»
+		«"\n"+pad»(
+		«pad=pad.addPad»
+		«pad»("«obj.session.name»") tell "«obj.session.name»" «obj.session.contractReference.name» . ask "«obj.session.name»" True . «obj.process.toMaude(pad)»
+		«pad.removePad»)
+		«ENDIF»
 		'''
 	}
 	
@@ -454,9 +448,9 @@ class MaudeGenerator extends AbstractIGenerator{
 
 		// timeout
 		if (obj.isTimeout) {
-			obj.TProcess = obj.TProcess ?: Co2Factory.eINSTANCE.createEmptyProcess
+			obj.timeoutValue.TProcess = obj.timeoutValue.TProcess ?: Co2Factory.eINSTANCE.createEmptyProcess
 			sb.append("\n").append(pad)
-			sb.append('''+ t . «obj.TProcess.toMaude(pad)»''')
+			sb.append('''+ t . «obj.timeoutValue.TProcess.toMaude(pad)»''')
 		}
 	
 
@@ -511,7 +505,15 @@ class MaudeGenerator extends AbstractIGenerator{
 		return sb.toString
 
 
-	}	
+	}
+	
+	def dispatch String toMaude(TimeoutProcess p, String padLeft) {
+		p.TProcess.toMaude(padLeft)
+	}
+	
+	def dispatch String toMaude(RetractedProcess p, String padLeft) {
+		p.process.toMaude(padLeft)
+	}
 	
 	
 	

@@ -49,9 +49,8 @@ Process:
 	EmptyProcess |
 	Sum |
 	IfThenElse |
-	TellProcess |
+	TellAndReturn |
 	TellAndWait |
-	TellRetract |
 	SendGroup |
 	ReceiveGroup |
 	SwitchCase |
@@ -95,9 +94,8 @@ Next returns Process:
 	EmptyProcess |
 	SingleSum |
 	IfThenElse |
-	TellProcess |
+	TellAndReturn |
 	TellAndWait |
-	TellRetract |
 	SendGroup |
 	ReceiveGroup |
 	SwitchCase |
@@ -142,7 +140,7 @@ Formula:
 
 /* MACROS */
 
-TellProcess:
+TellAndReturn:
 	"tellAndReturn" session=Session
 	("." process=Next)?
 ;
@@ -150,15 +148,19 @@ TellProcess:
 TellAndWait:
 	"tellAndWait" session=Session  
 	("." process=Next)?
+	(=> timeout?="after" timeoutValue=TimeoutProcessRetract)?
 ;
 
-TellRetract:
-	"tellRetract" session=Session
-	("." process=Next rProcess=RetractedProcess?)?
+TimeoutProcess:
+	value=(Expression|Placeholder) ("." tProcess=Next)?
 ;
 
-RetractedProcess:
-	-> ":" process=Next
+TimeoutProcessRetract returns TimeoutProcess:
+	value=(Expression|Placeholder) ("." tProcess=RetractedProcess)?
+;
+
+RetractedProcess returns Process:
+	{RetractedProcess} process=Next
 ;
 
 SendGroup:
@@ -188,7 +190,7 @@ SimpleReceiveAlt returns Receive:
 Receive:
 	"receive" "{" 
 		(inputs+=(Input|InputAlt))+
-		(timeout?="t" ("." tProcess=Next)?)?		
+		(timeout?="after" timeoutValue=TimeoutProcess)?		
 	"}"	
 ;
 
@@ -256,22 +258,29 @@ Atomic returns Expression:
     '(' Expression ')' |
     NumberLiteral |
     StringLiteral |
-    {BooleanLiteral} value=('true'|'false') |
+    BooleanLiteral |
     {VariableReference} ref=[VariableDeclaration]
 ;
 
-NumberLiteral:
-	value=INT
-;
-
-StringLiteral:
-	value=STRING
-;
+NumberLiteral: value=INT;
+StringLiteral: value=STRING;
+BooleanLiteral: value=('true'|'false');
 
 Placeholder returns Expression:
-	{Placeholder} "*" ":" type=Type
+	{Placeholder} "*" (":" type=Type)?
 ;
 
+IntPlaceholder returns Placeholder:
+	{IntPlaceholder} "*"
+;
+
+BoolPlaceholder returns Placeholder:
+	{BoolPlaceholder} "*"
+;
+
+StringPlaceholder returns Placeholder:
+	{StringPlaceholder} "*"
+;
 
 VariableDeclaration:
 	Variable | Session
@@ -289,7 +298,7 @@ Session:
 Type:
     {IntType} value='int' |
     {StringType} value='string' |
-    {BooleanType} value='boolean' |
+    {BooleanType} value=('boolean'|'bool') |
     {SessionType} value='session'
 ;
 

@@ -24,15 +24,16 @@ import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Receive
 import it.unica.co2.co2.Retract
+import it.unica.co2.co2.RetractedProcess
 import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndReturn
 import it.unica.co2.co2.TellAndWait
-import it.unica.co2.co2.TellProcess
-import it.unica.co2.co2.TellRetract
+import it.unica.co2.co2.TimeoutProcess
 import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableDeclaration
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
@@ -136,18 +137,11 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 			"tell " + ele.session.name
 	}
 	
-	def text(TellProcess ele) {
+	def text(TellAndReturn ele) {
 		if (ele.session.contractReference!=null)
 			"tellAndReturn " + ele.session.name + " [" + ele.session.contractReference.name + "]"
 		else
 			"tellAndReturn " + ele.session.name
-	}
-	
-	def text(TellRetract ele) {
-		if (ele.session.contractReference!=null)
-			"tellRetract " + ele.session.name + " [" + ele.session.contractReference.name + "]"
-		else
-			"tellRetract " + ele.session.name
 	}
 	
 	def text(TellAndWait ele) {
@@ -188,6 +182,11 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 	def text(Retract ele) {
 		"retract "+ ele.session.name
 	}
+	
+	def text(RetractedProcess ele) {
+		"retracted"
+	}
+	
 	
 	def text(IfThenElse ele) {
 		"if"
@@ -236,4 +235,7 @@ class CO2LabelProvider extends DefaultEObjectLabelProvider {
 		"case"
 	}
 
+	def text(TimeoutProcess elm) {
+		"after timeout"
+	}
 }

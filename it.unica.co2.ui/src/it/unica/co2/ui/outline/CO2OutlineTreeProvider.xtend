@@ -16,6 +16,7 @@ import it.unica.co2.co2.ProcessCall
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.Sum
 import it.unica.co2.co2.SwitchCase
+import it.unica.co2.co2.TimeoutProcess
 import it.unica.co2.co2.Variable
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
@@ -65,8 +66,6 @@ class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 		}
     }
     
-
-
 	// 
 	def void _createNode(IOutlineNode parentNode, DelimitedProcess process) {
 
@@ -79,42 +78,29 @@ class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	// don't create children of ProcessCall type node
-    def void _createChildren(IOutlineNode parentNode, ProcessCall process) {
-    }
-    
-	def boolean _isLeaf(ProcessCall elm) {
-		return true;
-	}
+    def void _createChildren(IOutlineNode parentNode, ProcessCall process) {}
+	def boolean _isLeaf(ProcessCall elm) {return true;}
 	
 	// don't create freename type node
-	def void _createChildren(IOutlineNode parentNode, Variable elm) {
-	}
-
-	def boolean _isLeaf(Variable elm) {
-		return true;
-	}
+	def void _createChildren(IOutlineNode parentNode, Variable elm) {}
+	def boolean _isLeaf(Variable elm) {return true;}
 	
 	
 	def void _createChildren(IOutlineNode parentNode, IntAction elm) {
-		if (elm.next!=null)
-			createNode(parentNode, elm.next)
+		if (elm.next!=null) createNode(parentNode, elm.next)
 	}
-
 	def boolean _isLeaf(IntAction elm) {
 		return elm.next==null;
 	}
 	
 	
 	def void _createChildren(IOutlineNode parentNode, ExtAction elm) {
-		if (elm.next!=null)
-			createNode(parentNode, elm.next)
+		if (elm.next!=null) createNode(parentNode, elm.next)
 	}
-
 	def boolean _isLeaf(ExtAction elm) {
 		return elm.next==null;
 	}
 	
-
 	// cut off (+) if the sum is single element
 	def void _createNode(IOutlineNode parentNode, IntSum sum) {
 		if (sum.actions.length == 1)
@@ -149,4 +135,10 @@ class CO2OutlineTreeProvider extends DefaultOutlineTreeProvider {
 	def void _createChildren(IOutlineNode parentNode, Case elm) {
 		createNode(parentNode, elm.caseProc);
 	}
+	
+	// cut off node of exps
+	def void _createChildren(IOutlineNode parentNode, TimeoutProcess elm) {
+		createChildren(parentNode, elm.TProcess)
+	}
+	
 }

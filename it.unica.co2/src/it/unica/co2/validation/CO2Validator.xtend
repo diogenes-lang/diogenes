@@ -3,6 +3,7 @@
  */
 package it.unica.co2.validation
 
+import it.unica.co2.co2.CO2System
 import it.unica.co2.co2.Co2Package
 import it.unica.co2.co2.ContractDefinition
 import it.unica.co2.co2.DelimitedProcess
@@ -18,11 +19,9 @@ import it.unica.co2.co2.IntSum
 import it.unica.co2.co2.PackageDeclaration
 import it.unica.co2.co2.ProcessDefinition
 import it.unica.co2.co2.TellAndWait
-import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.UnitActionType
 import it.unica.co2.co2.VariableDeclaration
 import it.unica.co2.xsemantics.validation.CO2TypeSystemValidator
-import java.io.File
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.ResourcesPlugin
@@ -33,7 +32,6 @@ import org.eclipse.jdt.core.IJavaProject
 import org.eclipse.jdt.core.JavaCore
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
-import it.unica.co2.co2.CO2System
 
 /**
  * This class contains custom validation rules. 
@@ -282,11 +280,6 @@ class CO2Validator extends CO2TypeSystemValidator {
 	}
 	
 	@Check
-	def void checkShadowTellRetract(TellRetract proc) {
-		this.checkFreeName(proc.eContainer, proc.session, 0)
-	}
-	
-	@Check
 	def void checkShadowTellAndWait(TellAndWait proc) {
 		this.checkFreeName(proc.eContainer, proc.session, 0)
 	}
@@ -311,14 +304,6 @@ class CO2Validator extends CO2TypeSystemValidator {
     def dispatch void checkFreeName(Input obj, VariableDeclaration fn, int i) {
     	if (obj.variable.name == fn.name) {
     		warning("Shadowed free-name", obj.variable.eContainer, obj.variable.eContainingFeature)
-	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
-    	}
-    	checkFreeName(obj.eContainer, fn, i)
-    }
-    
-    def dispatch void checkFreeName(TellRetract obj, VariableDeclaration fn, int i) {
-    	if (obj.session.name == fn.name) {
-    		warning("Shadowed free-name", obj.session.eContainer, obj.session.eContainingFeature)
 	    	warning("You are hiding an existing name", fn.eContainer, fn.eContainingFeature)
     	}
     	checkFreeName(obj.eContainer, fn, i)

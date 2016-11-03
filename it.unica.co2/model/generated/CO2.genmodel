@@ -81,21 +81,19 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Ask/formula"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Tau"/>
-    <genClasses ecoreClass="CO2.ecore#//TellProcess">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellProcess/session"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellProcess/process"/>
+    <genClasses ecoreClass="CO2.ecore#//TellAndReturn">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellAndReturn/session"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellAndReturn/process"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//TellAndWait">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellAndWait/session"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellAndWait/process"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//TellAndWait/timeout"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellAndWait/timeoutValue"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//TellRetract">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellRetract/session"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellRetract/process"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TellRetract/rProcess"/>
-    </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//RetractedProcess">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//RetractedProcess/process"/>
+    <genClasses ecoreClass="CO2.ecore#//TimeoutProcess">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TimeoutProcess/value"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//TimeoutProcess/tProcess"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//SendGroup"/>
     <genClasses ecoreClass="CO2.ecore#//Send">
@@ -108,7 +106,7 @@
     <genClasses ecoreClass="CO2.ecore#//Receive">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/inputs"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//Receive/timeout"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/tProcess"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/timeoutValue"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Input">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/actions"/>
@@ -132,6 +130,12 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//StringLiteral">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//StringLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//BooleanLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//BooleanLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//Placeholder">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Placeholder/type"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//VariableDeclaration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//VariableDeclaration/name"/>
@@ -170,6 +174,9 @@
     <genClasses ecoreClass="CO2.ecore#//ActionType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//ActionType/value"/>
     </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//RetractedProcess">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//RetractedProcess/process"/>
+    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//OrExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/left"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//OrExpression/right"/>
@@ -207,15 +214,12 @@
     <genClasses ecoreClass="CO2.ecore#//ArithmeticSigned">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//ArithmeticSigned/expression"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//BooleanLiteral">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CO2.ecore#//BooleanLiteral/value"/>
-    </genClasses>
     <genClasses ecoreClass="CO2.ecore#//VariableReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//VariableReference/ref"/>
     </genClasses>
-    <genClasses ecoreClass="CO2.ecore#//Placeholder">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Placeholder/type"/>
-    </genClasses>
+    <genClasses ecoreClass="CO2.ecore#//IntPlaceholder"/>
+    <genClasses ecoreClass="CO2.ecore#//BoolPlaceholder"/>
+    <genClasses ecoreClass="CO2.ecore#//StringPlaceholder"/>
     <genClasses ecoreClass="CO2.ecore#//IntType"/>
     <genClasses ecoreClass="CO2.ecore#//StringType"/>
     <genClasses ecoreClass="CO2.ecore#//BooleanType"/>

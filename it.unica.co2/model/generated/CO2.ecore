@@ -95,7 +95,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="formula" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Tau" eSuperTypes="#//Prefix"/>
-  <eClassifiers xsi:type="ecore:EClass" name="TellProcess" eSuperTypes="#//Process">
+  <eClassifiers xsi:type="ecore:EClass" name="TellAndReturn" eSuperTypes="#//Process">
     <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Session"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
@@ -106,17 +106,14 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
         containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TellRetract" eSuperTypes="#//Process">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="session" eType="#//Session"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="rProcess" eType="#//RetractedProcess"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timeoutValue" eType="#//TimeoutProcess"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="RetractedProcess">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
+  <eClassifiers xsi:type="ecore:EClass" name="TimeoutProcess">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tProcess" eType="#//Process"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SendGroup" eSuperTypes="#//Process"/>
@@ -133,7 +130,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" upperBound="-1"
         eType="#//Input" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tProcess" eType="#//Process"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timeoutValue" eType="#//TimeoutProcess"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Input">
@@ -166,6 +163,12 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StringLiteral" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BooleanLiteral" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VariableDeclaration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -209,6 +212,10 @@
   <eClassifiers xsi:type="ecore:EClass" name="ExtAction" eSuperTypes="#//Action"/>
   <eClassifiers xsi:type="ecore:EClass" name="ActionType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RetractedProcess" eSuperTypes="#//Process">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="process" eType="#//Process"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OrExpression" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="left" eType="#//Expression"
@@ -263,15 +270,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BooleanLiteral" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//VariableDeclaration"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntPlaceholder" eSuperTypes="#//Placeholder"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BoolPlaceholder" eSuperTypes="#//Placeholder"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringPlaceholder" eSuperTypes="#//Placeholder"/>
   <eClassifiers xsi:type="ecore:EClass" name="IntType" eSuperTypes="#//Type"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringType" eSuperTypes="#//Type"/>
   <eClassifiers xsi:type="ecore:EClass" name="BooleanType" eSuperTypes="#//Type"/>

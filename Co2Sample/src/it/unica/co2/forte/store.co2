@@ -14,15 +14,15 @@ contract D {
 specification Pdishonest {
 	tellAndWait x C .
 	receive@x order?[v:string] . (  
-		tellRetract y D . (
+		tellAndWait y D . (
 			send@y req![v] . 
 			receive {
 				@y ok? . send@x amount![*:int]
 				@y no? . send@x abort!
-				t . send@x abort! 
+				after * . send@x abort! 
 			}
 		)
-		: send@x abort!
+		after * .send@x abort!
 	)
 	
 }
@@ -30,14 +30,14 @@ specification Pdishonest {
 specification Store {
 	tellAndWait x C .
 	receive@x order?[v:string] . 
-	tellRetract y D . 
+	tellAndWait y D . 
 		send@y req![*:string] . 
 		receive {
 			@y ok? . send@x amount![*:int]
 			@y no? . send@x abort!
-			t . send@x abort! . receive@y ok? no?	
+			after * . send@x abort! . receive@y ok? no?	
 		}
-	: send@x abort!
+	after * .send@x abort!
 	
 }
 
@@ -51,7 +51,7 @@ specification Buyer {
 }
 
 specification Distributor {
-	tellRetract x { req? string . ( ok! (+) no! ) } .
+	tellAndWait x { req? string . ( ok! (+) no! ) } .
 	receive@x req?[msg:string] .
 	if *:boolean
 	then send@x ok!

@@ -1,6 +1,7 @@
 import it.unica.co2.co2.AndExpression
 import it.unica.co2.co2.ArithmeticSigned
 import it.unica.co2.co2.Ask
+import it.unica.co2.co2.BoolPlaceholder
 import it.unica.co2.co2.BooleanLiteral
 import it.unica.co2.co2.BooleanNegation
 import it.unica.co2.co2.BooleanType
@@ -13,8 +14,8 @@ import it.unica.co2.co2.DoOutput
 import it.unica.co2.co2.Equals
 import it.unica.co2.co2.Expression
 import it.unica.co2.co2.IfThenElse
+import it.unica.co2.co2.IntPlaceholder
 import it.unica.co2.co2.IntType
-import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Minus
 import it.unica.co2.co2.MultiOrDiv
 import it.unica.co2.co2.NumberLiteral
@@ -30,12 +31,13 @@ import it.unica.co2.co2.Send
 import it.unica.co2.co2.Session
 import it.unica.co2.co2.SessionType
 import it.unica.co2.co2.StringLiteral
+import it.unica.co2.co2.StringPlaceholder
 import it.unica.co2.co2.StringType
+import it.unica.co2.co2.SwitchCase
 import it.unica.co2.co2.Tau
 import it.unica.co2.co2.Tell
+import it.unica.co2.co2.TellAndReturn
 import it.unica.co2.co2.TellAndWait
-import it.unica.co2.co2.TellProcess
-import it.unica.co2.co2.TellRetract
 import it.unica.co2.co2.Type
 import it.unica.co2.co2.Variable
 import it.unica.co2.co2.VariableDeclaration
@@ -72,6 +74,15 @@ judgments {
  */
 axiom Placeholder
 	G |- Placeholder fn : fn.type
+
+axiom IntPlaceholder
+	G |- IntPlaceholder fn : Co2Factory::eINSTANCE.createIntType
+
+axiom BoolPlaceholder
+	G |- BoolPlaceholder fn : Co2Factory::eINSTANCE.createBooleanType
+
+axiom StringPlaceholder
+	G |- StringPlaceholder fn : Co2Factory::eINSTANCE.createStringType
  
 axiom NumeralLiteral
 	G |- NumberLiteral num : Co2Factory::eINSTANCE.createIntType
@@ -238,6 +249,12 @@ rule IfThenElse
 			feature Co2Package::eINSTANCE.ifThenElse_If
 from {
 	G |- ifThenElse.^if : var Type ifType		// get Expression type
+	
+	if (ifType==null) {	
+		ifType = Co2Factory.eINSTANCE.createBooleanType				// infer the type
+		ifThenElse.^if = Co2Factory.eINSTANCE.createBoolPlaceholder	// update the AST
+	}
+		
 	ifType instanceof BooleanType				// check the type
 }
 
@@ -379,8 +396,8 @@ from {
 
 
 
-rule TellProcess
-	G |= TellProcess tell
+rule TellAndReturn
+	G |= TellAndReturn tell
 from {
 	G ||- tell.session : var Type fnType		// get FreeName type
 	
@@ -405,19 +422,22 @@ from {
 			source tell
 			feature Co2Package::eINSTANCE.tellAndWait_Session
 	}
-}
-
-
-rule TellRetract
-	G |= TellRetract tell
-from {
-	G ||- tell.session : var Type fnType		// get FreeName type
 	
-	if (!(fnType instanceof SessionType)) {		// check the type
-		fail
-			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
-			source tell
-			feature Co2Package::eINSTANCE.tellRetract_Session
+	if (tell.isTimeout) {
+		
+		G |- tell.timeoutValue.value : var Type tType
+		
+		if (tType==null) {
+			tType = Co2Factory.eINSTANCE.createIntType						// infer the type
+			tell.timeoutValue.value = Co2Factory.eINSTANCE.createIntPlaceholder	// update the AST
+		}
+		
+		if (!(tType instanceof IntType)) {		// check the type
+			fail
+				error "invalid type '"+stringRep(tType)+"', 'int' expected"			
+				source tell
+				feature Co2Package::eINSTANCE.tellAndWait_TimeoutValue
+		}
 	}
 }
 
@@ -452,6 +472,23 @@ from {
 			}
 				
 			actionNames.get(input.session.name).add(action)
+		}
+	}
+
+	if (receive.isTimeout) {
+		
+		G |- receive.timeoutValue.value : var Type tType
+		
+		if (tType==null) {
+			tType = Co2Factory.eINSTANCE.createIntType								// infer the type
+			receive.timeoutValue.value = Co2Factory.eINSTANCE.createIntPlaceholder	// update the AST
+		}
+		
+		if (!(tType instanceof IntType)) {		// check the type
+			fail
+				error "invalid type '"+stringRep(tType)+"', 'int' expected"			
+				source receive
+				feature Co2Package::eINSTANCE.receive_TimeoutValue
 		}
 	}
 	
@@ -491,6 +528,15 @@ rule SwitchCase
 from {
 	
 	G |- intChoice.exp : var Type fnType
+	G |- intChoice.cases.get(0).match : var Type fstCaseType
+	
+	if (fnType==null || fnType.value==null) {	// check if the type is null OR if the type value is undefined due to type inference
+		fnType = fstCaseType // infer the type from the first case statement if the expression has no type
+		
+		// populate the AST for the code's generation
+		if (fnType instanceof IntType) intChoice.exp = Co2Factory::eINSTANCE.createIntPlaceholder
+		if (fnType instanceof StringType) intChoice.exp = Co2Factory::eINSTANCE.createStringPlaceholder
+	}
 	
 	if (!(fnType instanceof IntType) && !(fnType instanceof StringType)) {		// check the type
 		fail
@@ -569,19 +615,13 @@ from {
 }
 
 checkrule CheckTellProcess for
-    TellProcess proc
+    TellAndReturn proc
 from {
     empty |= proc
 }
 
 checkrule CheckTellAndWait for
     TellAndWait proc
-from {
-    empty |= proc
-}
-
-checkrule CheckTellRetract for
-    TellRetract proc
 from {
     empty |= proc
 }

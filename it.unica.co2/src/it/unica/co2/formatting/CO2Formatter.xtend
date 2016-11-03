@@ -5,10 +5,9 @@ package it.unica.co2.formatting
 
 import com.google.inject.Inject
 import it.unica.co2.services.CO2GrammarAccess
-import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
 import org.eclipse.xtext.formatting.impl.FormattingConfig
-import org.eclipse.xtext.util.Pair;
+
 /**
  * This class contains custom formatting declarations.
  * 
@@ -61,7 +60,7 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
         
         // set no space around :
         c.setNoSpace().around(variableAccess.colonKeyword_1);
-        c.setNoSpace().around(placeholderAccess.colonKeyword_2);
+        c.setNoSpace().around(placeholderAccess.colonKeyword_2_0);
                 
         // process definitions
         c.setLinewrap(2).before(processDefinitionRule);
@@ -97,12 +96,11 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
         c.setLinewrap().around(receiveAccess.inputsAssignment_2);
         
         // tell retract
-        c.setLinewrap().before(tellRetractRule);
-        c.setLinewrap().after(tellRetractAccess.fullStopKeyword_2_0);
-        c.setLinewrap().after(tellRetractAccess.processAssignment_2_1);
-        c.setIndentation(tellRetractAccess.fullStopKeyword_2_0,retractedProcessAccess.colonKeyword_0);
-        c.setLinewrap().before(retractedProcessAccess.colonKeyword_0);
-        c.setSpace(" ").after(retractedProcessAccess.colonKeyword_0);
+        c.setLinewrap().before(tellAndWaitRule);
+        c.setLinewrap().after(tellAndWaitAccess.fullStopKeyword_2_0);
+        c.setLinewrap().after(tellAndWaitAccess.processAssignment_2_1);
+        c.setIndentation(tellAndWaitAccess.fullStopKeyword_2_0,tellAndWaitAccess.timeoutAfterKeyword_3_0_0);
+        c.setLinewrap().before(tellAndWaitAccess.timeoutAfterKeyword_3_0_0);
         
         // if then else
         c.setLinewrap().before(ifThenElseRule);
@@ -119,9 +117,9 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap().after(parallelProcessesAccess.verticalLineKeyword_1_0);
 		
 		// parenthesis
-		c.setLinewrap().after(nextAccess.leftParenthesisKeyword_10_0);
-		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_10_2);
-		c.setIndentation(nextAccess.leftParenthesisKeyword_10_0, nextAccess.rightParenthesisKeyword_10_2);
+		c.setLinewrap().after(nextAccess.leftParenthesisKeyword_9_0);
+		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_9_2);
+		c.setIndentation(nextAccess.leftParenthesisKeyword_9_0, nextAccess.rightParenthesisKeyword_9_2);
 	
 		// alternative send/receive
 		c.setNoSpace().after(sendAltAccess.sendKeyword_0);
