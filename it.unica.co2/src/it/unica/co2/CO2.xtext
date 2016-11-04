@@ -107,7 +107,7 @@ Next returns Process:
 /* PREFIXES */
 
 Tell:
-	"tell" session=[VariableDeclaration]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
+	"telll" session=[VariableDeclaration]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
 ;
 
 Retract:
@@ -146,17 +146,17 @@ TellAndReturn:
 ;
 
 TellAndWait:
-	"tellAndWait" session=Session  
+	"tell" session=Session  
 	("." process=Next)?
 	(=> timeout?="after" timeoutValue=TimeoutProcessRetract)?
 ;
 
 TimeoutProcess:
-	value=(Expression|Placeholder) ("." tProcess=Next)?
+	value=(Expression|Placeholder) ("->" tProcess=Next)?
 ;
 
 TimeoutProcessRetract returns TimeoutProcess:
-	value=(Expression|Placeholder) ("." tProcess=RetractedProcess)?
+	value=(Expression|Placeholder) ("->" tProcess=RetractedProcess)?
 ;
 
 RetractedProcess returns Process:
@@ -164,53 +164,55 @@ RetractedProcess returns Process:
 ;
 
 SendGroup:
-	Send | SendAlt
+	Send
 ;
 
 Send:
-	"send" action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")? "to" session=[VariableDeclaration] ("." next=Next)?
+	"send" OutputAction ("." next=Next)?
 ;
 
-SendAlt returns Send:
-	"send" "@" session=[VariableDeclaration] action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")? ("." next=Next)?
+OutputAction returns Send:
+	(action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")? "to" session=[VariableDeclaration]) |
+	("@" session=[VariableDeclaration] action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")?)
 ;
 
 ReceiveGroup:
-	SimpleReceive | SimpleReceiveAlt | Receive
+	SimpleReceive | Receive
 ;
 
 SimpleReceive returns Receive:
 	"receive" inputs+=Input
 ;
 
-SimpleReceiveAlt returns Receive:
-	"receive" inputs+=InputAlt
-;
-
 Receive:
 	"receive" "{" 
-		(inputs+=(Input|InputAlt))+
+		(inputs+=MInput)+
 		(timeout?="after" timeoutValue=TimeoutProcess)?		
 	"}"	
 ;
 
 Input:
-	(actions+=[ExtAction] "?")+ ("["variable=Variable"]")? "from" session=[VariableDeclaration] ("." next=Next)?
+	InputAction ("." next=Next)?
 ;
 
-InputAlt returns Input:
-	"@" session=[VariableDeclaration] (actions+=[ExtAction] "?")+ ("["variable=Variable"]")? ("." next=Next)?
+MInput returns Input:
+	InputAction ("->" next=Next)?
+;
+
+InputAction returns Input:
+	((actions+=[ExtAction] "?")+ ("["variable=Variable"]")? "from" session=[VariableDeclaration]) |
+	("@" session=[VariableDeclaration] (actions+=[ExtAction] "?")+ ("["variable=Variable"]")?)
 ;
 
 SwitchCase:
 	"switch" exp=(Expression|Placeholder) "{"
 		cases+=Case+
-		(default?="default" "=>" defaultProc=Next)?
+		(default?="default" "->" defaultProc=Next)?
 	"}"
 ;
 
 Case: 
-	"case" match=(NumberLiteral|StringLiteral) "=>" caseProc=Next
+	"case" match=(NumberLiteral|StringLiteral) "->" caseProc=Next
 ;
 
 

@@ -23,25 +23,13 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
 	override protected void configureFormatting(FormattingConfig c) {
 		// It's usually a good idea to activate the following three statements.
 		// They will add and preserve newlines around comments
-//		c.setLinewrap(0, 1, 2).before(SL_COMMENTRule)
-//		c.setLinewrap(0, 1, 2).before(ML_COMMENTRule)
-//		c.setLinewrap(0, 1, 1).after(ML_COMMENTRule)
+		c.setLinewrap(0, 1, 2).before(SL_COMMENTRule)
+		c.setLinewrap(0, 1, 2).before(ML_COMMENTRule)
+		c.setLinewrap(0, 1, 1).after(ML_COMMENTRule)
 		
 		// set a maximum size of lines
 //        c.setAutoLinewrap(160);
 		
-//		// set no space before all commas
-//        for(Keyword comma : findKeywords(",")) {
-//            c.setNoSpace().before(comma);
-//        }
-//        
-//        // set no space around all parentheses
-//        for(Pair<Keyword, Keyword> p : findKeywordPairs("(", ")")) {
-//            c.setNoSpace().around(p.getFirst());
-//            c.setNoSpace().around(p.getSecond());
-//        }
-//        
-
 		findKeywords("{").forEach[k | c.setSpace(" ").before(k);]
 		findKeywords(",").forEach[k | c.setNoSpace().before(k);]	// set no space before all commas
 		findKeywords("!").forEach[k | c.setNoSpace().before(k);]	// set no space before all !
@@ -95,13 +83,12 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
         c.setLinewrap().before(receiveAccess.rightCurlyBracketKeyword_4);
         c.setLinewrap().around(receiveAccess.inputsAssignment_2);
         
-        // tell retract
+        // tellAndWait
         c.setLinewrap().before(tellAndWaitRule);
-        c.setLinewrap().after(tellAndWaitAccess.fullStopKeyword_2_0);
-        c.setLinewrap().after(tellAndWaitAccess.processAssignment_2_1);
-        c.setIndentation(tellAndWaitAccess.fullStopKeyword_2_0,tellAndWaitAccess.timeoutAfterKeyword_3_0_0);
-        c.setLinewrap().before(tellAndWaitAccess.timeoutAfterKeyword_3_0_0);
-        
+//        c.setLinewrap().after(tellAndWaitAccess.processAssignment_2_1);
+//        c.setIndentation(tellAndWaitAccess.fullStopKeyword_2_0,tellAndWaitAccess.timeoutAfterKeyword_3_0_0);
+//        c.setLinewrap().before(tellAndWaitAccess.timeoutAfterKeyword_3_0_0);
+
         // if then else
         c.setLinewrap().before(ifThenElseRule);
         c.setLinewrap().before(ifThenElseAccess.thenKeyword_3);		// then in a newline
@@ -121,9 +108,14 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_9_2);
 		c.setIndentation(nextAccess.leftParenthesisKeyword_9_0, nextAccess.rightParenthesisKeyword_9_2);
 	
-		// alternative send/receive
-		c.setNoSpace().after(sendAltAccess.sendKeyword_0);
-		c.setNoSpace().after(simpleReceiveAltAccess.receiveKeyword_0);
-		findKeywords("@").forEach[k | c.setNoSpace().after(k);]	// set no space before all ?
+		// send/receive
+		c.setLinewrap().before(sendRule);
+        c.setLinewrap().before(simpleReceiveRule);
+		c.setNoSpace().between(simpleReceiveAccess.receiveKeyword_0,inputActionAccess.commercialAtKeyword_1_0);
+		c.setNoSpace().after(inputActionAccess.commercialAtKeyword_1_0);
+		c.setNoSpace().around(outputActionAccess.commercialAtKeyword_1_0);
+	
+		findKeywords("after").forEach[k | c.setLinewrap().before(k);]
+		
 	}
 }

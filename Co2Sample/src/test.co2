@@ -1,46 +1,48 @@
 /*
  * empty contract
  */
- 
-contract c1{
-	a! . b? (+) c! 
+contract c1 {
+	a! . b? (+) c!
 }
-contract c2{(((nil)))}
+
+contract c2 {
+	( ( ( nil ) ) )
+}
 
 /*
  * single element
  */
- contract c3{
- 	a!
- }
+contract c3 {
+	a!
+}
 
 /*
  * simple internal sum
  */
-contract c4{
+contract c4 {
 	a! (+) b! (+) c!
 }
 
 /*
  * simple external sum
  */
-contract c5{
+contract c5 {
 	a? + b? + c?
-} 
+}
 
 /*
  * simple recursion
  */
-contract c6{
-	a!. c6
+contract c6 {
+	a! . c6
 }
 
-contract c7{
+contract c7 {
 	a? . c7
 }
 
-contract c8{
-	a!.(a! (+) b!) (+) b!.(a? + b?) (+) c!.c?.c7
+contract c8 {
+	a! . ( a! (+) b! ) (+) b! . ( a? + b? ) (+) c! . c? . c7
 }
 
 //contract scope {
@@ -77,25 +79,23 @@ contract bank {
 }
 
 contract police {
- 	a! (+) b!
+	a! (+) b!
 }
- 
+
 /*
  * Reference example
  */
 contract foo {
-	a!.nil (+) b!. police
+	a! . nil (+) b! . police
 }
- 
 
 contract CA {
-	order ? int . (amount ! unit . pay ? unit (+) abort ! unit)
+	order?int . ( amount!unit . pay?unit (+) abort!unit )
 }
 
 contract CI {
-	reqI ! unit . (okI ? unit + abortI ? unit)
+	reqI!unit . ( okI?unit + abortI?unit )
 }
- 
 
 contract C {
 	a! . ( a1?int + a2? . b! ) (+) b!
@@ -106,8 +106,8 @@ specification P100 {
 }
 
 specification P ( n:int, x:session ) {
-	tellAndWait x { a?string . b!int } . receive a?[n:string] from x . send b![n]
-	to x . tellAndWait x { a?string . b!int } . send b! to x
+	tell x { a?string . b!int } . receive a?[n:string] from x . send b![n] to x .
+	tell x { a?string . b!int } . send b! to x
 
 }
 
@@ -118,7 +118,7 @@ specification Bo2 ( x:session ) {
 }
 
 specification Bo ( x:session ) {
-	if * 
+	if *
 	then send b! to x . send b! to x . send b! to x
 	else send b! to x . send b! to x
 
@@ -141,30 +141,28 @@ contract D {
 }
 
 specification Foo {
-	tellAndWait x D .
+	tell x D .
 	switch * {
-		case "0" => send a! to x . receive a? b? from x
-		case "1" => 
+		case "0" -> send a! to x . receive a? b? from x
+		case "1" ->
 			receive {
 				a? from x
 				b? from x
 			}
-		case "2" =>
+		case "2" ->
 			if *
 			then send b! to x
-		default => send b![42] to x
+		default -> send b![42] to x
 	}
 }
 
-contract A { 
+contract A {
 	a!
 }
 
 specification Poo {
-	tellAndWait x A .
-	tellAndWait y B . 
-		send a! to x
-	after * . send a! to x 
+	tell x A . tell y B . send a! to x
+	after * -> send a! to x
 }
 
 contract B {
@@ -177,6 +175,7 @@ specification Parall ( x:session, y:session ) {
 	send@x a! |
 	receive {
 		@x a?
+		@y b?
 	} |
 	receive@y a2? a1?[n:int]
 }

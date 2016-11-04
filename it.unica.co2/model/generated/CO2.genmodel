@@ -97,10 +97,10 @@
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//SendGroup"/>
     <genClasses ecoreClass="CO2.ecore#//Send">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/action"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/value"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/session"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Send/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//ReceiveGroup"/>
     <genClasses ecoreClass="CO2.ecore#//Receive">
@@ -109,10 +109,10 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Receive/timeoutValue"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//Input">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/next"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/actions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/variable"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/session"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//Input/next"/>
     </genClasses>
     <genClasses ecoreClass="CO2.ecore#//SwitchCase">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CO2.ecore#//SwitchCase/exp"/>
