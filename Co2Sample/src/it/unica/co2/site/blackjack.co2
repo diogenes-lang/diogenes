@@ -21,24 +21,24 @@ contract Cd {
  * specification
  */
 specification P {
-	tellAndWait xd Cd .	
-	tellAndWait xp Cp . Pplay(xp, xd, 0) 
-	after * . send@xd abort!
+	tell xd Cd .	
+	tell xp Cp . Pplay(xp, xd, 0) 
+	after * -> send@xd abort!
 }
 
 specification Pplay(xp:session, xd:session, np:int) {
 	
 	receive {
-		@xp  hit? . send@xd next! . Pdeck(xp, xd, np)
-		@xp  stand? . Qstand(xp,xd,np,0)
-		after * . send@xd abort! . PabortP(xp) 
+		@xp  hit? -> send@xd next! . Pdeck(xp, xd, np)
+		@xp  stand? -> Qstand(xp,xd,np,0)
+		after * -> send@xd abort! . PabortP(xp) 
 	}
 }
 
 specification Pdeck(xp:session, xd:session, np:int) {
 	receive {
-		@xd card?[n:int] . Pcard(xp,xd,np+n,n)
-		after * . send@xp abort! . PabortD(xd)
+		@xd card?[n:int] -> Pcard(xp,xd,np+n,n)
+		after * -> send@xp abort! . PabortD(xd)
 	}
 }
 
@@ -56,8 +56,8 @@ specification Qstand(xp:session, xd:session, np:int, nd:int) {
 
 specification Qdeck(xp:session, xd:session, np:int, nd:int) {
 	receive {
-		@xd card?[n:int]. Qcard(xp,xd,np,nd)
-		after * . send@xp abort!. PabortD(xd)
+		@xd card?[n:int] -> Qcard(xp,xd,np,nd)
+		after * -> send@xp abort!. PabortD(xd)
 	}
 }
 

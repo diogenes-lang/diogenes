@@ -18,7 +18,7 @@ contract CI {
 
 process PA {
 	(x:session) (
-		tell x CA . (
+		telll x CA . (
 			do x order ? n:int . (if n>50 then PAY(x) else INS(x))
 		) 
 	)
@@ -29,7 +29,7 @@ process PAY (x:session) {
 }
    
 process INS (x:session) {
-	(y:session) tell y CI . (
+	(y:session) telll y CI . (
         do y reqI ! . ( 
               do y okI ? . PAY(x)
             + do y abortI ? . do x abort !

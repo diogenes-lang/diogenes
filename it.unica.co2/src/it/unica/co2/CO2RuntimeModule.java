@@ -3,8 +3,6 @@
  */
 package it.unica.co2;
 
-import org.eclipse.xtext.linking.impl.AbstractCleaningLinker;
-
 import it.unica.co2.xsemantics.CO2StringRepresentation;
 import it.xsemantics.runtime.StringRepresentation;
 

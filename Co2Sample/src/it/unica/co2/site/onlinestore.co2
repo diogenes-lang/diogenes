@@ -27,20 +27,20 @@ contract Cpay {
  * specification
  */
 specification Store {
-	tellAndWait x C . 
+	tell x C . 
 	receive@x addToCart?[n:int] . Padd(x,n)
 }
 
 specification Padd (x:session, total:int) {
 	receive {
-		@x addToCart?[n:int] . Padd(x, total+n)
-		@x checkout? . Ppay(x, total)
+		@x addToCart?[n:int] -> Padd(x, total+n)
+		@x checkout? -> Ppay(x, total)
 	}
 }
 
 specification Ppay (x:session, amount:int) {
 	receive { 
-		@x pay?[s:string] . Pack(x,amount) 
+		@x pay?[s:string] -> Pack(x,amount) 
 		@x cancel?
 	}
 }

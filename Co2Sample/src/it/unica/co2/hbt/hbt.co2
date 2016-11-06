@@ -19,12 +19,11 @@ contract Cd {
 	buyB! . (pay2E! . shipB? (+) quit!)
 }
 
-specification P {
-	
-	tellAndWait x Cb .
+specification P {	
+	tell x Cb .
 	receive {
-		@x buyA? . receive@x pay1E? . send@x shipA!
-		@x buyB? . Phonest(x) // or Pdishonest(x)
+		@x buyA? -> receive@x pay1E? . send@x shipA!
+		@x buyB? -> Phonest(x) // or Pdishonest(x)
 	}
 }
 
@@ -33,7 +32,7 @@ specification Pdishonest (x:session) {
 	then
 		send@x quote1E! . receive@x pay1E? . send@x shipB!
 	else
-		tellAndWait y Cd .
+		tell y Cd .
 		send@y buyB! . 
 		send@x quote3E! . 
 		receive@x pay3E? . 
@@ -46,29 +45,29 @@ process Phonest (x:session) {
 	if *:boolean
 	then
 		send@x quote1E! . receive@x pay1E? . send@x shipB!
-	else
-		tellAndWait y Cd .
+	else 
+		tell y Cd .
 			send@y buyB! . 
 			send@x quote3E! . 
 			receive {
-				@x pay3E? . (
+				@x pay3E? -> (
 					do y pay2E! . 
 						receive {
-							@y shipB? . send@x shipB!
-							after * . ( send@x refund! | receive@y shipB? )
+							@y shipB? -> send@x shipB!
+							after * -> ( send@x refund! | receive@y shipB? )
 						}
 					+ t .  (	// pay2E! might be stuck because y does not consume buyB
 				        send@x refund! | send@y quit!
 				    )
 				)
-				@x quit? . send@y quit!
-				after * . (
+				@x quit? -> send@y quit!
+				after * -> (
 					receive {
-						@x pay3E? . send@x refund! 
+						@x pay3E? -> send@x refund! 
 						@x quit?
 					}
 					| send@y quit!
 				)
 			}
-		after * . send@x abort!
+		after * -> send@x abort!
 }

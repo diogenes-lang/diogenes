@@ -21,12 +21,12 @@ specification Store {
 }
 
 specification BuyerA {
-    tellAndWait x { order! string . price? int } .
+    tell x { order! string . price? int } .
     send@x order![*:string] .
     receive@x price?[n:int] }
 
 specification BuyerB {
-    tellAndWait x { order! string . ( price? int + unavailable? + availablefrom? string) } .
+    tell x { order! string . ( price? int + unavailable? + availablefrom? string) } .
     send@x order![*:string] .
     receive {
           @x price?[n:int]
@@ -46,7 +46,7 @@ contract C2 {
 }
 
 specification Store2 {
-    tellAndWait x C2 . StoreLoop(x)
+    tell x C2 . StoreLoop(x)
 }
 
 specification StoreLoop ( x:session ) {
@@ -86,9 +86,9 @@ contract D {
 }
 
 specification StoreDishonest2 {
-	tellAndWait x C .
+	tell x C .
 	receive@x order?[v:string] . (  
-		tellAndWait y D . (
+		tell y D . (
 			send@y req![v] . 
 			receive {
 				@y ok? -> send@x price![*:int]
@@ -99,9 +99,9 @@ specification StoreDishonest2 {
 }
 
 specification StoreDishonest3 {
-    tellAndWait x C .
+    tell x C .
     receive@ x order?[v:string] .
-        tellAndWait y D .
+        tell y D .
         send@ y req![*:string] .
         receive {
             @y ok? -> send@x price![*:int]
@@ -114,9 +114,9 @@ specification StoreDishonest3 {
  * StoreHonest
  */
 specification StoreHonest {
-    tellAndWait x C .
+    tell x C .
     receive@x order?[v:string] . (
-        tellAndWait y D . (
+        tell y D . (
             send@y req![v] .
             receive@x order? .
             receive {

@@ -11,7 +11,7 @@ contract C {
 }
 	
 specification P {
-	tellAndWait x C .
+	tell x C .
 	receive@x req?[msg:string] .
 	if (msg=="valid message")
 	then send@x ok!

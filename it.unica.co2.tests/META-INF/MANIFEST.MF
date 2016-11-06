@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: it.unica.co2.tests
-Bundle-Vendor: My Company
+Bundle-Vendor: Università degli Studi di Cagliari
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: it.unica.co2.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -20,5 +20,5 @@ Import-Package: org.apache.log4j,
  org.junit.runners;version="4.5.0",
  org.junit.runners.model;version="4.5.0",
  org.hamcrest.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: it.unica.co2

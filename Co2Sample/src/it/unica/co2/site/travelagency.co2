@@ -32,7 +32,7 @@ contract D {
  * specification
  */
 specification P {
-	tellAndWait xu Cu . 
+	tell xu Cu . 
 	receive@xu tripDets?[yt:string] . 
 	receive@xu budget?[bud:int] . P1(xu,yt,bud)
 }
@@ -48,9 +48,9 @@ specification P1 (xu: session, yt:string, bud:int) {
 
 specification Pquote (xu:session, xf:session, xh:session, bud:int) {
 	receive {
-		@xf quote?[n:int] . Pquote1(xu,xf,xh,n,bud)
-		@xh quote?[n:int] . Pquote1(xu,xh,xf,n,bud) 
-		after * . Pabort(xu,xh,xf)
+		@xf quote?[n:int] -> Pquote1(xu,xf,xh,n,bud)
+		@xh quote?[n:int] -> Pquote1(xu,xh,xf,n,bud) 
+		after * -> Pabort(xu,xh,xf)
 	}
 }
 
@@ -62,11 +62,11 @@ specification Pquote1 (x:session, x1:session, x2:session, quote:int, budget:int)
 
 specification Pquote2 (x:session, x1:session, x2:session, quote:int, budget:int) {
 	receive {
-		@x2 quote?[quote2:int] . 
+		@x2 quote?[quote2:int] -> 
 			if quote+quote2<budget
 			then Ppay(x,x1,x2,quote+quote2)
 			else Pabort(x,x1,x2)
-		after * . Pabort(x,x1,x2)
+		after * -> Pabort(x,x1,x2)
 	}
 }
 
@@ -80,8 +80,8 @@ specification Pabort (x:session, x1:session, x2:session) {
 specification Ppay (x:session, x1:session, x2:session, amount:int) {
 	send@x quote![amount] . (
 		receive {
-			@x pay?. Pconfirm1(x,x1,x2)
-			after * . Pabort(x,x1,x2)
+			@x pay? -> Pconfirm1(x,x1,x2)
+			after * -> Pabort(x,x1,x2)
 		}
 	)
 }
@@ -89,16 +89,16 @@ specification Ppay (x:session, x1:session, x2:session, amount:int) {
 specification Pconfirm1 (x:session, x1:session, x2:session) {
 	send@x1 pay!. send@x2 pay! . (
 		receive { 
-			@x1 confirm?. Pconfirm2(x,x1,x2)
-			after * . Pabort(x,x1,x2)
+			@x1 confirm? -> Pconfirm2(x,x1,x2)
+			after * -> Pabort(x,x1,x2)
 		}
 	)
 }
 
 specification Pconfirm2 (x:session, x1:session, x2:session) {
 	receive {
-		@x2 confirm?. Pcommit(x,x1,x2)
-		after * . Pabort(x,x1,x2)
+		@x2 confirm? -> Pcommit(x,x1,x2)
+		after * -> Pabort(x,x1,x2)
 	}
 }
 

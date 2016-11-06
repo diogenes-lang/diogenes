@@ -93,11 +93,10 @@ class CO2Formatter extends AbstractDeclarativeFormatter {
         c.setLinewrap().before(ifThenElseRule);
         c.setLinewrap().before(ifThenElseAccess.thenKeyword_3);		// then in a newline
         c.setLinewrap().before(ifThenElseAccess.elseKeyword_5_0);	// else in a new line
-//        c.setLinewrap().after(ifThenElseAccess.thenKeyword_3);
-//        c.setLinewrap().after(ifThenElseAccess.elseKeyword_5_0);
-//        c.setIndentationIncrement().after(ifThenElseAccess.thenKeyword_3);
-//        c.setIndentationIncrement().after(ifThenElseAccess.elseKeyword_5_0);
-//        c.setIndentationDecrement().after(ifThenElseAccess.thenAssignment_4);
+        
+//		c.setIndentationIncrement().between(ifThenElseAccess.thenKeyword_3, ifThenElseAccess.elseAssignment_5_1);
+//		c.setIndentationIncrement().between(ifThenElseAccess.elseKeyword_5_0, ifThenElseRule);
+//		c.setIndentationDecrement().after(ifThenElseAccess.thenAssignment_4);
 //		c.setIndentationDecrement().after(ifThenElseAccess.elseAssignment_5_1);
 
 		// parallel

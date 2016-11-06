@@ -19,14 +19,14 @@ contract CV {
  * PROCESSES
  */
 process P {
-	(x:session) tell x CB . ask x . (
+	(x:session) telll x CB . ask x . (
 		do x clickPay? . do x pay? code:string 
 		+ do x clickVoucher? . Q(x)
 	)
 }
 
 process Q (x:session) {
-	(y:session) tell y CV . (
+	(y:session) telll y CV . (
 		ask y . Q1(x,y)
 		+ t . (
 			AbortX(x) | ask y . AbortY(y)
