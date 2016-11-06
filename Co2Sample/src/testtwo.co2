@@ -1,0 +1,21 @@
+
+honesty Alice Bob
+
+contract A {
+	a! (+) b!
+}
+
+contract B {
+	a? + b?
+}
+
+specification Alice {
+	tell x A . 
+	send@x a!
+}
+
+
+specification Bob {
+	tell x B . 
+	receive@x a? b?
+}

@@ -182,7 +182,7 @@ class JavaGenerator extends AbstractIGenerator {
 			«IF hasIntPlaceholders»static final Integer intPlaceholder = 42;«ENDIF»
 			«IF hasStringPlaceholders»static final String stringPlaceholder = "42";«ENDIF»
 			«IF hasBooleanPlaceholders»static final Boolean booleanPlaceholder = false;«ENDIF»
-			«IF hasSessionPlaceholders»static final SessionI<TST> sessionPlaceholder = null;«ENDIF»
+			«IF hasSessionPlaceholders»static final SessionI<SessionType> sessionPlaceholder = null;«ENDIF»
 			«IF hasIntPlaceholders||hasStringPlaceholders||hasBooleanPlaceholders||hasSessionPlaceholders»
 			
 			«ENDIF»
@@ -213,9 +213,9 @@ class JavaGenerator extends AbstractIGenerator {
 	def String getImports() {
 		'''
 		import static it.unica.co2.api.contract.utils.ContractFactory.*;
-		import it.unica.co2.api.contract.Contract;
 		import it.unica.co2.api.contract.ContractDefinition;
 		import it.unica.co2.api.contract.Recursion;
+		import it.unica.co2.api.contract.SessionType;
 		import it.unica.co2.api.contract.Sort;
 		import it.unica.co2.api.process.CO2Process;
 		import it.unica.co2.api.process.Participant;
@@ -226,7 +226,6 @@ class JavaGenerator extends AbstractIGenerator {
 		import co2api.Public;
 		import co2api.Session;
 		import co2api.SessionI;
-		import co2api.TST;
 		import co2api.TimeExpiredException;
 		'''
 	}
@@ -325,7 +324,7 @@ class JavaGenerator extends AbstractIGenerator {
 		if (fn.type instanceof IntType)			"Integer"
 		else if (fn.type instanceof StringType)	"String"
 		else if(fn.type instanceof BooleanType) "Boolean" 
-		else if(fn.type instanceof SessionType) "SessionI<TST>"
+		else if(fn.type instanceof SessionType) "SessionI<SessionType>"
 	}
 	
 	def String getFieldsAndConstructor(ProcessDefinition p) {
@@ -394,7 +393,7 @@ class JavaGenerator extends AbstractIGenerator {
 		tell.session.name = freshName						// update the name all its references
 		
 		'''
-		Public<TST> «tell.session.name» = tell(«mainClass».«tell.session.contractReference.name»);
+		Public<SessionType> «tell.session.name» = tell(«mainClass».«tell.session.contractReference.name»);
 		
 		«tell.process.toJava»'''
 	}
@@ -406,10 +405,10 @@ class JavaGenerator extends AbstractIGenerator {
 		
 		'''
 		«IF tell.isTimeout»
-			Public<TST> «publicName» = tell(«mainClass».«tell.session.contractReference.name», «tell.timeoutValue.value.javaExpression»*1000); «IF tell.timeoutValue instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
+			Public<SessionType> «publicName» = tell(«mainClass».«tell.session.contractReference.name», «tell.timeoutValue.value.javaExpression»*1000); «IF tell.timeoutValue instanceof Placeholder»//TODO: remove the placeholder/s«ENDIF»
 			
 			try {
-				Session<TST> «tell.session.name» = «publicName».waitForSession();
+				Session<SessionType> «tell.session.name» = «publicName».waitForSession();
 				
 				«tell.process.toJava»
 			}
@@ -420,7 +419,7 @@ class JavaGenerator extends AbstractIGenerator {
 				«ENDIF»
 			}
 		«ELSE»
-			Session<TST> «tell.session.name» = tellAndWait(«mainClass».«tell.session.contractReference.name»);
+			Session<SessionType> «tell.session.name» = tellAndWait(«mainClass».«tell.session.contractReference.name»);
 			
 			«IF tell.process!=null»
 				«tell.process.toJava»
