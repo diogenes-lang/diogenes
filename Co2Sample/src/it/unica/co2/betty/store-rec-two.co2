@@ -1,0 +1,37 @@
+single package it.unica.co2.betty
+
+honesty StoreRec
+
+contract Crec {  
+    addToCart? string . Crec
+    + checkout? . ( 
+           price! int . (accept? + reject?)
+           (+) unavailable!
+    )
+}
+
+contract D { req! string . ( ok? + no? ) }
+
+specification StoreRec { tell x Crec . Loop(x) }
+specification Loop(x:session) {
+    receive {
+        @x addToCart?[item:string] -> Loop(x)
+        @x checkout? -> Checkout(x)
+    }
+}
+specification Checkout(x:session) {
+    tell y D .
+        send@y req![*:string] .
+        receive {
+            @y ok?  -> send@x price![*:int] . receive {
+                    @x accept?
+                    @x reject?
+                }
+            @y no?  -> send@x unavailable!
+            after * -> (
+                send@x unavailable! |
+                receive@y ok? no? 
+            )                
+        }
+    after * -> send@x unavailable!
+}

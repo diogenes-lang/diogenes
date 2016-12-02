@@ -2,20 +2,31 @@
 honesty Alice Bob
 
 contract A {
-	a! (+) b!
+	a! (+) b! . B
 }
 
 contract B {
-	a? + b?
+	a? + b? . A
 }
 
 specification Alice {
-	tell x A . 
-	send@x a!
+	tell x A . P(x, "Alice")
 }
 
-
 specification Bob {
-	tell x B . 
-	receive@x a? b?
+	tell x B . P1(x,"Bob")
+}
+
+specification P(x:session, p:string) {
+	send@x b! . P1(x, p)
+}
+
+specification P1(x:session, p:string) {
+	receive {
+		@x a?
+		@x b? -> 
+			if p=="Alice" 
+			then send@x a! 
+			else P(x, p)
+	}
 }

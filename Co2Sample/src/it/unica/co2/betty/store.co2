@@ -1,7 +1,7 @@
 
 package it.unica.co2.betty
 
-honesty StoreDishonest1
+honesty BuyerA BuyerB
 
 
 /*
@@ -20,48 +20,73 @@ specification Store {
     ) 
 }
 
+//specification BuyerA {
+//    tell x { order! string . price? int } .
+//    send@x order![*:string] .
+//    receive@x price?[n:int] }
+//
+//specification BuyerB {
+//    tell x { order! string . ( price? int + unavailable? + availablefrom? string) } .
+//    send@x order![*:string] .
+//    receive {
+//          @x price?[n:int]
+//          @x unavailable?
+//          @x availablefrom? [date:string] }}
+
+
 specification BuyerA {
-    tell x { order! string . price? int } .
-    send@x order![*:string] .
-    receive@x price?[n:int] }
+    tell y { order! string . price? int } .
+    send@y order![*:string] .
+    receive@y price?[n:int] 
+}
 
 specification BuyerB {
-    tell x { order! string . ( price? int + unavailable? + availablefrom? string) } .
-    send@x order![*:string] .
+    tell y { order! string . ( price? int + unavailable?                      + availablefrom? string) } .
+    send@y order![*:string] .
     receive {
-          @x price?[n:int]
-          @x unavailable?
-          @x availablefrom? [date:string] }}
-
+        @y price?[n:int]
+        @y unavailable?
+        @y availablefrom?[date:string]}
+}
 
 /*
  * Store2 (recursive)
  */
 contract C2 {  
-	checkout? 
-    + order? string . ( 
-   		price! int . (accept? . C2 + reject? . C2)
-   		(+) unavailable! . C2
+	checkout? . ( 
+   		price! int . (accept? + reject?)
+   		(+) unavailable!
    	) 
+    + addToCart? string . C2
+}
+
+contract D1 {
+	req! string . ( ok? + no? )
 }
 
 specification Store2 {
-    tell x C2 . StoreLoop(x)
+    tell x C2 . StoreCart(x)
 }
 
-specification StoreLoop ( x:session ) {
+specification StoreCart(x:session) {
 	receive {
-		@x checkout?
-		@x order?[v:string] ->
-			if *:boolean
-			then 
-				send@x price![*:int] .
+		@x addToCart?[item:string] -> StoreCart(x)
+		@x checkout? -> (
+			tell y D1 .
+				send@y req![*:string] .
 				receive {
-					@x accept? -> StoreLoop ( x )
-					@x reject? -> StoreLoop ( x )
+					@y ok?  -> send@x price![*:int] . receive {
+							@x accept?
+							@x reject?
+						}
+					@y no?  -> send@x unavailable!
+					after * -> (
+						send@x unavailable! |
+						receive @y ok? no? 
+					)				
 				}
-			else 
-				send@x unavailable! . StoreLoop ( x )
+			after * -> send@x unavailable!	
+		)
 	}
 }
 
@@ -118,7 +143,6 @@ specification StoreHonest {
     receive@x order?[v:string] . (
         tell y D . (
             send@y req![v] .
-            receive@x order? .
             receive {
                 @y ok? -> send@x price![*:int]
                 @y no? -> send@x unavailable!
@@ -133,4 +157,3 @@ specification StoreHonest {
         after * -> send@x unavailable!
    )
 }
- 
