@@ -62,7 +62,7 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	}
 	
 	def dispatch IScope getDeclaredVariables(DoInput proc) {
-		if (proc.variable==null)
+		if (proc.variable===null)
 			return getDeclaredVariables(proc.eContainer)
 		else
 			return Scopes.scopeFor(
@@ -73,7 +73,7 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	}
 	
 	def dispatch IScope getDeclaredVariables(Input proc) {
-		if (proc.variable==null)
+		if (proc.variable===null)
 			return getDeclaredVariables(proc.eContainer)
 		else
 			return Scopes.scopeFor(
@@ -154,7 +154,7 @@ class CO2ScopeProvider extends AbstractDeclarativeScopeProvider {
 
 		var List<? extends EObject> candidates;
 		
-		if (session.contract!=null) {
+		if (session.contract!==null) {
 			candidates = EcoreUtil2.getAllContentsOfType(session.contract, clazz);
 		}
 		else {
