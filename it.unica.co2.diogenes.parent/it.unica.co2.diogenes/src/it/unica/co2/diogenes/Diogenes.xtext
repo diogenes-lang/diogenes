@@ -1,0 +1,371 @@
+grammar it.unica.co2.diogenes.Diogenes with org.eclipse.xtext.common.Terminals
+
+generate diogenes "http://www.unica.it/co2/diogenes/Diogenes"
+
+    
+CO2System:  
+    package=PackageDeclaration?
+//  imports+=Import*
+    honesty=HonestyDeclaration?
+    contractsAndProcessesDeclaration=ContractsAndProcessesDeclaration
+;
+
+
+PackageDeclaration:
+    (single?="single")? "package" name=QualifiedName
+;
+
+Import:
+    'import' importedNamespace=QualifiedName ("." "*")?;
+
+QualifiedName:
+  ID ('.' ID)*;
+    
+HonestyDeclaration:
+    {HonestyDeclaration} "honesty" (processes+=[ProcessDefinition])+
+;
+
+ContractsAndProcessesDeclaration:
+    {ContractsAndProcessesDeclaration} (contracts+=ContractDefinition | processes+=ProcessDefinition)*
+;
+
+ProcessDefinition:
+    {ProcessDefinition} (withoutRestrictions?="process" | "specification") name=ID ("("(params+=Variable ("," params+=Variable)*)?")")? "{" 
+        process=(ParallelProcesses)?
+    "}"
+;
+
+ParallelProcesses:
+    processes+=DelimitedProcess  ("|" processes+=DelimitedProcess)*
+;
+
+DelimitedProcess:
+    ("(" (freeNames+=Variable ("," freeNames+=Variable)*)? ")")? process=Process
+;
+
+
+
+Process:
+    EmptyProcess |
+    Sum |
+    IfThenElse |
+    TellAndReturn |
+    TellAndWait |
+    SendGroup |
+    ReceiveGroup |
+    SwitchCase |
+    ProcessCall |
+    "(" ParallelProcesses ")"
+;
+
+EmptyProcess:
+    {EmptyProcess} value="nil"
+;
+
+Sum:
+    prefixes+=Prefix ("+" prefixes+=Prefix)*
+;
+
+SingleSum returns Sum:
+    prefixes+=Prefix
+;
+
+IfThenElse:
+    {IfThenElse}
+    'if' if=(Expression|Placeholder)
+    "then" then=Next
+    (=>'else' else=Next)?
+;
+
+ProcessCall:
+    reference=[ProcessDefinition] ("("(params+=Expression ("," params+=Expression)*)?")")?
+;
+
+Prefix:
+    Tau         ("." next=Next)? |
+    Tell        ("." next=Next)? |
+    DoOutput    ("." next=Next)? |
+    DoInput     ("." next=Next)? |
+    Ask         ("." next=Next)? |
+    Retract     ("." next=Next)?
+;
+
+Next returns Process:
+    EmptyProcess |
+    SingleSum |
+    IfThenElse |
+    TellAndReturn |
+    TellAndWait |
+    SendGroup |
+    ReceiveGroup |
+    SwitchCase |
+    ProcessCall |
+    "(" ParallelProcesses ")"
+;
+
+
+/* PREFIXES */
+
+Tell:
+    "telll" session=[VariableDeclaration]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
+;
+
+Retract:
+    "retract" session=[VariableDeclaration]
+;
+
+DoOutput:
+    "do" session=[VariableDeclaration] actionName=[IntAction] "!" (value=Expression)?
+;
+
+DoInput:
+    "do" session=[VariableDeclaration] actionName=[ExtAction] "?" (variable=Variable)?
+;
+
+Ask:
+    "ask" session=[VariableDeclaration] formula=Formula?
+;
+
+Tau:
+    {Tau} "t"
+;
+
+Formula:
+    "True" | "(" "True" ")"
+;
+
+
+
+
+
+/* MACROS */
+
+TellAndReturn:
+    "tellAndReturn" session=Session
+    ("." process=Next)?
+;
+
+TellAndWait:
+    "tell" session=Session  
+    ("." process=Next)?
+    (=> timeout?="after" timeoutValue=TimeoutProcessRetract)?
+;
+
+TimeoutProcess:
+    value=(Expression|Placeholder) ("->" tProcess=Next)?
+;
+
+TimeoutProcessRetract returns TimeoutProcess:
+    value=(Expression|Placeholder) ("->" tProcess=RetractedProcess)?
+;
+
+RetractedProcess returns Process:
+    {RetractedProcess} process=Next
+;
+
+SendGroup:
+    Send
+;
+
+Send:
+    "send" OutputAction ("." next=Next)?
+;
+
+OutputAction returns Send:
+    (action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")? "to" session=[VariableDeclaration]) |
+    ("@" session=[VariableDeclaration] action=[IntAction] "!" ("["value=(Expression|Placeholder)"]")?)
+;
+
+ReceiveGroup:
+    SimpleReceive | Receive
+;
+
+SimpleReceive returns Receive:
+    "receive" inputs+=Input
+;
+
+Receive:
+    "receive" "{" 
+        (inputs+=MInput)+
+        (timeout?="after" timeoutValue=TimeoutProcess)?     
+    "}" 
+;
+
+Input:
+    InputAction ("." next=Next)?
+;
+
+MInput returns Input:
+    InputAction ("->" next=Next)?
+;
+
+InputAction returns Input:
+    ((actions+=[ExtAction] "?")+ ("["variable=Variable"]")? "from" session=[VariableDeclaration]) |
+    ("@" session=[VariableDeclaration] (actions+=[ExtAction] "?")+ ("["variable=Variable"]")?)
+;
+
+SwitchCase:
+    "switch" exp=(Expression|Placeholder) "{"
+        cases+=Case+
+        (default?="default" "->" defaultProc=Next)?
+    "}"
+;
+
+Case: 
+    "case" match=(NumberLiteral|StringLiteral) "->" caseProc=Next
+;
+
+
+// ======================================================================================
+// expression grammar
+// ======================================================================================
+/*
+ * the following part is extracted (and partially modified) from 
+ *      http://xsemantics.sourceforge.net/xsemantics-documentation/Expressions-example.html#Expressions
+ * a type-system is also provided
+ */
+Expression:
+    OrExpression;
+
+OrExpression returns Expression:
+    AndExpression (({OrExpression.left=current} '||' ) right=AndExpression)*
+;
+
+AndExpression returns Expression:
+    Comparison (({AndExpression.left=current} '&&') right=Comparison)*
+;
+
+Comparison returns Expression:
+       Equals
+       (({Comparison.left=current} op=('>=' | '<=' | '>' | '<') ) right=Equals)*;
+
+Equals returns Expression:
+       Addition 
+       (({Equals.left=current} op=("==") ) right=Addition)*;
+ 
+Addition returns Expression:
+    Multiplication
+    (({Plus.left=current} '+' | {Minus.left=current} '-')
+        right=Multiplication)*; 
+
+Multiplication returns Expression:
+    Prefixed (({MultiOrDiv.left=current} op=("*"|"/")) right=Prefixed)*;
+
+Prefixed returns Expression:
+    {BooleanNegation} =>"!" expression=Atomic | /* right associativity */
+    {ArithmeticSigned} =>"-" expression=Atomic | /* right associativity */
+    Atomic;
+
+Atomic returns Expression:
+    '(' Expression ')' |
+    NumberLiteral |
+    StringLiteral |
+    BooleanLiteral |
+    {VariableReference} ref=[VariableDeclaration]
+;
+
+NumberLiteral: value=INT;
+StringLiteral: value=STRING;
+BooleanLiteral: value=('true'|'false');
+
+Placeholder returns Expression:
+    {Placeholder} "*" (":" type=Type)?
+;
+
+IntPlaceholder returns Placeholder:
+    {IntPlaceholder} "*"
+;
+
+BoolPlaceholder returns Placeholder:
+    {BoolPlaceholder} "*"
+;
+
+StringPlaceholder returns Placeholder:
+    {StringPlaceholder} "*"
+;
+
+VariableDeclaration:
+    Variable | Session
+;
+
+Variable: 
+    name=ID ":" type=Type
+;
+
+Session: 
+    name=ID
+    ("{" contract=Contract? "}" | contractReference=[ContractDefinition])
+;
+
+Type:
+    {IntType} value='int' |
+    {StringType} value='string' |
+    {BooleanType} value=('boolean'|'bool') |
+    {SessionType} value='session'
+;
+
+
+
+
+// ======================================================================================
+// contract grammar
+// ======================================================================================
+
+ContractDefinition:
+    {ContractDefinition} "contract" name=ID "{" 
+        contract=(Contract)? 
+    "}" 
+;
+
+Contract:
+    IntSum | 
+    ExtSum | 
+    EmptyContract |
+    "(" Contract ")"
+;
+
+EmptyContract:
+    value="nil"
+;
+
+IntSum:
+    actions+=IntAction ("(+)" actions+=IntAction)*
+;
+
+ExtSum:
+    actions+=ExtAction ( "+"  actions+=ExtAction)*
+;
+
+NextContract returns Contract:
+    SingleIntSum |
+    SingleExtSum |
+    EmptyContract |
+    "(" Contract ")" |
+    {ContractReference} ref=[ContractDefinition]
+;
+
+SingleIntSum returns IntSum:
+    actions+=IntAction
+;
+
+SingleExtSum returns ExtSum:
+    actions+=ExtAction
+;
+
+Action:
+    IntAction | ExtAction
+;
+
+IntAction:
+    name=ID "!" (type=ActionType)? ("." next=(NextContract))?
+;
+
+ExtAction:
+    name=ID "?" (type=ActionType)? ("." next=(NextContract))?
+;
+
+ActionType: 
+    {UnitActionType} value="unit" |
+    {IntActionType} value="int" |
+    {StringActionType} value="string"
+;

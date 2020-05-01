@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://www.unica.it/co2/diogenes/Diogenes"
+			class = "it.unica.co2.diogenes.diogenes.DiogenesPackage"
+			genModel = "model/generated/Diogenes.genmodel" />
+	</extension>
+</plugin>

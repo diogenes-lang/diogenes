@@ -1,0 +1,633 @@
+import it.unica.co2.diogenes.diogenes.AndExpression
+import it.unica.co2.diogenes.diogenes.ArithmeticSigned
+import it.unica.co2.diogenes.diogenes.Ask
+import it.unica.co2.diogenes.diogenes.BoolPlaceholder
+import it.unica.co2.diogenes.diogenes.BooleanLiteral
+import it.unica.co2.diogenes.diogenes.BooleanNegation
+import it.unica.co2.diogenes.diogenes.BooleanType
+import it.unica.co2.diogenes.diogenes.Comparison
+import it.unica.co2.diogenes.diogenes.DelimitedProcess
+import it.unica.co2.diogenes.diogenes.DoInput
+import it.unica.co2.diogenes.diogenes.DoOutput
+import it.unica.co2.diogenes.diogenes.Equals
+import it.unica.co2.diogenes.diogenes.Expression
+import it.unica.co2.diogenes.diogenes.IfThenElse
+import it.unica.co2.diogenes.diogenes.IntPlaceholder
+import it.unica.co2.diogenes.diogenes.IntType
+import it.unica.co2.diogenes.diogenes.Minus
+import it.unica.co2.diogenes.diogenes.MultiOrDiv
+import it.unica.co2.diogenes.diogenes.NumberLiteral
+import it.unica.co2.diogenes.diogenes.OrExpression
+import it.unica.co2.diogenes.diogenes.Placeholder
+import it.unica.co2.diogenes.diogenes.Plus
+import it.unica.co2.diogenes.diogenes.Prefix
+import it.unica.co2.diogenes.diogenes.ProcessCall
+import it.unica.co2.diogenes.diogenes.ProcessDefinition
+import it.unica.co2.diogenes.diogenes.Receive
+import it.unica.co2.diogenes.diogenes.Retract
+import it.unica.co2.diogenes.diogenes.Send
+import it.unica.co2.diogenes.diogenes.Session
+import it.unica.co2.diogenes.diogenes.SessionType
+import it.unica.co2.diogenes.diogenes.StringLiteral
+import it.unica.co2.diogenes.diogenes.StringPlaceholder
+import it.unica.co2.diogenes.diogenes.StringType
+import it.unica.co2.diogenes.diogenes.SwitchCase
+import it.unica.co2.diogenes.diogenes.Tau
+import it.unica.co2.diogenes.diogenes.Tell
+import it.unica.co2.diogenes.diogenes.TellAndReturn
+import it.unica.co2.diogenes.diogenes.TellAndWait
+import it.unica.co2.diogenes.diogenes.Type
+import it.unica.co2.diogenes.diogenes.Variable
+import it.unica.co2.diogenes.diogenes.VariableDeclaration
+import it.unica.co2.diogenes.diogenes.VariableReference
+import it.unica.co2.diogenes.validation.AbstractDiogenesValidator
+import java.util.ArrayList
+import java.util.HashMap
+import org.eclipse.emf.ecore.EObject
+import it.unica.co2.diogenes.diogenes.DiogenesFactory
+import it.unica.co2.diogenes.diogenes.DiogenesPackage
+
+system it.unica.co2.diogenes.xsemantics.DiogenesTypeSystem
+
+validatorExtends AbstractDiogenesValidator
+
+judgments {
+
+	type |- Expression expression : output Type
+		error "cannot type " + stringRep(expression)
+		source expression
+		
+	vartype ||- VariableDeclaration fn : output Type
+		error "cannot type " + stringRep(fn)
+		source fn
+		
+	validate |= EObject obj
+		error "cannot type " + stringRep(obj)
+		source obj
+	
+//	interpret |- Expression expression ~> output Object
+}
+
+
+/*
+ * expressions
+ */
+axiom Placeholder
+	G |- Placeholder fn : fn.type
+
+axiom IntPlaceholder
+	G |- IntPlaceholder fn : DiogenesFactory::eINSTANCE.createIntType
+
+axiom BoolPlaceholder
+	G |- BoolPlaceholder fn : DiogenesFactory::eINSTANCE.createBooleanType
+
+axiom StringPlaceholder
+	G |- StringPlaceholder fn : DiogenesFactory::eINSTANCE.createStringType
+ 
+axiom NumeralLiteral
+	G |- NumberLiteral num : DiogenesFactory::eINSTANCE.createIntType
+
+axiom BooleanLiteral
+	G |- BooleanLiteral bool : DiogenesFactory::eINSTANCE.createBooleanType
+
+axiom StringLiteral
+	G |- StringLiteral str : DiogenesFactory::eINSTANCE.createStringType
+
+rule MultiOrDiv
+	G |- MultiOrDiv multiOrDiv : IntType intType
+from {
+	G |- multiOrDiv.left : intType
+	G |- multiOrDiv.right : intType
+}
+
+rule Minus
+	G |- Minus minus : DiogenesFactory::eINSTANCE.createIntType
+from {
+	var IntType intType
+	G |- minus.left : intType
+	G |- minus.right : intType
+}
+
+rule Plus
+    G |- Plus plus : Type type
+from {
+    G |- plus.left : var Type leftType
+    G |- plus.right : var Type rightType
+    
+    {
+        (leftType instanceof StringType && rightType instanceof StringType)
+        type = DiogenesFactory::eINSTANCE.createStringType
+    }
+    or
+    {
+        (leftType instanceof IntType && rightType instanceof IntType)
+        type = leftType // i.e., IntType
+    }
+}
+
+rule Comparison
+	G |- Comparison comparison : DiogenesFactory::eINSTANCE.createBooleanType
+from {
+	var IntType intType
+	G |- comparison.left : intType
+	G |- comparison.right : intType
+}
+
+rule Equals
+	G |- Equals comparison : DiogenesFactory::eINSTANCE.createBooleanType
+from {
+	G |- comparison.left : var Type leftType
+	G |- comparison.right : var Type rightType
+	
+	// can compare only if they have the same type
+	(leftType.eClass == rightType.eClass)
+}
+
+rule BooleanNegation
+	G |- BooleanNegation negation : BooleanType boolType
+from {
+	G |- negation.expression : boolType
+}
+
+rule Or
+	G |- OrExpression orExp : BooleanType boolType
+from {
+	G |- orExp.left : boolType
+	G |- orExp.right : boolType
+}
+
+rule And
+	G |- AndExpression andExp : BooleanType boolType
+from {
+	G |- andExp.left : boolType
+	G |- andExp.right : boolType
+}
+
+rule ArithmeticSigned
+	G |- ArithmeticSigned signed : IntType intType
+from {
+	G |- signed.expression : intType
+}
+
+rule VariableReference
+	G |- VariableReference varRef : Type type
+from {
+	G ||- varRef.ref : type
+}
+
+
+
+axiom Variable
+	G ||- Variable fn : fn.type
+
+
+
+axiom Session
+	G ||- Session session : DiogenesFactory.eINSTANCE.createSessionType
+
+
+/*
+ * CO2 processes
+ */
+ 
+rule ProcessDefinition
+	G |= ProcessDefinition p
+from {
+	//check unique name of the parameters
+	for (var i=0; i<p.params.size; i++) {
+		for (var j=0; j<p.params.size; j++) {
+			if (i!=j && p.params.get(i).name == p.params.get(j).name) {
+				fail
+					error "duplicate parameter name '"+p.params.get(i).name+"'" 
+					source p.params.get(j)
+			}
+		}
+	}
+	
+	if (!p.withoutRestrictions) {
+		/*
+		 * the program cannot contain
+		 * - prefixes
+		 * - delimited processes with freeNames
+		 */
+		var children = p.eAllContents.filter[x| x instanceof Prefix || x instanceof DelimitedProcess].toIterable
+		for (node : children) {
+			
+			if (
+				(node instanceof DelimitedProcess && !(node as DelimitedProcess).freeNames.isEmpty) ||
+				node instanceof Prefix
+			) {
+				// fail only if declare freenames
+				fail 
+					error "this code is not allowed" 
+					source node
+			}
+			
+		}
+	}
+}
+
+rule DelimitedProcess
+	G |= DelimitedProcess p 
+from {
+	//check unique name of the parameters
+	for (var i=0; i<p.freeNames.size; i++) {
+		for (var j=0; j<p.freeNames.size; j++) {
+			if (i!=j && p.freeNames.get(i).name == p.freeNames.get(j).name) {
+				fail
+					error "duplicate free-name '"+p.freeNames.get(i).name+"'" 
+					source p.freeNames.get(j)
+			}
+		}
+	}	
+}
+
+rule IfThenElse
+	G |= IfThenElse ifThenElse
+		error "invalid boolean expression " + stringRep(ifThenElse.^if) 
+			source ifThenElse 
+			feature DiogenesPackage::eINSTANCE.ifThenElse_If
+from {
+	G |- ifThenElse.^if : var Type ifType		// get Expression type
+	
+	if (ifType === null) {	
+		ifType = DiogenesFactory.eINSTANCE.createBooleanType				// infer the type
+		ifThenElse.^if = DiogenesFactory.eINSTANCE.createBoolPlaceholder	// update the AST
+	}
+		
+	ifType instanceof BooleanType				// check the type
+}
+
+rule ProcessCall
+	G |= ProcessCall procCall
+from {
+	var procReferred = procCall.reference
+	
+	if ( procCall.params.size != procReferred.params.size ) {
+		fail
+			error "invalid number of parameters" 
+			source procCall
+	}
+	
+	for (var i=0; i<procCall.params.size; i++) {
+		
+		var actualParam = procCall.params.get(i)
+		var formalParam = procReferred.params.get(i)
+		
+		G |- actualParam : var Type actType	// get the Type of the actual parameter (Expression)
+		G ||- formalParam : var Type formalType	// get the Type of the actual parameter (Expression)
+		
+		if (actType.eClass != formalType.eClass) {
+			fail
+				error "invalid type '"+stringRep(actType)+"', '"+stringRep(formalType)+"' expected"
+				source actualParam 
+		}
+	}
+}
+
+/*
+ * CO2 prefixes
+ */
+axiom Tau
+	G |= Tau tau
+
+rule Tell
+	G |= Tell tell
+from {
+	G ||- tell.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source tell
+			feature DiogenesPackage::eINSTANCE.tell_Session
+	}
+}
+
+
+rule Ask
+	G |= Ask ask
+from {
+	G ||- ask.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source ask
+			feature DiogenesPackage::eINSTANCE.ask_Session
+	}
+}
+
+rule Retract
+	G |= Retract restract
+from {
+	G ||- restract.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source restract
+			feature DiogenesPackage::eINSTANCE.retract_Session
+	}
+}
+
+
+rule DoInput
+	G |= DoInput doInput
+from {
+	
+	/*
+	 * check the session
+	 */
+	G ||- doInput.session : var Type sessionType		// get FreeName type
+
+	if (!(sessionType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(sessionType)+"', 'session' expected"			
+			source doInput
+			feature DiogenesPackage::eINSTANCE.doInput_Session
+	}
+	
+	/*
+	 * check the variable
+	 */
+	if (doInput.variable !== null) {
+		G ||- doInput.variable : var Type varType		// get FreeName type
+
+		if ( !(varType instanceof IntType) && !(varType instanceof StringType)){
+			fail
+				error "invalid type '"+stringRep(varType)+"', 'int' or 'string' expected"
+				source doInput
+				feature DiogenesPackage::eINSTANCE.doInput_Variable
+		}
+	}	
+	
+}
+
+rule DoOutput
+	G |= DoOutput doOutput
+from {
+	/*
+	 * check the session
+	 */
+	G ||- doOutput.session : var Type sessionType		// get FreeName type
+	
+	if (!(sessionType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(sessionType)+"', 'session' expected"			
+			source doOutput
+			feature DiogenesPackage::eINSTANCE.doOutput_Session
+	}
+	
+	/*
+	 * check the expression
+	 */
+	if (doOutput.value !== null) {
+		G |- doOutput.value : var Type varType		// get Expression type
+
+		if ( !(varType instanceof IntType) && !(varType instanceof StringType)){
+			fail
+				error "invalid type '"+stringRep(varType)+"', 'int' or 'string' expected"
+				source doOutput
+				feature DiogenesPackage::eINSTANCE.doInput_Variable
+		}
+	}
+}
+
+
+
+rule TellAndReturn
+	G |= TellAndReturn tell
+from {
+	G ||- tell.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source tell
+			feature DiogenesPackage::eINSTANCE.tellAndWait_Session
+	}
+}
+
+
+
+rule TellAndWait
+	G |= TellAndWait tell
+from {
+	G ||- tell.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source tell
+			feature DiogenesPackage::eINSTANCE.tellAndWait_Session
+	}
+	
+	if (tell.isTimeout) {
+		
+		G |- tell.timeoutValue.value : var Type tType
+		
+		if (tType === null) {
+			tType = DiogenesFactory.eINSTANCE.createIntType						// infer the type
+			tell.timeoutValue.value = DiogenesFactory.eINSTANCE.createIntPlaceholder	// update the AST
+		}
+		
+		if (!(tType instanceof IntType)) {		// check the type
+			fail
+				error "invalid type '"+stringRep(tType)+"', 'int' expected"			
+				source tell
+				feature DiogenesPackage::eINSTANCE.tellAndWait_TimeoutValue
+		}
+	}
+}
+
+
+rule Receive
+	G |= Receive receive
+from {
+	
+	var actionNames = new HashMap
+	
+	for (input: receive.inputs){
+		
+		G ||- input.session : var Type fnType		// get FreeName type
+		
+		if (!(fnType instanceof SessionType)) {		// check the type
+			fail
+				error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+				source input
+				feature DiogenesPackage::eINSTANCE.input_Session
+		}
+
+		if (!actionNames.containsKey(input.session.name))
+			actionNames.put(input.session.name, new ArrayList())
+
+		for (action: input.actions){
+			
+			if (actionNames.get(input.session.name).contains(action)) {
+				fail 
+					error "Action names must be unique within the same session"
+					source input
+					feature DiogenesPackage::eINSTANCE.input_Actions
+			}
+				
+			actionNames.get(input.session.name).add(action)
+		}
+	}
+
+	if (receive.isTimeout) {
+		
+		G |- receive.timeoutValue.value : var Type tType
+		
+		if (tType === null) {
+			tType = DiogenesFactory.eINSTANCE.createIntType								// infer the type
+			receive.timeoutValue.value = DiogenesFactory.eINSTANCE.createIntPlaceholder	// update the AST
+		}
+		
+		if (!(tType instanceof IntType)) {		// check the type
+			fail
+				error "invalid type '"+stringRep(tType)+"', 'int' expected"			
+				source receive
+				feature DiogenesPackage::eINSTANCE.receive_TimeoutValue
+		}
+	}
+	
+}
+
+
+rule Send
+	G |= Send send
+from {
+	G ||- send.session : var Type fnType		// get FreeName type
+	
+	if (!(fnType instanceof SessionType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'session' expected"			
+			source send
+			feature DiogenesPackage::eINSTANCE.send_Session
+	}
+	
+	/*
+	 * check the expression
+	 */
+	if (send.value !== null) {
+		G |- send.value : var Type varType		// get Expression type
+
+		if ( !(varType instanceof IntType) && !(varType instanceof StringType)){
+			fail
+				error "invalid type '"+stringRep(varType)+"', 'int' or 'string' expected"
+				source send
+				feature DiogenesPackage::eINSTANCE.send_Value
+		}
+	}
+}
+
+
+rule SwitchCase
+	G |= SwitchCase intChoice
+from {
+	
+	G |- intChoice.exp : var Type fnType
+	G |- intChoice.cases.get(0).match : var Type fstCaseType
+	
+	if (fnType === null || fnType.value === null) {	// check if the type is null OR if the type value is undefined due to type inference
+		fnType = fstCaseType // infer the type from the first case statement if the expression has no type
+		
+		// populate the AST for the code's generation
+		if (fnType instanceof IntType) intChoice.exp = DiogenesFactory::eINSTANCE.createIntPlaceholder
+		if (fnType instanceof StringType) intChoice.exp = DiogenesFactory::eINSTANCE.createStringPlaceholder
+	}
+	
+	if (!(fnType instanceof IntType) && !(fnType instanceof StringType)) {		// check the type
+		fail
+			error "invalid type '"+stringRep(fnType)+"', 'int' or 'string' expected"			
+			source intChoice
+			feature DiogenesPackage::eINSTANCE.switchCase_Exp
+	}
+	
+	for (c: intChoice.cases){
+		G |- c.match : var Type matchType
+		
+		if (matchType.class != fnType.class) {		// check the type
+			fail
+				error "invalid type '"+stringRep(matchType)+"', '"+stringRep(fnType)+"' expected"			
+				source c
+				feature DiogenesPackage::eINSTANCE.case_Match
+		}
+	}
+}
+
+/*
+ * rule invocations
+ */
+checkrule CheckExpression for
+    Expression expr
+from {
+    empty |- expr : var Type type
+}
+
+checkrule CheckReferrable for
+    VariableDeclaration fn
+from {
+    empty ||- fn : var Type type
+}
+
+checkrule CheckPrefix for		// check all prefixes
+    Prefix prefix
+from {
+    empty |= prefix
+}
+
+checkrule CheckIf for
+    IfThenElse ifProc
+from {
+    empty |= ifProc
+}
+
+checkrule CheckProcessCall for
+    ProcessCall procCall
+from {
+    empty |= procCall
+}
+
+checkrule CheckProcessDefinition for
+    ProcessDefinition proc
+from {
+    empty |= proc
+}
+
+checkrule CheckDelimitedProcess for
+    DelimitedProcess proc
+from {
+    empty |= proc
+}
+
+checkrule CheckReceive for
+    Receive proc
+from {
+    empty |= proc
+}
+
+checkrule CheckSend for
+    Send proc
+from {
+    empty |= proc
+}
+
+checkrule CheckTellProcess for
+    TellAndReturn proc
+from {
+    empty |= proc
+}
+
+checkrule CheckTellAndWait for
+    TellAndWait proc
+from {
+    empty |= proc
+}
+
+checkrule CheckSwitchCase for
+	SwitchCase proc
+from {
+	empty |= proc
+}

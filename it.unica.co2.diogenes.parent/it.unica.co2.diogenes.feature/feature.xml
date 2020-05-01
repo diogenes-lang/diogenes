@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="it.unica.co2.diogenes.feature"
+	label="Diogenes Feature "
+	version="1.0.0.qualifier">
+	<plugin
+			id="it.unica.co2.diogenes"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+	<plugin
+			id="it.unica.co2.diogenes.ide"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+	<plugin
+			id="it.unica.co2.diogenes.ui"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+</feature>
