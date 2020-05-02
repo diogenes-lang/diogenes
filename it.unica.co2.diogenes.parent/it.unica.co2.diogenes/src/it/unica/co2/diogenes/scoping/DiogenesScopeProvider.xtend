@@ -29,142 +29,142 @@ import static extension it.unica.co2.diogenes.utils.CustomExtensions.*
 
 /**
  * This class contains custom scoping description.
- * 
+ *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
  * on how and when to use it.
  *
  */
 class DiogenesScopeProvider extends AbstractDeclarativeScopeProvider {
-	
-	/*
-	 * FreeName reference
-	 * 
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	def IScope scope_VariableDeclaration(EObject ctx, EReference ref) {
-		return getDeclaredVariables(ctx.eContainer);
-	}
-	
-	def IScope scope_Session(EObject ctx, EReference ref) {
-		return getDeclaredVariables(ctx.eContainer);
-	}
 
-	//utils: recursively get all free-names declarations until ProcessDefinition
-	def dispatch IScope getDeclaredVariables(EObject cont) {
-		return getDeclaredVariables(cont.eContainer);
-	}
-	
-	def dispatch IScope getDeclaredVariables(DelimitedProcess proc) {
-		return Scopes.scopeFor(
-			proc.freeNames
-			,
-			getDeclaredVariables(proc.eContainer) // outer
-		);
-	}
-	
-	def dispatch IScope getDeclaredVariables(DoInput proc) {
-		if (proc.variable===null)
-			return getDeclaredVariables(proc.eContainer)
-		else
-			return Scopes.scopeFor(
-				newArrayList(proc.variable)
-				,
-				getDeclaredVariables(proc.eContainer) // outer
-			);
-	}
-	
-	def dispatch IScope getDeclaredVariables(Input proc) {
-		if (proc.variable===null)
-			return getDeclaredVariables(proc.eContainer)
-		else
-			return Scopes.scopeFor(
-				newArrayList(proc.variable)
-				,
-				getDeclaredVariables(proc.eContainer) // outer
-			);
-	}
-	
-	def dispatch IScope getDeclaredVariables(RetractedProcess proc) {
-		return getDeclaredVariables(proc.eContainer.eContainer.eContainer); 	// skip the session declared by the tell
-	}
-	
-	def dispatch IScope getDeclaredVariables(TellAndReturn proc) {
-		return Scopes.scopeFor(
-			newArrayList(proc.session)
-			,
-			getDeclaredVariables(proc.eContainer) // outer
-		);
-	}
+    /*
+     * FreeName reference
+     *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    def IScope scope_VariableDeclaration(EObject ctx, EReference ref) {
+        return getDeclaredVariables(ctx.eContainer);
+    }
 
-	def dispatch IScope getDeclaredVariables(TellAndWait proc) {
-		return Scopes.scopeFor(
-			newArrayList(proc.session)
-			,
-			getDeclaredVariables(proc.eContainer) // outer
-		);
-	}
+    def IScope scope_Session(EObject ctx, EReference ref) {
+        return getDeclaredVariables(ctx.eContainer);
+    }
 
-	def dispatch IScope getDeclaredVariables(ProcessDefinition obj) {
-		return Scopes.scopeFor(obj.params); // stop recursion
-	}
-	
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	
-	
-	/*
-	 * Contract reference: refers to any contract
-	 * 
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	def IScope scope_ContractDefinition(EObject ctx, EReference ref) {
-		ctx.getIScopeForAllContentsOfClass(ContractDefinition);
-	}
-	
-	/*
-	 * Process reference: refers to any process
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	def IScope scope_ProcessDefinition(EObject ctx, EReference ref) {
-		ctx.getIScopeForAllContentsOfClass(ProcessDefinition);
-	}
+    //utils: recursively get all free-names declarations until ProcessDefinition
+    def dispatch IScope getDeclaredVariables(EObject cont) {
+        return getDeclaredVariables(cont.eContainer);
+    }
 
-	/*
-	 * Action references: resolve the references into advertised contracts
-	 * 
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	def IScope scope_IntAction(Send ctx, EReference ref) {
-		return getSessionScope(ctx.session, IntAction)
-//		return ctx.getIScopeForAllContentsOfClass(IntAction)
-	}
-	
-	def IScope scope_ExtAction(Input ctx, EReference ref) {
-		return getSessionScope(ctx.session, ExtAction)
-//		return ctx.getIScopeForAllContentsOfClass(ExtAction)
-	}
+    def dispatch IScope getDeclaredVariables(DelimitedProcess proc) {
+        return Scopes.scopeFor(
+            proc.freeNames
+            ,
+            getDeclaredVariables(proc.eContainer) // outer
+        );
+    }
 
-	def IScope scope_IntAction(DoOutput ctx, EReference ref) {
-		return getSessionScope(ctx.session, IntAction)
-//		return ctx.getIScopeForAllContentsOfClass(IntAction)
-	}
-	
-	def IScope scope_ExtAction(DoInput ctx, EReference ref) {
-		return getSessionScope(ctx.session, ExtAction)
-//		return ctx.getIScopeForAllContentsOfClass(ExtAction)
-	}
-	
-	
-	def dispatch IScope getSessionScope(Session session, Class<? extends EObject> clazz) {
+    def dispatch IScope getDeclaredVariables(DoInput proc) {
+        if (proc.variable===null)
+            return getDeclaredVariables(proc.eContainer)
+        else
+            return Scopes.scopeFor(
+                newArrayList(proc.variable)
+                ,
+                getDeclaredVariables(proc.eContainer) // outer
+            );
+    }
 
-		var List<? extends EObject> candidates;
-		
-		if (session.contract!==null) {
-			candidates = EcoreUtil2.getAllContentsOfType(session.contract, clazz);
-		}
-		else {
-			candidates = EcoreUtil2.getAllContentsOfType(session.contractReference.contract, clazz);			
-		}
-		return Scopes.scopeFor(candidates);
-	}
-	
-	def dispatch IScope getSessionScope(Variable session, Class<? extends EObject> clazz) {
-		return session.getIScopeForAllContentsOfClass(clazz)
-	}
-	
+    def dispatch IScope getDeclaredVariables(Input proc) {
+        if (proc.variable===null)
+            return getDeclaredVariables(proc.eContainer)
+        else
+            return Scopes.scopeFor(
+                newArrayList(proc.variable)
+                ,
+                getDeclaredVariables(proc.eContainer) // outer
+            );
+    }
+
+    def dispatch IScope getDeclaredVariables(RetractedProcess proc) {
+        return getDeclaredVariables(proc.eContainer.eContainer.eContainer);     // skip the session declared by the tell
+    }
+
+    def dispatch IScope getDeclaredVariables(TellAndReturn proc) {
+        return Scopes.scopeFor(
+            newArrayList(proc.session)
+            ,
+            getDeclaredVariables(proc.eContainer) // outer
+        );
+    }
+
+    def dispatch IScope getDeclaredVariables(TellAndWait proc) {
+        return Scopes.scopeFor(
+            newArrayList(proc.session)
+            ,
+            getDeclaredVariables(proc.eContainer) // outer
+        );
+    }
+
+    def dispatch IScope getDeclaredVariables(ProcessDefinition obj) {
+        return Scopes.scopeFor(obj.params); // stop recursion
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+    /*
+     * Contract reference: refers to any contract
+     *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    def IScope scope_ContractDefinition(EObject ctx, EReference ref) {
+        ctx.getIScopeForAllContentsOfClass(ContractDefinition);
+    }
+
+    /*
+     * Process reference: refers to any process
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    def IScope scope_ProcessDefinition(EObject ctx, EReference ref) {
+        ctx.getIScopeForAllContentsOfClass(ProcessDefinition);
+    }
+
+    /*
+     * Action references: resolve the references into advertised contracts
+     *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    def IScope scope_IntAction(Send ctx, EReference ref) {
+        return getSessionScope(ctx.session, IntAction)
+//        return ctx.getIScopeForAllContentsOfClass(IntAction)
+    }
+
+    def IScope scope_ExtAction(Input ctx, EReference ref) {
+        return getSessionScope(ctx.session, ExtAction)
+//        return ctx.getIScopeForAllContentsOfClass(ExtAction)
+    }
+
+    def IScope scope_IntAction(DoOutput ctx, EReference ref) {
+        return getSessionScope(ctx.session, IntAction)
+//        return ctx.getIScopeForAllContentsOfClass(IntAction)
+    }
+
+    def IScope scope_ExtAction(DoInput ctx, EReference ref) {
+        return getSessionScope(ctx.session, ExtAction)
+//        return ctx.getIScopeForAllContentsOfClass(ExtAction)
+    }
+
+
+    def dispatch IScope getSessionScope(Session session, Class<? extends EObject> clazz) {
+
+        var List<? extends EObject> candidates;
+
+        if (session.contract!==null) {
+            candidates = EcoreUtil2.getAllContentsOfType(session.contract, clazz);
+        }
+        else {
+            candidates = EcoreUtil2.getAllContentsOfType(session.contractReference.contract, clazz);
+        }
+        return Scopes.scopeFor(candidates);
+    }
+
+    def dispatch IScope getSessionScope(Variable session, Class<? extends EObject> clazz) {
+        return session.getIScopeForAllContentsOfClass(clazz)
+    }
+
 }

@@ -10,6 +10,7 @@ src-gen
 xsemantics-gen
 lib
 target
+plugin.xml_gen
 
 *.xtendbin
 *.class

@@ -11,7 +11,7 @@ import org.eclipse.xtext.generator.IGeneratorContext
 
 /**
  * Generates code from your model files on save.
- * 
+ *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 class DiogenesGenerator extends AbstractGenerator {
@@ -19,10 +19,10 @@ class DiogenesGenerator extends AbstractGenerator {
     @Inject MaudeGenerator maudeGenerator
     @Inject JavaGenerator javaGenerator
 
-	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
+    override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
         println("doGenerate() ++ "+resource.URI.lastSegment)
-        
+
         maudeGenerator.doGenerate(resource, fsa)
         javaGenerator.doGenerate(resource, fsa)
-	}
+    }
 }

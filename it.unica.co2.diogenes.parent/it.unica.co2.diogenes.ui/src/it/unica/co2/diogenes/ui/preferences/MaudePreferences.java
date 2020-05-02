@@ -14,7 +14,7 @@ import it.unica.co2.diogenes.ui.internal.DiogenesActivator;
 
 /**
  * Define the properties' page related to maude honesty checking
- * 
+ *
  * @author Nicola Atzei
  */
 public class MaudePreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {

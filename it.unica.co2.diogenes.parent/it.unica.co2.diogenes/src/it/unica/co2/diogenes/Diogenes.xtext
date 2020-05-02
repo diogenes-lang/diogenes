@@ -2,8 +2,8 @@ grammar it.unica.co2.diogenes.Diogenes with org.eclipse.xtext.common.Terminals
 
 generate diogenes "http://www.unica.it/co2/diogenes/Diogenes"
 
-    
-CO2System:  
+
+CO2System:
     package=PackageDeclaration?
 //  imports+=Import*
     honesty=HonestyDeclaration?
@@ -20,7 +20,7 @@ Import:
 
 QualifiedName:
   ID ('.' ID)*;
-    
+
 HonestyDeclaration:
     {HonestyDeclaration} "honesty" (processes+=[ProcessDefinition])+
 ;
@@ -30,7 +30,7 @@ ContractsAndProcessesDeclaration:
 ;
 
 ProcessDefinition:
-    {ProcessDefinition} (withoutRestrictions?="process" | "specification") name=ID ("("(params+=Variable ("," params+=Variable)*)?")")? "{" 
+    {ProcessDefinition} (withoutRestrictions?="process" | "specification") name=ID ("("(params+=Variable ("," params+=Variable)*)?")")? "{"
         process=(ParallelProcesses)?
     "}"
 ;
@@ -107,7 +107,7 @@ Next returns Process:
 /* PREFIXES */
 
 Tell:
-    "telll" session=[VariableDeclaration]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition]) 
+    "telll" session=[VariableDeclaration]  ("{" contract=Contract? "}" | contractReference=[ContractDefinition])
 ;
 
 Retract:
@@ -146,7 +146,7 @@ TellAndReturn:
 ;
 
 TellAndWait:
-    "tell" session=Session  
+    "tell" session=Session
     ("." process=Next)?
     (=> timeout?="after" timeoutValue=TimeoutProcessRetract)?
 ;
@@ -185,10 +185,10 @@ SimpleReceive returns Receive:
 ;
 
 Receive:
-    "receive" "{" 
+    "receive" "{"
         (inputs+=MInput)+
-        (timeout?="after" timeoutValue=TimeoutProcess)?     
-    "}" 
+        (timeout?="after" timeoutValue=TimeoutProcess)?
+    "}"
 ;
 
 Input:
@@ -211,7 +211,7 @@ SwitchCase:
     "}"
 ;
 
-Case: 
+Case:
     "case" match=(NumberLiteral|StringLiteral) "->" caseProc=Next
 ;
 
@@ -220,7 +220,7 @@ Case:
 // expression grammar
 // ======================================================================================
 /*
- * the following part is extracted (and partially modified) from 
+ * the following part is extracted (and partially modified) from
  *      http://xsemantics.sourceforge.net/xsemantics-documentation/Expressions-example.html#Expressions
  * a type-system is also provided
  */
@@ -240,13 +240,13 @@ Comparison returns Expression:
        (({Comparison.left=current} op=('>=' | '<=' | '>' | '<') ) right=Equals)*;
 
 Equals returns Expression:
-       Addition 
+       Addition
        (({Equals.left=current} op=("==") ) right=Addition)*;
- 
+
 Addition returns Expression:
     Multiplication
     (({Plus.left=current} '+' | {Minus.left=current} '-')
-        right=Multiplication)*; 
+        right=Multiplication)*;
 
 Multiplication returns Expression:
     Prefixed (({MultiOrDiv.left=current} op=("*"|"/")) right=Prefixed)*;
@@ -288,11 +288,11 @@ VariableDeclaration:
     Variable | Session
 ;
 
-Variable: 
+Variable:
     name=ID ":" type=Type
 ;
 
-Session: 
+Session:
     name=ID
     ("{" contract=Contract? "}" | contractReference=[ContractDefinition])
 ;
@@ -312,14 +312,14 @@ Type:
 // ======================================================================================
 
 ContractDefinition:
-    {ContractDefinition} "contract" name=ID "{" 
-        contract=(Contract)? 
-    "}" 
+    {ContractDefinition} "contract" name=ID "{"
+        contract=(Contract)?
+    "}"
 ;
 
 Contract:
-    IntSum | 
-    ExtSum | 
+    IntSum |
+    ExtSum |
     EmptyContract |
     "(" Contract ")"
 ;
@@ -364,7 +364,7 @@ ExtAction:
     name=ID "?" (type=ActionType)? ("." next=(NextContract))?
 ;
 
-ActionType: 
+ActionType:
     {UnitActionType} value="unit" |
     {IntActionType} value="int" |
     {StringActionType} value="string"

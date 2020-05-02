@@ -3,22 +3,6 @@
 <target name="it.unica.co2.diogenes.target" sequenceNumber="1">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.pde.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.draw2d.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
-			<repository location="https://download.eclipse.org/releases/2020-03"/>
-		</location>
-		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="0.0.0"/>
-			<repository location="https://download.eclipse.org/modeling/emft/mwe/updates/milestones/S202002170915/"/>
-		</location>
-		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
-			<repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/milestones/"/>
-		</location>
-		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<unit id="com.google.gson" version="2.8.2.v20180104-1110"/>
 			<unit id="org.antlr.runtime" version="3.2.0.v201101311130"/>
 			<unit id="org.junit" version="4.12.0.v201504281640"/>
@@ -34,5 +18,18 @@
 			<unit id="io.github.classgraph" version="4.8.35.v20190528-1517"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/2020-03"/>
 		</location>
+        <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+            <unit id="org.eclipse.xsemantics.runtime.feature.feature.group" version="1.19.0.v20191203-1556"/>
+            <repository location="http://download.eclipse.org/xsemantics/milestones/1.19"/>
+        </location>
+    	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+        	<repository location="http://download.eclipse.org/releases/2019-12"/>
+        	<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.11.1.v20191121-1148"/>
+        	<unit id="org.eclipse.jdt.feature.group" version="3.18.200.v20191210-0610"/>
+    	</location>
+    	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+        	<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0/"/>
+        	<unit id="org.eclipse.xtext.sdk.feature.group" version="2.20.0.v20191202-1256"/>
+    	</location>
 	</locations>
 </target>

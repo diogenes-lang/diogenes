@@ -126,7 +126,7 @@ public class MaudeJob extends WorkspaceJob {
 
     /**
      * Read the given IResource and return its content as String.
-     * 
+     *
      * @param resource
      * @return the content of the IResource
      */

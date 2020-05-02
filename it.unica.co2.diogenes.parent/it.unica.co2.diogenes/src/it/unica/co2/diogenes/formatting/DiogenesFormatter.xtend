@@ -10,102 +10,102 @@ import it.unica.co2.diogenes.services.DiogenesGrammarAccess
 
 /**
  * This class contains custom formatting declarations.
- * 
+ *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#formatting
  * on how and when to use it.
- * 
+ *
  * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  */
 class DiogenesFormatter extends AbstractDeclarativeFormatter {
 
-	@Inject extension DiogenesGrammarAccess
-	
-	override protected void configureFormatting(FormattingConfig c) {
-		// It's usually a good idea to activate the following three statements.
-		// They will add and preserve newlines around comments
-		c.setLinewrap(0, 1, 2).before(SL_COMMENTRule)
-		c.setLinewrap(0, 1, 2).before(ML_COMMENTRule)
-		c.setLinewrap(0, 1, 1).after(ML_COMMENTRule)
-		
-		// set a maximum size of lines
+    @Inject extension DiogenesGrammarAccess
+
+    override protected void configureFormatting(FormattingConfig c) {
+        // It's usually a good idea to activate the following three statements.
+        // They will add and preserve newlines around comments
+        c.setLinewrap(0, 1, 2).before(SL_COMMENTRule)
+        c.setLinewrap(0, 1, 2).before(ML_COMMENTRule)
+        c.setLinewrap(0, 1, 1).after(ML_COMMENTRule)
+
+        // set a maximum size of lines
         c.setAutoLinewrap(200);
-		
-		findKeywords("{").forEach[k | c.setSpace(" ").before(k);]
-		findKeywords(",").forEach[k | c.setNoSpace().before(k);]	// set no space before all commas
-		findKeywords("!").forEach[k | c.setNoSpace().before(k);]	// set no space before all !
-		findKeywords("?").forEach[k | c.setNoSpace().before(k);]	// set no space before all ?
-		findKeywordPairs("[","]").forEach[p | 						// set no space within []
-			c.setNoSpace().around(p.first);
-        	c.setNoSpace().before(p.second);
+
+        findKeywords("{").forEach[k | c.setSpace(" ").before(k);]
+        findKeywords(",").forEach[k | c.setNoSpace().before(k);]    // set no space before all commas
+        findKeywords("!").forEach[k | c.setNoSpace().before(k);]    // set no space before all !
+        findKeywords("?").forEach[k | c.setNoSpace().before(k);]    // set no space before all ?
+        findKeywordPairs("[","]").forEach[p |                         // set no space within []
+            c.setNoSpace().around(p.first);
+            c.setNoSpace().before(p.second);
         ]
-		
+
         // set no space before action types
         c.setNoSpace().before(actionTypeRule);
-        
+
         // set no space for ! and ? into actions
         c.setNoSpace().between(intActionAccess.nameAssignment_0, intActionAccess.exclamationMarkKeyword_1);
         c.setNoSpace().between(extActionAccess.nameAssignment_0, extActionAccess.questionMarkKeyword_1);
-        
+
         // set no space around :
         c.setNoSpace().around(variableAccess.colonKeyword_1);
         c.setNoSpace().around(placeholderAccess.colonKeyword_2_0);
-                
+
         // process definitions
         c.setLinewrap(2).before(processDefinitionRule);
         c.setIndentation(processDefinitionAccess.getLeftCurlyBracketKeyword_4,processDefinitionAccess.rightCurlyBracketKeyword_6);
         c.setLinewrap().after(processDefinitionAccess.getLeftCurlyBracketKeyword_4);
         c.setLinewrap().before(processDefinitionAccess.rightCurlyBracketKeyword_6);
-        
+
         // contract definitions
         c.setLinewrap(2).before(contractDefinitionRule);
         c.setIndentation(contractDefinitionAccess.leftCurlyBracketKeyword_3,contractDefinitionAccess.rightCurlyBracketKeyword_5);
         c.setLinewrap().after(contractDefinitionAccess.leftCurlyBracketKeyword_3);
         c.setLinewrap().before(contractDefinitionAccess.rightCurlyBracketKeyword_5);
-        
+
         // switch-case
         c.setLinewrap().before(switchCaseRule);
         c.setIndentation(switchCaseAccess.leftCurlyBracketKeyword_2,switchCaseAccess.rightCurlyBracketKeyword_5);
         c.setLinewrap().after(switchCaseAccess.leftCurlyBracketKeyword_2);
         c.setLinewrap().before(switchCaseAccess.rightCurlyBracketKeyword_5);
-        
+
         c.setLinewrap().after(caseRule);
         c.setIndentationIncrement().after(caseAccess.matchAssignment_1);
         c.setIndentationDecrement().after(caseRule);
-        
-    	c.setIndentationIncrement().after(switchCaseAccess.defaultAssignment_4_0);
-    	c.setIndentationDecrement().after(switchCaseAccess.defaultProcAssignment_4_2);
-        
-        
+
+        c.setIndentationIncrement().after(switchCaseAccess.defaultAssignment_4_0);
+        c.setIndentationDecrement().after(switchCaseAccess.defaultProcAssignment_4_2);
+
+
         // receive
         c.setLinewrap().before(receiveRule);
         c.setIndentation(receiveAccess.leftCurlyBracketKeyword_1,receiveAccess.rightCurlyBracketKeyword_4);
         c.setLinewrap().after(receiveAccess.leftCurlyBracketKeyword_1);
         c.setLinewrap().before(receiveAccess.rightCurlyBracketKeyword_4);
         c.setLinewrap().around(receiveAccess.inputsAssignment_2);
-        
+
         // tellAndWait
         c.setLinewrap().before(tellAndWaitRule);
 
         // if then else
         c.setLinewrap().before(ifThenElseRule);
-        c.setLinewrap().before(ifThenElseAccess.thenKeyword_3);		// then in a newline
-        c.setLinewrap().before(ifThenElseAccess.elseKeyword_5_0);	// else in a new line
-        
-		// parallel
-		c.setLinewrap().after(parallelProcessesAccess.verticalLineKeyword_1_0);
-		
-		// parenthesis
-		c.setLinewrap().after(nextAccess.leftParenthesisKeyword_9_0);
-		c.setLinewrap().before(nextAccess.rightParenthesisKeyword_9_2);
-		c.setIndentation(nextAccess.leftParenthesisKeyword_9_0, nextAccess.rightParenthesisKeyword_9_2);
-	
-		// send/receive
-		c.setLinewrap().before(sendRule);
+        c.setLinewrap().before(ifThenElseAccess.thenKeyword_3);        // then in a newline
+        c.setLinewrap().before(ifThenElseAccess.elseKeyword_5_0);    // else in a new line
+
+        // parallel
+        c.setLinewrap().after(parallelProcessesAccess.verticalLineKeyword_1_0);
+
+        // parenthesis
+        c.setLinewrap().after(nextAccess.leftParenthesisKeyword_9_0);
+        c.setLinewrap().before(nextAccess.rightParenthesisKeyword_9_2);
+        c.setIndentation(nextAccess.leftParenthesisKeyword_9_0, nextAccess.rightParenthesisKeyword_9_2);
+
+        // send/receive
+        c.setLinewrap().before(sendRule);
         c.setLinewrap().before(simpleReceiveRule);
-		c.setNoSpace().between(simpleReceiveAccess.receiveKeyword_0,inputActionAccess.commercialAtKeyword_1_0);
-		c.setNoSpace().after(inputActionAccess.commercialAtKeyword_1_0);
-		c.setNoSpace().around(outputActionAccess.commercialAtKeyword_1_0);
-	
-		findKeywords("after").forEach[k | c.setLinewrap().before(k);]
-	}
+        c.setNoSpace().between(simpleReceiveAccess.receiveKeyword_0,inputActionAccess.commercialAtKeyword_1_0);
+        c.setNoSpace().after(inputActionAccess.commercialAtKeyword_1_0);
+        c.setNoSpace().around(outputActionAccess.commercialAtKeyword_1_0);
+
+        findKeywords("after").forEach[k | c.setLinewrap().before(k);]
+    }
 }

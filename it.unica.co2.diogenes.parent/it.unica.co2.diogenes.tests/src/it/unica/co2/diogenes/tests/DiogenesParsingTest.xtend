@@ -15,16 +15,16 @@ import org.junit.jupiter.api.^extension.ExtendWith
 @ExtendWith(InjectionExtension)
 @InjectWith(DiogenesInjectorProvider)
 class DiogenesParsingTest {
-	@Inject
-	ParseHelper<CO2System> parseHelper
-	
-	@Test
-	def void loadModel() {
-		val result = parseHelper.parse('''
-			Hello Xtext!
-		''')
-		Assertions.assertNotNull(result)
-		val errors = result.eResource.errors
-		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
-	}
+    @Inject
+    ParseHelper<CO2System> parseHelper
+
+    @Test
+    def void loadModel() {
+        val result = parseHelper.parse('''
+            Hello Xtext!
+        ''')
+        Assertions.assertNotNull(result)
+        val errors = result.eResource.errors
+        Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+    }
 }

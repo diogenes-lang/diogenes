@@ -23,121 +23,121 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 
 /**
  * Customization of the default outline structure.
- * 
+ *
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#outline
  */
 class DiogenesOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	// cut off <unamed> due to ContractsAndProcessesDeclaration token
-	def void _createNode(IOutlineNode parentNode, ContractsAndProcessesDeclaration elm) {
+    // cut off <unamed> due to ContractsAndProcessesDeclaration token
+    def void _createNode(IOutlineNode parentNode, ContractsAndProcessesDeclaration elm) {
 
-		for (element : elm.contracts) {
-			createNode(parentNode, element);
-		}
+        for (element : elm.contracts) {
+            createNode(parentNode, element);
+        }
 
-		for (element : elm.processes) {
-			createNode(parentNode, element);
-		}
-	}
-
-	// cut off node of parameters
-	def void _createChildren(IOutlineNode parentNode, ProcessDefinition elm) {
-		createNode(parentNode, elm.process);
-	}
-
-	//cut off + if the sum is single element
-    def void _createNode(IOutlineNode parentNode, Sum sum) {
-    	if (sum.prefixes.length==1)
-			createNode(parentNode, sum.prefixes.get(0))		//cut
-		else
-			createChildren(createEObjectNode(parentNode,sum), sum)	//normal behavior
+        for (element : elm.processes) {
+            createNode(parentNode, element);
+        }
     }
-    
+
+    // cut off node of parameters
+    def void _createChildren(IOutlineNode parentNode, ProcessDefinition elm) {
+        createNode(parentNode, elm.process);
+    }
+
+    //cut off + if the sum is single element
+    def void _createNode(IOutlineNode parentNode, Sum sum) {
+        if (sum.prefixes.length==1)
+            createNode(parentNode, sum.prefixes.get(0))        //cut
+        else
+            createChildren(createEObjectNode(parentNode,sum), sum)    //normal behavior
+    }
+
     //cut off | if the sum is single element
     def void _createNode(IOutlineNode parentNode, ParallelProcesses paral) {
-    	if (paral.processes.length==1)
-			createNode(parentNode, paral.processes.get(0))		//cut
-		else {
-			var newParentNode = createEObjectNode(parentNode,paral);
-			for (p : paral.processes) {
-				var node = createEObjectNode(newParentNode, p);
-				createChildren(node, p)
-			}
-		}
+        if (paral.processes.length==1)
+            createNode(parentNode, paral.processes.get(0))        //cut
+        else {
+            var newParentNode = createEObjectNode(parentNode,paral);
+            for (p : paral.processes) {
+                var node = createEObjectNode(newParentNode, p);
+                createChildren(node, p)
+            }
+        }
     }
-    
-	// 
-	def void _createNode(IOutlineNode parentNode, DelimitedProcess process) {
 
-		if (process.freeNames.length > 0) {
-			for (fn : process.freeNames)
-				createNode(parentNode, fn)
-		}
+    //
+    def void _createNode(IOutlineNode parentNode, DelimitedProcess process) {
 
-		createNode(parentNode, process.process)
-	}
+        if (process.freeNames.length > 0) {
+            for (fn : process.freeNames)
+                createNode(parentNode, fn)
+        }
 
-	// don't create children of ProcessCall type node
+        createNode(parentNode, process.process)
+    }
+
+    // don't create children of ProcessCall type node
     def void _createChildren(IOutlineNode parentNode, ProcessCall process) {}
-	def boolean _isLeaf(ProcessCall elm) {return true;}
-	
-	// don't create freename type node
-	def void _createChildren(IOutlineNode parentNode, Variable elm) {}
-	def boolean _isLeaf(Variable elm) {return true;}
-	
-	
-	def void _createChildren(IOutlineNode parentNode, IntAction elm) {
-		if (elm.next !== null) createNode(parentNode, elm.next)
-	}
-	def boolean _isLeaf(IntAction elm) {
-		return elm.next === null;
-	}
-	
-	def void _createChildren(IOutlineNode parentNode, ExtAction elm) {
-		if (elm.next !== null) createNode(parentNode, elm.next)
-	}
-	def boolean _isLeaf(ExtAction elm) {
-		return elm.next === null;
-	}
-	
-	// cut off (+) if the sum is single element
-	def void _createNode(IOutlineNode parentNode, IntSum sum) {
-		if (sum.actions.length == 1)
-			createNode(parentNode, sum.actions.get(0)) // cut
-		else
-			createChildren(createEObjectNode(parentNode, sum), sum) // normal behavior
-	}
+    def boolean _isLeaf(ProcessCall elm) {return true;}
 
-	// cut off + if the sum is single element
-	def void _createNode(IOutlineNode parentNode, ExtSum sum) {
-		if (sum.actions.length == 1)
-			createNode(parentNode, sum.actions.get(0)) // cut
-		else
-			createChildren(createEObjectNode(parentNode, sum), sum) // normal behavior
-	}
-	
-	// cut off node of exps
-	def void _createChildren(IOutlineNode parentNode, SwitchCase elm) {
-		for (c : elm.cases)
-			createNode(parentNode, c);
-		
-		createNode(parentNode, elm.defaultProc);
-	}
-	
-	// cut off node of exps
-	def void _createChildren(IOutlineNode parentNode, IfThenElse elm) {
-		createNode(parentNode, elm.then);
-		createNode(parentNode, elm.^else);
-	}
-	
-	// cut off node of exps
-	def void _createChildren(IOutlineNode parentNode, Case elm) {
-		createNode(parentNode, elm.caseProc);
-	}
-	
-	// cut off node of exps
-	def void _createChildren(IOutlineNode parentNode, TimeoutProcess elm) {
-		createChildren(parentNode, elm.TProcess)
-	}
-	
+    // don't create freename type node
+    def void _createChildren(IOutlineNode parentNode, Variable elm) {}
+    def boolean _isLeaf(Variable elm) {return true;}
+
+
+    def void _createChildren(IOutlineNode parentNode, IntAction elm) {
+        if (elm.next !== null) createNode(parentNode, elm.next)
+    }
+    def boolean _isLeaf(IntAction elm) {
+        return elm.next === null;
+    }
+
+    def void _createChildren(IOutlineNode parentNode, ExtAction elm) {
+        if (elm.next !== null) createNode(parentNode, elm.next)
+    }
+    def boolean _isLeaf(ExtAction elm) {
+        return elm.next === null;
+    }
+
+    // cut off (+) if the sum is single element
+    def void _createNode(IOutlineNode parentNode, IntSum sum) {
+        if (sum.actions.length == 1)
+            createNode(parentNode, sum.actions.get(0)) // cut
+        else
+            createChildren(createEObjectNode(parentNode, sum), sum) // normal behavior
+    }
+
+    // cut off + if the sum is single element
+    def void _createNode(IOutlineNode parentNode, ExtSum sum) {
+        if (sum.actions.length == 1)
+            createNode(parentNode, sum.actions.get(0)) // cut
+        else
+            createChildren(createEObjectNode(parentNode, sum), sum) // normal behavior
+    }
+
+    // cut off node of exps
+    def void _createChildren(IOutlineNode parentNode, SwitchCase elm) {
+        for (c : elm.cases)
+            createNode(parentNode, c);
+
+        createNode(parentNode, elm.defaultProc);
+    }
+
+    // cut off node of exps
+    def void _createChildren(IOutlineNode parentNode, IfThenElse elm) {
+        createNode(parentNode, elm.then);
+        createNode(parentNode, elm.^else);
+    }
+
+    // cut off node of exps
+    def void _createChildren(IOutlineNode parentNode, Case elm) {
+        createNode(parentNode, elm.caseProc);
+    }
+
+    // cut off node of exps
+    def void _createChildren(IOutlineNode parentNode, TimeoutProcess elm) {
+        createChildren(parentNode, elm.TProcess)
+    }
+
 }

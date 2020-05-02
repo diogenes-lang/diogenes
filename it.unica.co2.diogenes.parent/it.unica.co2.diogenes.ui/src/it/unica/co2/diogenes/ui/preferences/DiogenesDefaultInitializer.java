@@ -7,9 +7,9 @@ import it.unica.co2.diogenes.ui.internal.DiogenesActivator;
 
 /**
  * Set default values to the properties related to maude honesty checking
- * 
+ *
  * @author Nicola Atzei
- * 
+ *
  * @see MaudePreferences
  */
 public class DiogenesDefaultInitializer extends AbstractPreferenceInitializer {
