@@ -30,8 +30,8 @@
         <module>it.unica.co2.diogenes.target</module>
         <module>it.unica.co2.diogenes.feature</module>
         <module>it.unica.co2.diogenes.repository</module>
-        <module>it.unica.co2.diogenes.tests</module>
-        <module>it.unica.co2.diogenes.ui.tests</module>
+<!--         <module>it.unica.co2.diogenes.tests</module> -->
+<!--         <module>it.unica.co2.diogenes.ui.tests</module> -->
     </modules>
 
     <dependencyManagement>
@@ -105,6 +105,7 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho-version}</version>
                 <configuration>
+                    <pomDependencies>consider</pomDependencies>
                     <target>
                         <artifact>
                             <groupId>it.unica.co2.diogenes</groupId>
@@ -132,6 +133,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        
         <pluginManagement>
             <plugins>
                 <plugin>

@@ -37,4 +37,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>co2-honesty-checker-5.2.0.jar</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/home/nicola/repositories/diogenes-honesty/co2-honesty-checker/co2-honesty-checker-5.2.0.jar</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

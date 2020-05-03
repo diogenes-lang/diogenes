@@ -10,11 +10,6 @@
     <packaging>eclipse-plugin</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>it.unica.co2</groupId>
-            <artifactId>co2-honesty-checker</artifactId>
-            <version>5.2.0</version>
-        </dependency>
         <!-- Leave this dependency here to avoid "java.lang.ClassNotFoundException: org.eclipse.xsemantics.runtime.StringRepresentation" -->
         <dependency>
             <groupId>org.eclipse.xsemantics</groupId>

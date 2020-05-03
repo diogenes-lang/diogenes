@@ -1,8 +1,6 @@
 #.classpath # eclipse
 #.project   # eclipse
 #.settings  # eclipse
-.launch     # eclipse
-.settings   # eclipse
 
 bin
 xtend-gen
@@ -15,11 +13,8 @@ plugin.xml_gen
 *.xtendbin
 *.class
 
+**/generated/
 local.properties
 
-it.unica.co2.update_site/features
-it.unica.co2.update_site/plugins
-it.unica.co2.update_site/artifacts.jar
-it.unica.co2.update_site/content.jar
-
 backup
+*.jar

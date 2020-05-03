@@ -33,9 +33,7 @@ Export-Package: it.unica.co2.diogenes,
  it.unica.co2.diogenes.utils,
  it.unica.co2.diogenes.validation,
  it.unica.co2.diogenes.xsemantics,
- it.unica.co2.diogenes.xsemantics.validation,
- it.unica.co2.honesty
+ it.unica.co2.diogenes.xsemantics.validation
 Import-Package: org.apache.log4j
 Bundle-ClassPath: .antlr-generator-3.2.0-patch.jar,
- .,
- co2-honesty-checker-5.2.0.jar
+ .

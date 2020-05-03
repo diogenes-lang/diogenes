@@ -32,3 +32,5 @@ Export-Package: it.unica.co2.diogenes.ui,
  it.unica.co2.diogenes.ui.quickfix,
  it.unica.co2.diogenes.validation
 Bundle-Activator: it.unica.co2.diogenes.ui.internal.DiogenesActivator
+Bundle-ClassPath: co2-honesty-checker-5.2.0.jar,
+ .

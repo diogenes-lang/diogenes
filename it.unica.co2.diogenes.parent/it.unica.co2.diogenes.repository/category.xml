@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-    <feature id="it.unica.co2.diogenes.feature" version="0.0.0">
-        <category name="main"/>
-    </feature>
-    <feature id="it.unica.co2.diogenes.feature.source" version="0.0.0">
-        <category name="main.source"/>
-    </feature>
-    <category-def name="main" label="Diogenes"/>
-    <category-def name="main.source" label="Diogenes (Sources)"/>
+   <feature id="it.unica.co2.diogenes.feature" version="0.0.0">
+      <category name="main"/>
+   </feature>
+   <feature id="it.unica.co2.diogenes.feature.source" version="0.0.0">
+      <category name="main.source"/>
+   </feature>
+   <category-def name="main" label="Diogenes"/>
+   <category-def name="main.source" label="Diogenes (Sources)"/>
 </site>

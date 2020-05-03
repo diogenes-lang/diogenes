@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Automatic-Module-Name: it.unica.co2.diogenes.tests
 Bundle-ManifestVersion: 2
 Bundle-Name: it.unica.co2.diogenes.tests
-Bundle-Vendor: My Company
+Bundle-Vendor: University of Cagliari
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: it.unica.co2.diogenes.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
