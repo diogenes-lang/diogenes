@@ -1,3 +1,5 @@
+os: linux
+dist: xenial
 language: java
 jdk:
 - openjdk8
@@ -18,16 +20,15 @@ notifications:
     - atzeinicola@gmail.com
     on_success: change
     on_failure: always
-    
-    
+
+
 deploy:
   provider: releases
-  api_key:
+  token:
     secure: ny6qhjFPT0QpEwKxlheHAAY81a/tURqL1oIeOIfieXvWjvGMZp8CUBghlEKm7e5vZy51JvNjN4tzvET1o14mZwg+uoz9MsEalAF5jFO4FkLjADQk/o9T1pYmUrztTeN0Omoai4dmyhX+dfDYklnLJjRkyiyyux7ekwQvsFISeutJk/B9wfDhpoobruKSViKjGfveUtS2kCFYlU5wSHkuDFn9Y21UmfF6dwJ7HJeSB6GLTSvk4nKga+/5VSS5LW5ETXNEggxwqxmVtkHRrBBxz8mho7NztyNVQF7gUnCVa2Z22U1e8u67EuKaQS5i3DwAFjJFC7KbEhvzoOuX6Etpedc2YOeDIwGCYZyGUSAIAXQkv0/iuH80/fRarvn4eS/2dn/AP8sq1ZvhG3YMQTUTxVC2JsSIo642JJjC+PxXnijHl6/2aWEKOvK8kVpUp0Or41NvZv5rlh6RKEFH/FZBawaTieAMqQZcSR/QWNxb8YcygAfOXKD/vmUbYR9K1BjAi4glHDSIhp7iEHfCgh4AWWh8CRiyPV5PBfINxGUVkQXXQbAcf8633NbOVdHn1pCmRgZTLMfBY4YNpbL8cLbgBijadBeXbHjzx1wYr0+991xmkRZWqM0sAZMS+V1dINYV96WpI4K6dbvfq7iNlQeITCkJDvo7ERrUBmMvv7CB8lM=
   file_glob: true
   file: it.unica.co2.diogenes.parent/it.unica.co2.diogenes.repository/target/it.unica.co2.diogenes.repository-*.zip
   on:
     tags: true
     repo: diogenes-lang/diogenes
-  skip_cleanup: 'true'
-
+  cleanup: false
